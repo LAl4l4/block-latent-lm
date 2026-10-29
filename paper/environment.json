@@ -1,0 +1,13 @@
+{
+  "python": "3.13.9",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "packages": {
+    "torch": "2.11.0+cu128",
+    "tokenizers": "0.23.3",
+    "numpy": "2.5.2",
+    "pyarrow": null
+  },
+  "cuda_runtime": "12.8",
+  "training_python": "D:/Code/venv313/Scripts/python.exe",
+  "note": "pyarrow is needed for rebuilding data; prepared data training does not require it."
+}

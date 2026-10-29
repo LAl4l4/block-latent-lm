@@ -26,6 +26,7 @@ from latent_ar.checkpoints import (
 from latent_ar.codec import BlockCodec, reconstruction_statistics
 from latent_ar.codec_data import CodecDataset
 from latent_ar.control import GracefulStop
+from latent_ar.checkpoint_io import publish_checkpoint
 from latent_ar.data import StoryDataset
 from latent_ar.model import ModelConfig
 from latent_ar.staged import LatentPriorModel, StagedModelConfig
@@ -481,7 +482,7 @@ def save_stage(
     }
     temporary = path.with_suffix(".tmp")
     torch.save(checkpoint, temporary)
-    temporary.replace(path)
+    return publish_checkpoint(temporary, path, step)
 
 
 def describe(stage, values):
@@ -663,6 +664,7 @@ def run_stage(stage):
     if final_step < first_step:
         raise ValueError("No remaining steps; increase --max-steps/--stop-after")
 
+    last_saved_path = args.resume
     started = time.perf_counter()
     if device.type == "cuda":
         torch.cuda.reset_peak_memory_stats(device)
@@ -808,7 +810,7 @@ def run_stage(stage):
                 or step == final_step
                 or stop.requested
             ):
-                save_stage(
+                last_saved_path = save_stage(
                     run_dir / "last.pt",
                     model,
                     optimizer,
@@ -822,7 +824,7 @@ def run_stage(stage):
                     validation,
                     provenance,
                 )
-                print(f"[保存] step {step} → {run_dir / 'last.pt'}", flush=True)
+                print(f"[保存] step {step} → {last_saved_path}", flush=True)
             if stop.requested:
                 break
         interrupted = stop.requested
@@ -838,7 +840,7 @@ def run_stage(stage):
             if device.type == "cuda"
             else None
         ),
-        "checkpoint": str(run_dir / "last.pt"),
+        "checkpoint": str(last_saved_path),
     }
     (run_dir / "summary.json").write_text(
         json.dumps(summary, indent=2) + "\n", encoding="utf-8"
