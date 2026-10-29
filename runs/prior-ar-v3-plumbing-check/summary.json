@@ -1,0 +1,10 @@
+{
+  "stage": "prior",
+  "last_step": 3,
+  "tokens_seen": 32769,
+  "blocks_seen": 8367,
+  "interrupted": false,
+  "wall_seconds": 0.9911509000230581,
+  "peak_gpu_allocated_mb": 2756.0185546875,
+  "checkpoint": "runs\\prior-ar-v3-plumbing-check\\last.pt"
+}

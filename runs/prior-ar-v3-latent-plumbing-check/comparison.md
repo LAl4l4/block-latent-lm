@@ -1,0 +1,27 @@
+# 原始 latent 与均值 latent 的短文本生成对比
+
+检查点：step 3；1 个 prompt × 1 个随机种子；最多 8 token。
+
+均值定义：对每个 prompt 的完整生成 latent 序列取时间均值，再重复到全部生成位置。保留原 prompt latent。两边采样设置和随机种子完全相同；不强制最低生成长度。
+
+这项离线诊断比较逐步变化的 latent 与其均值；均值仍包含该 prompt 的信息，不能等同于没有 latent，也不能据此单独判断主干的质量收益。
+
+完全相同的输出：0 / 1。
+
+第一个 token 即不同：1 / 1；平均续写长度：原始 8.00 token，均值 8.00 token。
+
+## Prompt 1 / seed 42
+
+**输入**
+
+Once upon a time, a little girl found a strange box.
+
+**原始 latent**
+
+ knot dependableNot sisters tired neck. honey
+
+**均值 latent**
+
+ almost neckNot sink almost neckNot sink
+
+相同前缀：0 token；输出长度：8 / 8 token。

@@ -1,0 +1,105 @@
+{
+  "source": "D:\\Code\\latent-ar-async-decoder\\runs\\prior-energy-v4-check\\last.pt",
+  "source_step": 1404,
+  "source_sha256": "290ca0279e6236d3633c4b4fbe2894a9d6b074611a25ac82502df4abff53cf2d",
+  "rater": "D:\\Code\\latent-ar-async-decoder\\runs\\train-b128\\last.pt",
+  "batch_size": 128,
+  "grad_accum": 2,
+  "notes": [
+    "Matched source weights, data-window RNG and candidate RNG; equal updates, not equal FLOPs.",
+    "All objectives use eight candidates; token CE averages the candidate CE, mixture NLL averages whole-block probabilities first.",
+    "Reference LM CE is an auxiliary local-model fluency proxy, not a semantic score; inspect repetition, EOS and samples too.",
+    "Mixture likelihood uses finite candidates and a softmax decoder, not exact argmax-generation likelihood."
+  ],
+  "arms": {
+    "token_head": [
+      {
+        "step": 0,
+        "text_nll": 9.055819092242876,
+        "tokens": 2737,
+        "blocks": 702,
+        "scored_blocks": 702,
+        "free_reference_lm_ce": 12.823720296223959,
+        "free_mean_length": 64.0,
+        "free_early_eos_fraction": 0.0,
+        "free_repeated_trigram_fraction": 0.0,
+        "free_cross_seed_unique_fraction": 1.0
+      },
+      {
+        "step": 100,
+        "text_nll": 5.3632335279560195,
+        "tokens": 2737,
+        "blocks": 702,
+        "scored_blocks": 702,
+        "free_reference_lm_ce": 8.153048303732918,
+        "free_mean_length": 38.125,
+        "free_early_eos_fraction": 0.08333333333333333,
+        "free_repeated_trigram_fraction": 0.011334413831703069,
+        "free_cross_seed_unique_fraction": 1.0
+      },
+      {
+        "step": 200,
+        "text_nll": 4.34586966155348,
+        "tokens": 2737,
+        "blocks": 702,
+        "scored_blocks": 702,
+        "free_reference_lm_ce": 4.899621238171215,
+        "free_mean_length": 34.75,
+        "free_early_eos_fraction": 0.041666666666666664,
+        "free_repeated_trigram_fraction": 0.009173387096774191,
+        "free_cross_seed_unique_fraction": 1.0
+      },
+      {
+        "step": 300,
+        "text_nll": 3.875427357593853,
+        "tokens": 2737,
+        "blocks": 702,
+        "scored_blocks": 702,
+        "free_reference_lm_ce": 3.594537296205619,
+        "free_mean_length": 34.708333333333336,
+        "free_early_eos_fraction": 0.125,
+        "free_repeated_trigram_fraction": 0.00806451612903226,
+        "free_cross_seed_unique_fraction": 1.0
+      },
+      {
+        "step": 400,
+        "text_nll": 3.68079786262331,
+        "tokens": 2737,
+        "blocks": 702,
+        "scored_blocks": 702,
+        "free_reference_lm_ce": 3.47582666015625,
+        "free_mean_length": 35.708333333333336,
+        "free_early_eos_fraction": 0.16666666666666666,
+        "free_repeated_trigram_fraction": 0.0031531429776211575,
+        "free_cross_seed_unique_fraction": 1.0
+      },
+      {
+        "step": 500,
+        "text_nll": 3.549005365563345,
+        "tokens": 2737,
+        "blocks": 702,
+        "scored_blocks": 702,
+        "free_reference_lm_ce": 3.416693421803653,
+        "free_mean_length": 35.791666666666664,
+        "free_early_eos_fraction": 0.20833333333333334,
+        "free_repeated_trigram_fraction": 0.00958678304564034,
+        "free_cross_seed_unique_fraction": 0.9583333333333334
+      },
+      {
+        "step": 600,
+        "text_nll": 3.4543645243423455,
+        "tokens": 2737,
+        "blocks": 702,
+        "scored_blocks": 702,
+        "free_reference_lm_ce": 3.1055880647749716,
+        "free_mean_length": 36.25,
+        "free_early_eos_fraction": 0.125,
+        "free_repeated_trigram_fraction": 0.010378565082866156,
+        "free_cross_seed_unique_fraction": 1.0
+      }
+    ]
+  },
+  "data_seed": 1729,
+  "noise_seed": 2718,
+  "cycle_weight": 1.0
+}

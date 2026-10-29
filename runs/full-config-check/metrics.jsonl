@@ -1,0 +1,3 @@
+{"kind": "train", "step": 1, "ce": 9.028005488965878, "lr": 2.9999999999999997e-06, "grad_norm": 6.397910118103027, "target_tokens": 756, "tokens_seen": 756, "step_seconds": 3.741439900128171, "target_tokens_per_second": 202.06124384734915}
+{"kind": "train", "step": 2, "ce": 9.034392472151872, "lr": 5.999999999999999e-06, "grad_norm": 6.315591812133789, "target_tokens": 728, "tokens_seen": 1484, "step_seconds": 3.0965515999123454, "target_tokens_per_second": 235.10023214875787}
+{"kind": "dev", "step": 2, "ce": 9.023074361301909, "perplexity": 8292.231248416292, "tokens": 149, "stories": 4}

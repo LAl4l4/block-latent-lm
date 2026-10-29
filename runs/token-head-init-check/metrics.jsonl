@@ -1,0 +1,2 @@
+{"kind": "train", "stage": "prior", "step": 1, "text_nll": 9.056616849042248, "tokens": 11172, "blocks": 2848, "scored_blocks": 2848, "lr": 2.9999999999999997e-06, "grad_norm": 2.3133373260498047, "step_seconds": 0.448072100058198, "tokens_seen": 11172, "blocks_seen": 2848}
+{"kind": "dev", "stage": "prior", "step": 1, "text_nll": 9.05066340782123, "tokens": 5370, "blocks": 1378, "scored_blocks": 1378, "shuffled_context_text_nll": 9.051540677374302, "context_nll_advantage": 0.000877269553072324}

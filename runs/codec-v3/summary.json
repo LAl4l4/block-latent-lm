@@ -1,0 +1,10 @@
+{
+  "stage": "codec",
+  "last_step": 10000,
+  "tokens_seen": 9210416,
+  "blocks_seen": 2560000,
+  "interrupted": false,
+  "wall_seconds": 178.79692199989222,
+  "peak_gpu_allocated_mb": 149.2783203125,
+  "checkpoint": "runs\\codec-v3\\last.pt"
+}

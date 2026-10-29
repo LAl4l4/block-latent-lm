@@ -1,0 +1,84 @@
+{
+  "metadata": {
+    "checkpoint": "D:\\Code\\latent-ar-async-decoder\\runs\\prior-energy-v4-check\\last.pt",
+    "checkpoint_step": 101,
+    "architecture": "latent_codec_energy_v4",
+    "max_new_tokens": 16,
+    "latent_steps": 4,
+    "temperature": 0.0,
+    "top_k": 50,
+    "seeds": [
+      42
+    ],
+    "prompt_count": 1,
+    "pair_count": 1,
+    "identical_pairs": 0,
+    "first_token_different_pairs": 1,
+    "mean_original_content_tokens": 16.0,
+    "mean_averaged_content_tokens": 16.0,
+    "mean_definition": "Per-prompt temporal mean over the complete generated latent segment; broadcast to all generated positions. Prompt latents unchanged.",
+    "limitations": "Offline perturbation diagnostic, not a separately trained no-latent baseline or a causal quality estimate.",
+    "latent_statistics": [
+      {
+        "prompt_index": 0,
+        "mean_cosine_to_average": 0.5963115692138672,
+        "relative_temporal_rms": 0.8010607957839966
+      }
+    ]
+  },
+  "pairs": [
+    {
+      "prompt_index": 0,
+      "prompt": "Once upon a time, a little girl found a strange box.",
+      "seed": 42,
+      "original": {
+        "token_ids": [
+          302,
+          462,
+          672,
+          672,
+          92,
+          503,
+          561,
+          1517,
+          261,
+          261,
+          879,
+          961,
+          17,
+          332,
+          17,
+          307
+        ],
+        "text": " The could always alwaysy smiled away enough t t come P. \". it",
+        "content_tokens": 16,
+        "stopped_by_eos": false
+      },
+      "mean": {
+        "token_ids": [
+          92,
+          1142,
+          412,
+          672,
+          92,
+          1142,
+          412,
+          672,
+          92,
+          1142,
+          412,
+          672,
+          92,
+          1142,
+          412,
+          672
+        ],
+        "text": "y N It alwaysy N It alwaysy N It alwaysy N It always",
+        "content_tokens": 16,
+        "stopped_by_eos": false
+      },
+      "identical_output": false,
+      "identical_prefix_tokens": 0
+    }
+  ]
+}

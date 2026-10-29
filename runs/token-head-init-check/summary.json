@@ -1,0 +1,10 @@
+{
+  "stage": "prior",
+  "last_step": 1,
+  "tokens_seen": 11172,
+  "blocks_seen": 2848,
+  "interrupted": false,
+  "wall_seconds": 1.0055309999734163,
+  "peak_gpu_allocated_mb": 2538.9853515625,
+  "checkpoint": "runs\\token-head-init-check\\last.pt"
+}

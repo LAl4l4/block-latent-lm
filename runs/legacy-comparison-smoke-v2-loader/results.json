@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "checkpoint": "D:\\Code\\latent-ar-async-decoder\\runs\\train-b128\\last.pt",
+    "checkpoint_step": 4112,
+    "architecture": "latent_ar_v1",
+    "max_new_tokens": 8,
+    "latent_steps": 2,
+    "temperature": 0.8,
+    "top_k": 50,
+    "seeds": [
+      42
+    ],
+    "prompt_count": 1,
+    "pair_count": 1,
+    "identical_pairs": 1,
+    "first_token_different_pairs": 0,
+    "mean_original_content_tokens": 8.0,
+    "mean_averaged_content_tokens": 8.0,
+    "mean_definition": "Per-prompt temporal mean over the complete generated latent segment; broadcast to all generated positions. Prompt latents unchanged.",
+    "limitations": "Offline perturbation diagnostic, not a separately trained no-latent baseline or a causal quality estimate.",
+    "latent_statistics": [
+      {
+        "prompt_index": 0,
+        "mean_cosine_to_average": 0.9168521761894226,
+        "relative_temporal_rms": 0.3992585837841034
+      }
+    ]
+  },
+  "pairs": [
+    {
+      "prompt_index": 0,
+      "prompt": "Once upon a time, a little girl found a box.",
+      "seed": 42,
+      "original": {
+        "token_ids": [
+          316,
+          1011,
+          307,
+          361,
+          268,
+          673,
+          307,
+          585
+        ],
+        "text": " She picked it up and took it home",
+        "content_tokens": 8,
+        "stopped_by_eos": false
+      },
+      "mean": {
+        "token_ids": [
+          316,
+          1011,
+          307,
+          361,
+          268,
+          673,
+          307,
+          585
+        ],
+        "text": " She picked it up and took it home",
+        "content_tokens": 8,
+        "stopped_by_eos": false
+      },
+      "identical_output": true,
+      "identical_prefix_tokens": 8
+    }
+  ]
+}
