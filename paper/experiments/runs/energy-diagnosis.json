@@ -1,0 +1,44 @@
+{
+  "checkpoint": "runs\\prior-energy-v4-check\\last.pt",
+  "step": 1404,
+  "batch_size": 128,
+  "metrics": {
+    "model": {
+      "energy_sum": 0.6748759985316128,
+      "attraction_sum": 1.345325575165548,
+      "spread_sum": 1.34089915326787,
+      "reference_ce": 9.865926742553711,
+      "reference_accuracy": 0.08808193355798721,
+      "mean_max_probability": 0.5065723657608032
+    },
+    "shuffled_context": {
+      "energy_sum": 0.7520185008277395,
+      "attraction_sum": 1.4242211772326288,
+      "spread_sum": 1.3444050870543813
+    },
+    "unconditional_empirical": {
+      "energy_sum": 0.7120414479204463,
+      "attraction_sum": 1.4238605471584724,
+      "spread_sum": 1.4236383756463171
+    },
+    "standard_gaussian": {
+      "energy_sum": 0.7138416749818578,
+      "attraction_sum": 1.4206576631100327,
+      "spread_sum": 1.4136319762563498
+    },
+    "zero_point": {
+      "energy_sum": 1.0096001479726053,
+      "attraction_sum": 1.0096001479726053,
+      "spread_sum": 0.0
+    },
+    "oracle": {
+      "reference_ce": 0.07700908184051514,
+      "reference_accuracy": 0.9940409660339355
+    },
+    "rollout": {
+      "first_block_max_distance": 0.0,
+      "mean_teacher_free_distance": 0.3663381040096283,
+      "reference_ce": 11.126301765441895
+    }
+  }
+}

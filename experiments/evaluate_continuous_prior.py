@@ -13,7 +13,7 @@ from download_data import sha256
 from latent_ar.checkpoints import load_model
 from latent_ar.data import StoryDataset
 from latent_ar.model import ModelConfig
-from token_ar_baseline import TokenAR
+from experiments.token_ar_baseline import TokenAR
 from train import precision_context, select_device, to_device
 
 

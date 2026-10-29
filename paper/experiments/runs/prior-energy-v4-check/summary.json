@@ -1,0 +1,10 @@
+{
+  "stage": "prior",
+  "last_step": 1404,
+  "tokens_seen": 15954841,
+  "blocks_seen": 4066286,
+  "interrupted": true,
+  "wall_seconds": 354.8490977000911,
+  "peak_gpu_allocated_mb": 3087.0498046875,
+  "checkpoint": "runs\\prior-energy-v4-check\\last.pt"
+}

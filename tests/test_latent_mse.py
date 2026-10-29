@@ -28,7 +28,7 @@ def test_latent_only_objective_never_backpropagates_decoder_ce():
 
 
 def test_latent_only_weights_are_allowed_but_empty_objective_is_rejected(tmp_path):
-    config = json.loads(Path("configs/prior-latent-mse.json").read_text())
+    config = json.loads(Path("paper/archive/configs/prior-latent-mse.json").read_text())
     path = tmp_path / "config.json"
     path.write_text(json.dumps(config))
     args = Namespace(

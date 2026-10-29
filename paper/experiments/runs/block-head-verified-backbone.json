@@ -1,0 +1,37 @@
+{
+  "checkpoint": "runs\\prior-block-head-verified\\last.pt",
+  "step": 1000,
+  "initial": "runs\\prior-energy-v4-check\\last.pt",
+  "initial_step": 1404,
+  "relative_backbone_parameter_change": 0.29370112986653113,
+  "metrics": {
+    "trained": {
+      "text_nll": 3.1613634049115458,
+      "tokens": 5370,
+      "blocks": 1378,
+      "scored_blocks": 1378,
+      "shuffled_context_text_nll": 5.78910541783054,
+      "context_nll_advantage": 2.6277420129189943
+    },
+    "restored_initial_backbone": {
+      "text_nll": 4.239712086824953,
+      "tokens": 5370,
+      "blocks": 1378,
+      "scored_blocks": 1378,
+      "shuffled_context_text_nll": 5.3434994035148975,
+      "context_nll_advantage": 1.1037873166899441
+    },
+    "zero_context": {
+      "text_nll": 5.363495111731844,
+      "tokens": 5370,
+      "blocks": 1378,
+      "scored_blocks": 1378,
+      "shuffled_context_text_nll": 5.363495111731844,
+      "context_nll_advantage": 0.0
+    }
+  },
+  "notes": [
+    "Same frozen codec, local output head, dev windows and evaluation protocol in every arm.",
+    "Restoring initial weights diagnoses reliance and coadaptation; it is not a matched frozen-backbone training control."
+  ]
+}

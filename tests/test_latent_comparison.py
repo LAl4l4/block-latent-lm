@@ -3,7 +3,10 @@
 import pytest
 import torch
 
-from compare_latent_generation import mean_generated_latents, use_fixed_rollout
+from experiments.compare_latent_generation import (
+    mean_generated_latents,
+    use_fixed_rollout,
+)
 from latent_ar.model import LatentARModel, ModelConfig
 
 

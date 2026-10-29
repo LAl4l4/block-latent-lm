@@ -1,9 +1,11 @@
 .venv/
 .tmp/
-data/
-runs/
+/data/
+/runs/
 *.tmp
 __pycache__/
 .pytest_cache/
 *.pyc
+.coverage
+htmlcov/
 

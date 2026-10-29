@@ -1,0 +1,219 @@
+{
+  "seed": 10042,
+  "draws": 32,
+  "batch_size": 128,
+  "reports": [
+    {
+      "checkpoint": "runs\\prior-energy-v4-check\\last.pt",
+      "step": 1404,
+      "greedy_decoder": {
+        "1": {
+          "reward": 0.08871080374842315,
+          "reference_match": 0.08894320297951583,
+          "collision": 0.08917560221060851,
+          "units": 5370
+        },
+        "2": {
+          "reward": 0.02498696990755705,
+          "reference_match": 0.02531625751503006,
+          "collision": 0.02564554512250307,
+          "units": 3992
+        },
+        "3": {
+          "reward": 0.010300669852950166,
+          "reference_match": 0.011723190602500948,
+          "collision": 0.013145711352051729,
+          "units": 2639
+        },
+        "4": {
+          "reward": 0.0067265815309662655,
+          "reference_match": 0.0075562547673531655,
+          "collision": 0.008385928003740066,
+          "units": 1311
+        }
+      },
+      "softmax_decoder": {
+        "1": {
+          "reward": 0.0882692827536493,
+          "reference_match": 0.08003957169459963,
+          "collision": 0.07180986063554996,
+          "units": 5370
+        },
+        "2": {
+          "reward": 0.024845053009244295,
+          "reference_match": 0.022271104709418836,
+          "collision": 0.01969715640959338,
+          "units": 3992
+        },
+        "3": {
+          "reward": 0.011281613269933627,
+          "reference_match": 0.010527188328912467,
+          "collision": 0.009772763387891308,
+          "units": 2639
+        },
+        "4": {
+          "reward": 0.007675438596491228,
+          "reference_match": 0.00665045766590389,
+          "collision": 0.005625476735316552,
+          "units": 1311
+        }
+      },
+      "free_text": [
+        {
+          "row": 0,
+          "seed": 42,
+          "prompt": " to go inside and see what was in there. She walked closer and closer to the palace.\n\nSuddenly, a scary dragon appeared! The dragon seemed angry and Lily got very scared. She tried to run away, but the dragon chased her. Lily tripped and fell, hurting her leg. The dragon came closer and closer until Lily was too scared to move.\n\nThe dragon took Lily to his cave and she never saw her family again. The big palace seemed like a good",
+          "continuation": " in ocean."
+        },
+        {
+          "row": 0,
+          "seed": 43,
+          "prompt": " to go inside and see what was in there. She walked closer and closer to the palace.\n\nSuddenly, a scary dragon appeared! The dragon seemed angry and Lily got very scared. She tried to run away, but the dragon chased her. Lily tripped and fell, hurting her leg. The dragon came closer and closer until Lily was too scared to move.\n\nThe dragon took Lily to his cave and she never saw her family again. The big palace seemed like a good",
+          "continuation": " saw a even it. Tom what big\" park. Ben that happy that \" of him He said that rans P into it as to \n whenever..'sWhen day decided her it many promised They days always\ns and said that the \" andy her. \" out very and his a smiled a kids"
+        },
+        {
+          "row": 1,
+          "seed": 42,
+          "prompt": " started playing together.\n\nAfter a while, the boy got tired and wanted to go home. Lily asked him if he wanted to come to her house to play with her toys. The boy said yes and they went to Lily's house.\n\nWhen they got there, Lily's mom gave them some",
+          "continuation": " is ocean."
+        },
+        {
+          "row": 1,
+          "seed": 43,
+          "prompt": " started playing together.\n\nAfter a while, the boy got tired and wanted to go home. Lily asked him if he wanted to come to her house to play with her toys. The boy said yes and they went to Lily's house.\n\nWhen they got there, Lily's mom gave them some",
+          "continuation": "'s was even it. The always big\" puddle. Ben that happy that \" back him He said that ran were P into it as to \n whenever..\n, enormous decided her it many\" never day help always\ns and said that few \" andy her. \" out very and his on smiled a kids"
+        },
+        {
+          "row": 2,
+          "seed": 42,
+          "prompt": " it saw a nice sunny spot. The bee liked the warm sun, so it flew down and relaxed. Suddenly, the bee heard a loud noise and felt a sharp pain. The bee was dead!\n\nThe bee had been stung by a big bee. The bee",
+          "continuation": " is ocean."
+        },
+        {
+          "row": 2,
+          "seed": 43,
+          "prompt": " it saw a nice sunny spot. The bee liked the warm sun, so it flew down and relaxed. Suddenly, the bee heard a loud noise and felt a sharp pain. The bee was dead!\n\nThe bee had been stung by a big bee. The bee",
+          "continuation": " saw a even it. Tom whatie\" instead. She that jumped that \" of! He said that ran were P into it as to \n whenever.\n\n, branch decided on the many promised They days.\ns and said that his \" andy her. \" out very and his on smiled\n kids"
+        },
+        {
+          "row": 3,
+          "seed": 42,
+          "prompt": " have fun.\n\n\"Let's go to the puddle!\" Tom said.\n\n\"OK!\" Lily said.\n\nThey ran to the puddle and jumped in. The water was cold and wet, but they did not care. They laughed and splashed and threw water at each other. They did not see the dark clouds in the sky. They did not hear the thunder and the rain.\n\nSoon, the puddle became bigger and deeper.",
+          "continuation": " an ocean."
+        },
+        {
+          "row": 3,
+          "seed": 43,
+          "prompt": " have fun.\n\n\"Let's go to the puddle!\" Tom said.\n\n\"OK!\" Lily said.\n\nThey ran to the puddle and jumped in. The water was cold and wet, but they did not care. They laughed and splashed and threw water at each other. They did not see the dark clouds in the sky. They did not hear the thunder and the rain.\n\nSoon, the puddle became bigger and deeper.",
+          "continuation": " He was veryIt. Tom other\"\" instead. She withThat that \" of! He said that ran were P into the happy to \n whenever.\n\n\n path decided on was many promised They days. shinings and others that. \" andy her. \" out very and his on smiled\n let"
+        }
+      ]
+    },
+    {
+      "checkpoint": "runs\\prior-mixture-v5-check\\last.pt",
+      "step": 1000,
+      "greedy_decoder": {
+        "1": {
+          "reward": -0.07287086261788912,
+          "reference_match": 0.1260358472998138,
+          "collision": 0.3249425572175167,
+          "units": 5370
+        },
+        "2": {
+          "reward": -0.179483462893529,
+          "reference_match": 0.03476484218436874,
+          "collision": 0.24901314726226648,
+          "units": 3992
+        },
+        "3": {
+          "reward": -0.21553022894791524,
+          "reference_match": 0.012291587722622205,
+          "collision": 0.24011340439315965,
+          "units": 2639
+        },
+        "4": {
+          "reward": -0.22401023596860314,
+          "reference_match": 0.007794622425629291,
+          "collision": 0.2395994808198617,
+          "units": 1311
+        }
+      },
+      "softmax_decoder": {
+        "1": {
+          "reward": 0.07908031477143028,
+          "reference_match": 0.08495111731843576,
+          "collision": 0.09082191986544123,
+          "units": 5370
+        },
+        "2": {
+          "reward": 0.01844919678065809,
+          "reference_match": 0.021026427855711422,
+          "collision": 0.023603658930764753,
+          "units": 3992
+        },
+        "3": {
+          "reward": 0.005632020926792896,
+          "reference_match": 0.006761557408109132,
+          "collision": 0.007891093889425368,
+          "units": 2639
+        },
+        "4": {
+          "reward": 0.003959978839103369,
+          "reference_match": 0.003313310450038139,
+          "collision": 0.0026666420609729093,
+          "units": 1311
+        }
+      },
+      "free_text": [
+        {
+          "row": 0,
+          "seed": 42,
+          "prompt": " to go inside and see what was in there. She walked closer and closer to the palace.\n\nSuddenly, a scary dragon appeared! The dragon seemed angry and Lily got very scared. She tried to run away, but the dragon chased her. Lily tripped and fell, hurting her leg. The dragon came closer and closer until Lily was too scared to move.\n\nThe dragon took Lily to his cave and she never saw her family again. The big palace seemed like a good",
+          "continuation": ". She it. a happy. She out."
+        },
+        {
+          "row": 0,
+          "seed": 43,
+          "prompt": " to go inside and see what was in there. She walked closer and closer to the palace.\n\nSuddenly, a scary dragon appeared! The dragon seemed angry and Lily got very scared. She tried to run away, but the dragon chased her. Lily tripped and fell, hurting her leg. The dragon came closer and closer until Lily was too scared to move.\n\nThe dragon took Lily to his cave and she never saw her family again. The big palace seemed like a good",
+          "continuation": " happy. They was so happy and the. You to to. They and. happy!\n\nThe little had and was the mom.. She it to to and and.. \n it. was happy. She!!\n\nThe little had and was happy. She. It to. outside in the sun"
+        },
+        {
+          "row": 1,
+          "seed": 42,
+          "prompt": " started playing together.\n\nAfter a while, the boy got tired and wanted to go home. Lily asked him if he wanted to come to her house to play with her toys. The boy said yes and they went to Lily's house.\n\nWhen they got there, Lily's mom gave them some",
+          "continuation": " basket and said. to happy. She. She had a so that it.! \n it. back and it and happy and to. happy and to. for the big. It."
+        },
+        {
+          "row": 1,
+          "seed": 43,
+          "prompt": " started playing together.\n\nAfter a while, the boy got tired and wanted to go home. Lily asked him if he wanted to come to her house to play with her toys. The boy said yes and they went to Lily's house.\n\nWhen they got there, Lily's mom gave them some",
+          "continuation": " Dad. She said so happy. the. It had to to and and. happy. She said so much happy. and the big.. They had to to and and. so \n\n. to happy. She back!\n\nThe little, and felt happy. She. They had to off in the sun"
+        },
+        {
+          "row": 2,
+          "seed": 42,
+          "prompt": " it saw a nice sunny spot. The bee liked the warm sun, so it flew down and relaxed. Suddenly, the bee heard a loud noise and felt a sharp pain. The bee was dead!\n\nThe bee had been stung by a big bee. The bee",
+          "continuation": " was happy. the and out. The. It and the. They and the it They and the and to it. and and and. and and and. from the sky.?\"."
+        },
+        {
+          "row": 2,
+          "seed": 43,
+          "prompt": " it saw a nice sunny spot. The bee liked the warm sun, so it flew down and relaxed. Suddenly, the bee heard a loud noise and felt a sharp pain. The bee was dead!\n\nThe bee had been stung by a big bee. The bee",
+          "continuation": " didn. They happy and happy. She. The with the. They and the scatter. They was so that it. and the face.. The was and happy. They was so happy. the. \n\nThe decided to be and the little it was. She it. to made to to a happy. She"
+        },
+        {
+          "row": 3,
+          "seed": 42,
+          "prompt": " have fun.\n\n\"Let's go to the puddle!\" Tom said.\n\n\"OK!\" Lily said.\n\nThey ran to the puddle and jumped in. The water was cold and wet, but they did not care. They laughed and splashed and threw water at each other. They did not see the dark clouds in the sky. They did not hear the thunder and the rain.\n\nSoon, the puddle became bigger and deeper.",
+          "continuation": " He felt and and the said. She. They had and. \n they.. They said to can and said. and and said. can and said. for the mom. happy."
+        },
+        {
+          "row": 3,
+          "seed": 43,
+          "prompt": " have fun.\n\n\"Let's go to the puddle!\" Tom said.\n\n\"OK!\" Lily said.\n\nThey ran to the puddle and jumped in. The water was cold and wet, but they did not care. They laughed and splashed and threw water at each other. They did not see the dark clouds in the sky. They did not hear the thunder and the rain.\n\nSoon, the puddle became bigger and deeper.",
+          "continuation": " It was happy and the said. She. They had and it They and the back.\n\nThey smiled and \" and back. They. They had and. They and the. They had the. \n they. had to\n\nThey said and \". They they to. smiled and the said for the sky"
+        }
+      ]
+    }
+  ]
+}

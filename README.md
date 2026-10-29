@@ -1,74 +1,34 @@
-# Latent AR：固定 latent 目标与块内小头对照
+# Latent AR：块级主干与小输出头
 
-新训练默认不使用 Energy：`configs/prior.json` 与 `configs/prior-latent-mse.json` 都是确定性下一 latent MSE，文字 CE 权重为 0。原 Energy 配置保存在 `configs/prior-energy-v4.json`，原实验和检查点保留。历史用法见 [Energy V4 说明](README-energy-v4.md)。
+当前默认方案：主干按四 token 的 latent 块推进，小输出头内部选择四个词，再编码成回灌 latent。decoder 只负责还原。这包含离散选择，不是纯连续向量回归；异步加速尚未实现和验证。
 
-完整实测、失败尝试与限制见 [固定 latent 实验报告](docs/fixed-latent-experiments-2026-10-29.md)。
+## 继续训练
 
-## 当前结果
+已完整恢复第 **3100** 步，没有启动新的主模型训练。执行：
 
-| 方法 | 结果 |
+```powershell
+& D:\Code\venv313\Scripts\python.exe train_prior.py --resume runs/main/last.pt
+```
+
+将从第 3101 步继续，恢复优化器与随机状态。活动训练目录不再进入 Git 扫描。保存遇到临时读锁会重试；持续被占用时另存版本文件，终端显示实际保存路径。
+
+## 目录
+
+| 路径 | 用途 |
 |---|---|
-| 确定性 latent MSE，1000 步 | 固定 dev MSE 0.9260，利用了条件，文字仍杂乱 |
-| 连续 latent 去噪，保留 step 1100 | 去噪 loss 明显下降，自由生成仍未解决 |
-| 块级主干＋块内离散小头，1000 步 | 固定 dev NLL/token 3.1614，主干和正确历史的作用已验证，文字流畅性明显改善 |
+| `latent_ar/` | 当前模型、共用训练逻辑及论文对照模块 |
+| `configs/` | 当前小输出头和 codec 两份配置 |
+| `docs/` | 当前方法与复现说明 |
+| `paper/` | 论文材料索引、数据来源、环境、原始结果和历史研究记录 |
+| `experiments/` | 离线评估、对照与归档恢复工具 |
+| `artifacts/checkpoints/main-step3100.pt` | Git LFS 保存的第 3100 步固定备份 |
+| `runs/main/` | 活动训练模型、日志与恢复记录，不由 Git 跟踪 |
+| `runs/` 其他目录 | 关键初始化、codec 和论文基线权重 |
+| `data/` | 原始与准备数据，不由 Git 实时跟踪 |
+| `tests/` | 模型、保存与复现检查 |
 
-块内小头先逐位置选择四个词，再经冻结 encoder 得到一个回灌 latent；decoder 只负责还原。主干仍每块推进一次，但这个方案包含离散词选择，不能称为纯连续向量回归。尚未实现或测量异步加速；生成仍有语义跳跃、重复和指代问题。
+[论文材料索引](paper/README.md) · [当前方法](docs/method.md) · [继续训练、评估与恢复归档](docs/reproduce.md)
 
-## 使用已验证模型
+根目录 `train_prior.py` 是当前训练入口，`train_codec.py` 用于重建 codec，`generate.py` 用于生成；`train.py` 保留共用训练工具和历史基线入口。旧工具已移到 `experiments/`，使用 `python -m experiments.<name>` 运行。
 
-在项目目录、Python 3.13 环境中执行：
-
-```powershell
-& D:\Code\venv313\Scripts\python.exe generate.py `
-  --checkpoint runs/prior-block-head-verified/last.pt `
-  --prompt "Once upon a time, a little girl found a strange box." `
-  --max-new-tokens 64 --seed 42 --show-info
-```
-
-继续训练这个块级模型：
-
-```powershell
-& D:\Code\venv313\Scripts\python.exe train_prior.py `
-  --resume runs/prior-block-head-verified/last.pt
-```
-
-每 100 步保存到该实验的 `last.pt`。`--resume` 恢复检查点原来的架构、目标、优化器与随机状态，不能通过替换外部配置更换目标。
-
-## 继续纯 latent MSE 实验
-
-```powershell
-& D:\Code\venv313\Scripts\python.exe train_prior.py `
-  --resume runs/prior-latent-mse-check/last.pt
-```
-
-若要新建同类实验、只继承旧主干：
-
-```powershell
-& D:\Code\venv313\Scripts\python.exe train_prior.py `
-  --config configs/prior-latent-mse.json `
-  --init-prior runs/prior-energy-v4-check/last.pt `
-  --run-dir runs/prior-latent-mse-new
-```
-
-旧检查点仅提供主干和 latent 归一化统计，新输出头与优化器重新开始，训练目标不含 Energy。直接运行 `train_prior.py` 则从头建立默认 MSE 实验。MSE 点预测会趋向条件均值，loss 下降不保证生成具体可解码文字。
-
-## 文件与复查
-
-- `configs/prior-latent-mse.json`：确定性真实 latent 目标。
-- `configs/prior-denoising.json`：连续去噪 MSE，推理需要多次小头迭代。
-- `configs/prior-token-head.json`：块内离散小头，主干仍按 latent 块推进。
-- `evaluate_continuous_prior.py`：独立噪声的真实历史/自由回灌对照，保存全部文本。
-- `diagnose_backbone_learning.py`：恢复初始主干、抹除/错配上下文的干预。
-- [本轮完整实验](docs/fixed-latent-experiments-2026-10-29.md)、[此前损失诊断](docs/loss-investigation-2026-10-29.md)、[其他消融](docs/training-ablation-results-2026-10-29.md)。
-
-所有新实验仅使用 train/dev。冻结 codec 在固定 2048 个 dev 块上的检查：token 99.43%、完整四 token 全对 97.83%。数据准备流程见 [V3 用法](docs/usage-v3.md)。
-
-测试：
-
-```powershell
-$env:PYTHONPATH = Join-Path $PWD '.tmp/dev-tools'
-& D:\Code\venv313\Scripts\python.exe -m pytest tests -q `
-  --basetemp .tmp/pytest-fixed-latent-final
-```
-
-最终 87 项测试通过，包括 latent-only 无 CE 反传、主干梯度、冻结 codec、去噪双峰学习、块内因果性、实际 latent 回灌、decoder 不进入回灌环，以及中断恢复。
+整理前完整研究快照为 Git 提交 `1763f0f`，研究数据和旧权重由本地 Git LFS 保留，可按 `paper/artifacts.json` 恢复。旧环境和缓存可重建；历史依赖记录在 `paper/archive/`。本项目尚未推送到远端。

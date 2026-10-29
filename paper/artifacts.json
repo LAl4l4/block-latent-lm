@@ -1,0 +1,257 @@
+{
+  "pre_cleanup_commit": "1763f0f",
+  "artifacts": [
+    {
+      "original_path": "data/prepared/dev.bin",
+      "commit": "1763f0f",
+      "sha256": "e271a4ab8647f6bf388c59c0bfde700a95d07c1edb906502889d00db1c6c7e25",
+      "bytes": 9339020
+    },
+    {
+      "original_path": "data/prepared/dev.jsonl",
+      "commit": "1763f0f",
+      "sha256": "61657d0ba20de7fc696b710bed2fcc50bcfba68589b29defce04fe53fc8ce6cc",
+      "bytes": 11074893
+    },
+    {
+      "original_path": "data/prepared/dev.offsets.npy",
+      "commit": "1763f0f",
+      "sha256": "df4061ac54125ae5293d947b6e779269fcbff2099cec15ab4cf688ed046b240e",
+      "bytes": 88096
+    },
+    {
+      "original_path": "data/prepared/test.bin",
+      "commit": "1763f0f",
+      "sha256": "75583bec05bd651f1128826d76d660fa592dc2ec8d1ea2010a1dcf28e0df0228",
+      "bytes": 9428288
+    },
+    {
+      "original_path": "data/prepared/test.jsonl",
+      "commit": "1763f0f",
+      "sha256": "2c9a2730ad32e17723b4c07e3c7065a156536659a4ef1aae905467ec10e17587",
+      "bytes": 11154389
+    },
+    {
+      "original_path": "data/prepared/test.offsets.npy",
+      "commit": "1763f0f",
+      "sha256": "99645717cad6be7dd3ddb61a492b6b7385f2edf760979e40ab242ff71f61490c",
+      "bytes": 88096
+    },
+    {
+      "original_path": "data/prepared/train.bin",
+      "commit": "1763f0f",
+      "sha256": "36f1deb580ff4e0c290e7930feebeae1d8e7c3820c202b5c238540343009b86f",
+      "bytes": 87991480
+    },
+    {
+      "original_path": "data/prepared/train.jsonl",
+      "commit": "1763f0f",
+      "sha256": "9834d671f1d34824decfd8809e92246154d35cfb94d511c5cf94202314d95919",
+      "bytes": 103182616
+    },
+    {
+      "original_path": "data/prepared/train.offsets.npy",
+      "commit": "1763f0f",
+      "sha256": "36ee0652bda35dff67b018c9a55b04526d8b701864a67d3a76ce6e7349a4f243",
+      "bytes": 800136
+    },
+    {
+      "original_path": "data/raw/train-00000-of-00004-2d5a1467fff1081b.parquet",
+      "commit": "1763f0f",
+      "sha256": "77cf780cebe52b6e83e3a2ac84bc56d8059363113e41d17a023f1d8b2ed0fc0b",
+      "bytes": 248731111
+    },
+    {
+      "original_path": "data/raw/train-00001-of-00004-5852b56a2bd28fd9.parquet",
+      "commit": "1763f0f",
+      "sha256": "e2f173a6dcc2b5895183e8ad376e115bd5c06764eb0cfc01ce1add156b2d017f",
+      "bytes": 248171980
+    },
+    {
+      "original_path": "data/raw/train-00002-of-00004-a26307300439e943.parquet",
+      "commit": "1763f0f",
+      "sha256": "cac73cd1a0973a7fccde022a5a5c78f8ba58ea6849541835c58e7c5fc747f2ef",
+      "bytes": 245894874
+    },
+    {
+      "original_path": "data/raw/train-00003-of-00004-d243063613e5a057.parquet",
+      "commit": "1763f0f",
+      "sha256": "862514ae75723ddd339337f1ef7617b88f82290dcddd57445e1d38d257ca7891",
+      "bytes": 247988350
+    },
+    {
+      "original_path": "data/raw/validation-00000-of-00001-869c898b519ad725.parquet",
+      "commit": "1763f0f",
+      "sha256": "33406a6206554cfc279c29c11f4df51528af487aa1a602b075566fc83c49dcab",
+      "bytes": 9989127
+    },
+    {
+      "original_path": "runs/block-v2-integration-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "68bd1d7f48446e2fa86a529eccd8d739ad3f20f065227aecc6b545b4eeda0881",
+      "bytes": 406855251
+    },
+    {
+      "original_path": "runs/codec-v3-integration-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "84483919cb4015b86c0243264fcc7af0d97af18846e83f65832632abcead3fcb",
+      "bytes": 51223423
+    },
+    {
+      "original_path": "runs/codec-v3/last.pt",
+      "commit": "1763f0f",
+      "sha256": "8013f8e2560b079b94df280f7451c1e017423012709adba2e5544943062cb0a6",
+      "bytes": 51222853
+    },
+    {
+      "original_path": "runs/full-config-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "200902629da4adc69e0be5b9a1febf89a503428de6682e7897d7c9117141216c",
+      "bytes": 420223991
+    },
+    {
+      "original_path": "runs/objective-ablation-v1/block_mixture/last.pt",
+      "commit": "1763f0f",
+      "sha256": "b4418144a798a655dbe4b74b592bde3c764b9dfbcfac96548a4f5047fb4800c5",
+      "bytes": 373556169
+    },
+    {
+      "original_path": "runs/objective-ablation-v1/energy/last.pt",
+      "commit": "1763f0f",
+      "sha256": "c2b41769d7200f7ff45d27d6bb20a662d26729d1b0804a9fda8b4ce00e63d3ea",
+      "bytes": 373556169
+    },
+    {
+      "original_path": "runs/objective-ablation-v1/token_ce/last.pt",
+      "commit": "1763f0f",
+      "sha256": "45eeee654571d713283a17422427471f40754435a3dccc67b6fe432994414348",
+      "bytes": 373556169
+    },
+    {
+      "original_path": "runs/objective-cycle-ablation-v1/block_mixture/last.pt",
+      "commit": "1763f0f",
+      "sha256": "5636e61c2db8226eca786e68f10887a9f33471d6a9dcb5977f13264632f3762e",
+      "bytes": 373556297
+    },
+    {
+      "original_path": "runs/objective-cycle-ablation-v1/block_mixture_cycle/last.pt",
+      "commit": "1763f0f",
+      "sha256": "4d80927cafe981e1eaf68ad32a2f158555428ed80586128b63020e0fefcaaff6",
+      "bytes": 373556297
+    },
+    {
+      "original_path": "runs/overfit/last.pt",
+      "commit": "1763f0f",
+      "sha256": "54ee53a3f476d55777ac87ab61b96c8c93c7cbdf13beef401e6b88cfa527c319",
+      "bytes": 420223991
+    },
+    {
+      "original_path": "runs/prior-ar-v3-plumbing-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "62fe2c1559f5a2fcee8c15eab3254e051524edf8a04b9ff357abe6a35f90eaee",
+      "bytes": 347553037
+    },
+    {
+      "original_path": "runs/prior-block-head-verified/last.pt",
+      "commit": "1763f0f",
+      "sha256": "1fe8b203d62f4c60822cf81b7298e53ab1c1b3c170313877373de6a70b0a5efe",
+      "bytes": 375889380
+    },
+    {
+      "original_path": "runs/prior-denoising-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "100db9bfa5c023c59f974b4ed3d6c0affd4c54a7edbc18b0da1c1d3711e2f6aa",
+      "bytes": 404720305
+    },
+    {
+      "original_path": "runs/prior-energy-text-v5-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "5c8e53e623de1a1d1135737d9f7f7daf43ebf399a1a41b8c047dd1f7f981f40d",
+      "bytes": 373555913
+    },
+    {
+      "original_path": "runs/prior-energy-v4-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "290ca0279e6236d3633c4b4fbe2894a9d6b074611a25ac82502df4abff53cf2d",
+      "bytes": 373556105
+    },
+    {
+      "original_path": "runs/prior-latent-mse-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "992887be1927cdfd4f92b4c48bd3db75f78ac7671a42affb67b0772a7ea8eb3a",
+      "bytes": 347553101
+    },
+    {
+      "original_path": "runs/prior-mixture-v5-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "f29ba99b081c380ef06662b9d917d1265f8c4cf792031b7c3fc60b8cb3ce7e54",
+      "bytes": 391722033
+    },
+    {
+      "original_path": "runs/prior-v3-plumbing-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "904f86f61dfa2509ebfcfc60ff87e4312f6f0fbf134ece5aa97b4cab657d1ef2",
+      "bytes": 379494900
+    },
+    {
+      "original_path": "runs/prior-v3/last.pt",
+      "commit": "1763f0f",
+      "sha256": "a9a5d8776469fd69ab5a29797081e881046b7e187913d5ef5d7b97aec0dc43c9",
+      "bytes": 347552781
+    },
+    {
+      "original_path": "runs/smoke-no-latents/last.pt",
+      "commit": "1763f0f",
+      "sha256": "d964e3454c7248b1588d430624df08b25a2c58e74c2b3b5dd7d4c3317bac1fd4",
+      "bytes": 7401256
+    },
+    {
+      "original_path": "runs/smoke-resume/last.pt",
+      "commit": "1763f0f",
+      "sha256": "e2ecc5a394e04e3ed80cc8a2dbd1b260e477292886c3fd4ec42c16b579508588",
+      "bytes": 8299079
+    },
+    {
+      "original_path": "runs/smoke-uninterrupted/last.pt",
+      "commit": "1763f0f",
+      "sha256": "4dc385994dbc000a807b630c4a8eb039e1a5fb17f7292fd3067acaaf77cf164a",
+      "bytes": 8299079
+    },
+    {
+      "original_path": "runs/token-ar-control/last.pt",
+      "commit": "1763f0f",
+      "sha256": "88fe657c809c9989e0dee9cf405e0cc57f5327226b40737bb355bd328a55781b",
+      "bytes": 86598251
+    },
+    {
+      "original_path": "runs/token-head-ablation-v1/token_head/last.pt",
+      "commit": "1763f0f",
+      "sha256": "044c0e18574d95ad99bb21cf2e4358a2602038fc69c49366d4881f370522ca83",
+      "bytes": 375889380
+    },
+    {
+      "original_path": "runs/token-head-init-check/last.pt",
+      "commit": "1763f0f",
+      "sha256": "096167c72b6c3244523b3cf0705cbaf3e04d98a530214e2306792b562844e16a",
+      "bytes": 375888868
+    },
+    {
+      "original_path": "runs/train-b128/last.pt",
+      "commit": "1763f0f",
+      "sha256": "5ea272dc53be555dd3f3b2d388ca8890a787db4d9dbabcc62bf2d3fb8d9b640f",
+      "bytes": 420223991
+    },
+    {
+      "original_path": "runs/train-block-v2/last.pt",
+      "commit": "1763f0f",
+      "sha256": "1b3a171c6aed028596e1b65556658bd1e5728de41ea6ab250c9583a49b748bef",
+      "bytes": 406855251
+    },
+    {
+      "original_path": "artifacts/checkpoints/main-step3100.pt",
+      "commit": "b22466a2470c3b84b307afab0a691be8a2ff481f",
+      "sha256": "fdb5663234ce74ade13e17a376dd1bdf26d7651bb5dda8de4226daa4187c6696",
+      "bytes": 375889444
+    }
+  ]
+}

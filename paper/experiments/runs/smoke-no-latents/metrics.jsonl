@@ -1,0 +1,2 @@
+{"kind": "train", "step": 1, "ce": 9.025737762451172, "lr": 0.0003, "grad_norm": 6.338602542877197, "target_tokens": 128, "tokens_seen": 128, "step_seconds": 0.06454280018806458, "target_tokens_per_second": 1983.1801475460325}
+{"kind": "dev", "step": 1, "ce": 9.000563347476652, "perplexity": 8107.650065499459, "tokens": 174, "stories": 4}

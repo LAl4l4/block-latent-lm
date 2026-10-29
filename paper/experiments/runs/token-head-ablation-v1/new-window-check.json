@@ -1,0 +1,54 @@
+{
+  "checkpoint_step": 601,
+  "new_dev_indices": [
+    128,
+    129,
+    130,
+    131,
+    132,
+    133,
+    134,
+    135
+  ],
+  "render_fidelity_on_512_planned_tokens": 1.0,
+  "correct_context_ce": 3.610352662232545,
+  "shuffled_context_ce": 5.84704296581738,
+  "examples": [
+    {
+      "prompt": " you. You should respect other people's belongings and treat them with care.\" \n\nTom learned something valuable that day. He understood that even though he was curious and wanted to find out more about the club, it was not his to take. Even if something looks interesting",
+      "text": " was going to help things in the right thing, just he would always be careful when something the world!"
+    },
+    {
+      "prompt": " dog. She loved it very much. She took it outside to play. The dog was so happy, it wagged its tail and bit on a stick. Mandy laughed and threw the stick again. The dog bit it and ran like it was flying.\n\nMandy was so proud of her dog. But then it saw a rabbit and decided to give chase. Mandy yelled \"stop!\" But the dog kept running. It chased the rabbit all the way to a tip.\n\nThe tip was full of muddy puddles. The dog ran so",
+      "text": " happy to the cat. The fox was happy and safe."
+    },
+    {
+      "prompt": " year old as he had never seen anything like it before. He was filled with curiosity and insisted on finding out what it was.\n\nHe asked his mum, and she said it was a comet and that it was filled with ice and dust. He asked if he could touch it and his mum laughed, she said it was too far away and he couldn't. He insisted that he had to touch it and his mum said that wasn't possible.\n\nThe 3 year old was sad he couldn't touch the comet. He wanted to touch it so he could find out what it felt",
+      "text": " to get his mom.\n\nHe smiled and said, \"Don't worry, I can't go to be so scared!\"\n\nThe fox was so happy because it was not brave and he knew he would keep his work. He was so happy he was able to give him a big hug and hugged each other"
+    },
+    {
+      "prompt": " he decided to take the pens and paper to his purple table.\n\nHe held a pen in his hand and he asked his mom, \"Mama can I write?\"\n\nHis mom smiled. \"Of course,\" she said.\n\nSo Jake wrote a big \"A\" on the paper and showed it to his mom.\n\nHis mom clapped and said, \"That's great! What else can you write?\"\n\nJake thought for a minute. Then he wrote a \"B\" on the paper. His mom clapped again and said, \"That's so",
+      "text": " fun!\"\n\nHis mom was so proud. She thanked his mother and said, \"This is not good\".\n\nJack was proud of his house. He had to keep his new friend and his mommy was happy!"
+    },
+    {
+      "prompt": " went to pick some seeds from the ground. But the bird was still hungry. Suddenly, the bird heard a beautiful sound. It was a little girl singing",
+      "text": ".\n\n\"What are you here?\" Sarah said, \"You know how to make me feel better?\"\n\nThe fox followed the little girl gave them the big smile. They ran around the garden and a lot of fun. They were happy and happy."
+    },
+    {
+      "prompt": " against the bedroom door, watching him. She said, \"You look like you're having so much fun with that rope!\" John beamed and said \"Yeah, it's so much",
+      "text": " fun!\" \n\nLucy and thanked her and thanked for the little girl. She knew that she was even important and had a big hug."
+    },
+    {
+      "prompt": " her friends. One day, Emma decided to play inside. She grabbed a big bottle of spray and headed for the floor.\n\nEmma began to spray the floor in unusual ways. She made swirls and zig zags. She even wrote her name in the floor! Then, Emma stepped back and laughed as she looked at her amazing art.\n\nSuddenly, there was a loud noise. Emma's dad had come home. He was not happy at all with the mess on the floor. He shook his head and said it was time to clean up.\n\nSo, Emma had to",
+      "text": " keep her hand. She smiled and she was gone, a big smile. She was so happy that she could always get home."
+    },
+    {
+      "prompt": " but it crawled away. Tim didn't give up and kept following the bug. Finally, he was able to catch it in his hands. The bug was very original with its bright colors and unique patterns.\n\nTim was very happy and showed his bug to his friends. They were all amazed by how original and beautiful the bug was. Tim felt proud that he was able to catch such a special bug. From that day on, Tim",
+      "text": " and Lily knew that we can help"
+    }
+  ],
+  "notes": [
+    "New dev windows, not the eight prefixes used for ablation selection.",
+    "Rendering fidelity includes planned tokens after possible EOS; it is not a language quality metric."
+  ]
+}

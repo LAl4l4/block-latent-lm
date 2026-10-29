@@ -159,7 +159,7 @@ def save_checkpoint(
 
 def parse_args():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--config", type=Path, default=Path("configs/overfit.json"))
+    parser.add_argument("--config", type=Path, default=Path("paper/archive/configs/overfit.json"))
     parser.add_argument("--data", type=Path, default=Path("data/prepared"))
     parser.add_argument("--run-dir", type=Path)
     parser.add_argument("--device", default="auto")

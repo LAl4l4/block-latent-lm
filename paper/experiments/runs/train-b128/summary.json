@@ -1,0 +1,8 @@
+{
+  "last_step": 4112,
+  "tokens_seen": 46723177,
+  "interrupted": true,
+  "wall_seconds": 3343.6118705000263,
+  "peak_gpu_allocated_mb": 4330.41748046875,
+  "checkpoint": "runs\\train-b128\\last.pt"
+}

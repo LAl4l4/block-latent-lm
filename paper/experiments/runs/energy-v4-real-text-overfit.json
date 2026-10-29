@@ -1,0 +1,65 @@
+{
+  "source_step": 1404,
+  "training_split": "train",
+  "fixed_windows": 4,
+  "max_target_tokens": 16,
+  "extra_updates": 500,
+  "records": [
+    {
+      "extra_steps": 1,
+      "energy": 0.7020968198776245,
+      "teacher_token_accuracy": 0.125,
+      "free_token_accuracy": 0.046875
+    },
+    {
+      "extra_steps": 50,
+      "energy": 0.0561596155166626,
+      "teacher_token_accuracy": 1.0,
+      "free_token_accuracy": 1.0
+    },
+    {
+      "extra_steps": 100,
+      "energy": 0.026164043694734573,
+      "teacher_token_accuracy": 1.0,
+      "free_token_accuracy": 1.0
+    },
+    {
+      "extra_steps": 250,
+      "energy": 0.010794316418468952,
+      "teacher_token_accuracy": 1.0,
+      "free_token_accuracy": 1.0
+    },
+    {
+      "extra_steps": 500,
+      "energy": 0.007392442785203457,
+      "teacher_token_accuracy": 1.0,
+      "free_token_accuracy": 1.0
+    }
+  ],
+  "examples": [
+    {
+      "prompt": " The crane said, \"I am not scared of you, fox. You cannot eat me.\"\n\nThe fox was sad. He wanted to eat the crane, but the crane was too big and strong. The fox went away to find",
+      "target": " other food. The crane was happy and kept eating fish from the pond. The",
+      "free": " other food. The crane was happy and kept eating fish from the pond. The"
+    },
+    {
+      "prompt": " drawing, she saw a boy playing with a ball. She said, \"Hi! What's your name?\" The boy replied, \"My name is Max.",
+      "target": " What are you doing?\" Lily said, \"I'm drawing pictures. Do you",
+      "free": " What are you doing?\" Lily said, \"I'm drawing pictures. Do you"
+    },
+    {
+      "prompt": "\n\nBut Lily does not wait. She slides down very fast. She laughs and shouts, \"Whee!\"\n\nBen is sad.",
+      "target": " He wanted to slide with his sister. He slides down slowly. He does not",
+      "free": " He wanted to slide with his sister. He slides down slowly. He does not"
+    },
+    {
+      "prompt": " a tree and Sammy had to climb up to get it. Climbing was hard work, but Sammy was determined to own that nut.",
+      "target": " \n\nAfter a lot of hard work, Sammy finally reached the nut. He",
+      "free": " \n\nAfter a lot of hard work, Sammy finally reached the nut. He"
+    }
+  ],
+  "notes": [
+    "Isolated fixed-window overfit diagnostic, not continuation of the user run.",
+    "No model or optimizer checkpoint is saved; original run is preserved."
+  ]
+}

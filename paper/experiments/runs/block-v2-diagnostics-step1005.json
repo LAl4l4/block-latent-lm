@@ -1,0 +1,105 @@
+{
+  "checkpoint_step": 1005,
+  "dev_stories": 128,
+  "metrics": {
+    "original": {
+      "ce": 5.657736058444355,
+      "ppl": 286.49929013683857,
+      "top1_accuracy": 0.07667791526059242,
+      "tokens": 5334,
+      "position_group_ce": {
+        "0": 5.074052396352511,
+        "1": 5.652514015219741,
+        "2": 5.784637430510007,
+        "3": 5.718040816995779
+      }
+    },
+    "temporal_mean": {
+      "ce": 5.724865026942433,
+      "ppl": 306.391907799747,
+      "top1_accuracy": 0.06730408698912636,
+      "tokens": 5334,
+      "position_group_ce": {
+        "0": 5.570329132378685,
+        "1": 5.718552317330748,
+        "2": 5.788321048888953,
+        "3": 5.721803472283181
+      }
+    },
+    "wrong_prompt": {
+      "ce": 6.2634911038341885,
+      "ppl": 525.0487439150343,
+      "top1_accuracy": 0.05868016497937758,
+      "tokens": 5334,
+      "position_group_ce": {
+        "0": 6.194787310994068,
+        "1": 6.352867082491389,
+        "2": 6.30106210676334,
+        "3": 6.189723013857412
+      }
+    },
+    "zero": {
+      "ce": 16.30272476316437,
+      "ppl": 12027722.638405811,
+      "top1_accuracy": 0.0,
+      "tokens": 5334,
+      "position_group_ce": {
+        "0": 16.45041365352862,
+        "1": 16.27058019280777,
+        "2": 16.255157945926076,
+        "3": 16.32284779689894
+      }
+    },
+    "unigram": {
+      "ce": 5.992445280277465
+    }
+  },
+  "adjacent_latent_cosine": 0.9556929506361485,
+  "different_prompt_latent_cosine": 0.20077726780436933,
+  "first_position_top_tokens": [
+    [
+      ".",
+      0.16023746132850647
+    ],
+    [
+      "Ġand",
+      0.08313009887933731
+    ],
+    [
+      ",",
+      0.0780934989452362
+    ],
+    [
+      ".\"",
+      0.03688875958323479
+    ],
+    [
+      "Ġto",
+      0.031552623957395554
+    ],
+    [
+      "!",
+      0.02457321062684059
+    ],
+    [
+      "Ġyou",
+      0.023084396496415138
+    ],
+    [
+      "!\"",
+      0.021685782819986343
+    ]
+  ],
+  "gradient_norms_single_dev_batch": {
+    "encoder": 3.8192192501840134,
+    "backbone": 0.7541875514254321,
+    "latent_head": 0.5522953598770106,
+    "decoder": 1.8310016981623358
+  },
+  "notes": [
+    "Same fixed dev windows and targets for all variants.",
+    "Wrong-prompt means rotating generated latent sequences across an 8-story batch.",
+    "Unigram is Laplace-smoothed and fitted on 4096 training windows.",
+    "Perturbations are out of distribution; loss changes diagnose reliance, not causal quality gain."
+  ]
+}

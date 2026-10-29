@@ -1,0 +1,59 @@
+{
+  "step": 1500,
+  "device": "cpu",
+  "precision": "fp32",
+  "samples": 128,
+  "tokens": 5370,
+  "blocks": 1378,
+  "teacher_latent_mse": 1.060293632252642,
+  "constant_mean_latent_mse": 1.02039941751732,
+  "teacher_token_ce": 5.7042168132419695,
+  "constant_mean_token_ce": 8.423451411923883,
+  "oracle_token_ce": 0.07700330354203946,
+  "teacher_token_accuracy": 0.20204841713221602,
+  "oracle_token_accuracy": 0.9940409683426443,
+  "teacher_full_block_accuracy": 0.012204424103737605,
+  "prediction_normalized_rms": 0.28856204440781996,
+  "codec_source": {
+    "checkpoint": "D:\\Code\\latent-ar-async-decoder\\runs\\codec-v3\\last.pt",
+    "step": 10000,
+    "sha256": "8013f8e2560b079b94df280f7451c1e017423012709adba2e5544943062cb0a6",
+    "quality": {
+      "ce": 0.07511102396420896,
+      "token_accuracy": 0.9943388596845936,
+      "block_accuracy": 0.98046875,
+      "full_block_accuracy": 0.9783132530120482,
+      "full_blocks": 1660,
+      "tokens": 7419,
+      "blocks": 2048
+    },
+    "latent_stats_blocks": 4096,
+    "latent_stats_split": "train"
+  },
+  "examples": [
+    {
+      "prompt": " to go inside and see what was in there. She walked closer and closer to the palace.\n\nSuddenly, a scary dragon appeared! The dragon seemed angry and Lily got very scared. She tried to run away, but the dragon chased her. Lily tripped and fell, hurting her leg. The dragon came closer and closer until Lily was too scared to move.\n\nThe dragon took Lily to his cave and she never saw her family again. The big palace seemed like a good",
+      "reference": " idea, but it was too dangerous.",
+      "teacher": " new, the the was too to. The",
+      "free": " new, the the Lily, and and Lily, and and Lily, and and Lily,, and Lily,, and Lily,, and Lily had, and Lily had, and Lily had, and Lily had, and Lily had, and Lily had, and Lily had,, Lily had,, Lily had,,"
+    },
+    {
+      "prompt": " started playing together.\n\nAfter a while, the boy got tired and wanted to go home. Lily asked him if he wanted to come to her house to play with her toys. The boy said yes and they went to Lily's house.\n\nWhen they got there, Lily's mom gave them some",
+      "reference": " chocolate powder to make hot chocolate. The boy accidentally spilled the powder all over the floor. Lily's mom said it was okay and they cleaned it up together.\n\nThe moral of the story is that accidents happen, but it's important to help clean up the mess and turn a bad situation into a good one.",
+      "teacher": " so and and. her... boy was so and sky and and.\"... mom was so and very and and.....\n\nThe and of the story is that always is! all. can\n to be and and,,.. around the.. the..",
+      "free": " so and and.. She was. for the was. of the had and of the had and of the had and the the had and the. had and the., and \n., and \n\n,. \n\n,. \n\n, and \n\n, and \n\n, and \n\n, and"
+    },
+    {
+      "prompt": " it saw a nice sunny spot. The bee liked the warm sun, so it flew down and relaxed. Suddenly, the bee heard a loud noise and felt a sharp pain. The bee was dead!\n\nThe bee had been stung by a big bee. The bee",
+      "reference": " was very sad it had died but it was happy it had been able to relax in the sun for a bit before it passed away.\n\nThe other bees were sorry to hear that their friend was dead. They made sure to keep an eye out for any more bees flying around, so that they could stay safe.",
+      "teacher": " was so and and and the the. was the the. been a the..... the.......\nThe the the was the the and the, and the so, and the a to to and important and and the so... the... had to the.",
+      "free": " was so and and and the the the.. the the.. the the.. the the.. the the.. the\n.. the\n.. the\n.. the\n.. the\n.. the the. the the the\n the the the\n the the the\n the the the"
+    },
+    {
+      "prompt": " have fun.\n\n\"Let's go to the puddle!\" Tom said.\n\n\"OK!\" Lily said.\n\nThey ran to the puddle and jumped in. The water was cold and wet, but they did not care. They laughed and splashed and threw water at each other. They did not see the dark clouds in the sky. They did not hear the thunder and the rain.\n\nSoon, the puddle became bigger and deeper.",
+      "reference": " The water started to flow fast and strong. It was a flood. The flood took their ball and carried it away. Tom and Lily tried to get out of the puddle, but they could not. The water was too high and too fast. They were scared and cold.\n\n\"Help! Help!\" Tom shouted",
+      "teacher": " They the the the down and... He.. big,.. was a and and upon... They\n a and to play the. the,. She it was was. They\n a and. and and..,\n. and They.\n\n\" and, Tom, Tom.",
+      "free": " They the the the for, and. for, and. for, and. for, and. for the and. and the and. and the.. and\n. and and\n and and and\n and. and the and. and the and and and.. and and\n. and\n\n. and"
+    }
+  ]
+}

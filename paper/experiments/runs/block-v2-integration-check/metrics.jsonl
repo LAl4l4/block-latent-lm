@@ -1,0 +1,5 @@
+{"kind": "train", "step": 1, "ce": 9.053789258302006, "lr": 6e-07, "grad_norm": 2.739842414855957, "target_tokens": 11172, "step_seconds": 1.3400550000369549, "target_tokens_per_second": 8336.971243487698, "tokens_seen": 11172}
+{"kind": "train", "step": 2, "ce": 9.052492396522792, "lr": 1.2e-06, "grad_norm": 2.8917794227600098, "target_tokens": 10727, "step_seconds": 0.8828193999361247, "target_tokens_per_second": 12150.843083847205, "tokens_seen": 21899}
+{"kind": "dev", "step": 2, "ce": 9.045933955521186, "perplexity": 8483.971492421715, "tokens": 5334, "stories": 128}
+{"kind": "train", "step": 3, "ce": 9.047514661913523, "lr": 1.8e-06, "grad_norm": 2.7295877933502197, "target_tokens": 10870, "step_seconds": 1.2852817999664694, "target_tokens_per_second": 8457.28928884201, "tokens_seen": 32769}
+{"kind": "dev", "step": 3, "ce": 9.040818628140233, "perplexity": 8440.68400995984, "tokens": 5334, "stories": 128}

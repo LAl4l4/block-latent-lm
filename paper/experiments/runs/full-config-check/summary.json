@@ -1,0 +1,7 @@
+{
+  "last_step": 2,
+  "tokens_seen": 1484,
+  "wall_seconds": 7.914814899908379,
+  "peak_gpu_allocated_mb": 719.57958984375,
+  "checkpoint": "runs\\full-config-check\\last.pt"
+}

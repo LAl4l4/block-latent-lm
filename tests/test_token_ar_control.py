@@ -3,7 +3,7 @@ import random
 import torch
 
 from latent_ar.model import ModelConfig
-from token_ar_baseline import TokenAR, packed_batch
+from experiments.token_ar_baseline import TokenAR, packed_batch
 
 
 def test_token_causality_and_cached_generation_agree():

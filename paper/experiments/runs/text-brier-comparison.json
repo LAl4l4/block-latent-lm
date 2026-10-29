@@ -1,0 +1,219 @@
+{
+  "seed": 20042,
+  "draws": 64,
+  "batch_size": 256,
+  "reports": [
+    {
+      "checkpoint": "runs\\prior-energy-v4-check\\last.pt",
+      "step": 1404,
+      "greedy_decoder": {
+        "1": {
+          "reward": 0.09044238906984685,
+          "reference_match": 0.09274612295762946,
+          "collision": 0.09504985684541209,
+          "units": 10833
+        },
+        "2": {
+          "reward": 0.02026569288677065,
+          "reference_match": 0.02447716420687089,
+          "collision": 0.028688635526971134,
+          "units": 8063
+        },
+        "3": {
+          "reward": 0.004324782602221626,
+          "reference_match": 0.009896810506566604,
+          "collision": 0.015468838410911583,
+          "units": 5330
+        },
+        "4": {
+          "reward": 0.0010397155584371924,
+          "reference_match": 0.005998250756429652,
+          "collision": 0.010956785954422111,
+          "units": 2644
+        }
+      },
+      "softmax_decoder": {
+        "1": {
+          "reward": 0.09019343452326005,
+          "reference_match": 0.08341698975353087,
+          "collision": 0.0766405449838017,
+          "units": 10833
+        },
+        "2": {
+          "reward": 0.02124557551740362,
+          "reference_match": 0.021498666749348878,
+          "collision": 0.021751757981294136,
+          "units": 8063
+        },
+        "3": {
+          "reward": 0.006083694422109057,
+          "reference_match": 0.008718339587242026,
+          "collision": 0.011352984752374996,
+          "units": 5330
+        },
+        "4": {
+          "reward": 0.003236775988761617,
+          "reference_match": 0.005448657337367625,
+          "collision": 0.007660538685973633,
+          "units": 2644
+        }
+      },
+      "free_text": [
+        {
+          "row": 0,
+          "seed": 42,
+          "prompt": ", he is bad!\" Lily says. She points at the boy. \"He pushed me!\"\n\nThe boy stares at Ben and Lily. He laughs. He thinks he is funny.\n\nBen stares back at the boy. He does not laugh. He does not think he is funny. He thinks he is mean.\n\n\"Stop laughing, you bully!\" Ben says. He throws the ball at the boy. The ball hits the boy in the face. The boy stops laughing. He",
+          "continuation": " is ocean."
+        },
+        {
+          "row": 0,
+          "seed": 43,
+          "prompt": ", he is bad!\" Lily says. She points at the boy. \"He pushed me!\"\n\nThe boy stares at Ben and Lily. He laughs. He thinks he is funny.\n\nBen stares back at the boy. He does not laugh. He does not think he is funny. He thinks he is mean.\n\n\"Stop laughing, you bully!\" Ben says. He throws the ball at the boy. The ball hits the boy in the face. The boy stops laughing. He",
+          "continuation": " saw a even it.\n\n\"\"So. She and happy that \" of! He said but ran were P into it happy to \n whenever. He how, enormous decided on The many promised They days.\n smile and I that the. andy her. \" out very and his on smiled\n\n"
+        },
+        {
+          "row": 1,
+          "seed": 42,
+          "prompt": " the hug was over, they looked up at the sky and smiled. Then,",
+          "continuation": " the present."
+        },
+        {
+          "row": 1,
+          "seed": 43,
+          "prompt": " the hug was over, they looked up at the sky and smiled. Then,",
+          "continuation": " they it always it. Tom\nThe\" park. Ben with It that \" of on He said that ran were P into it happy to \n whenever.\n\n, path decided on it many promised never day help.\ns and said that his \" andy her. \" out very and his on smiled\n kids"
+        },
+        {
+          "row": 2,
+          "seed": 42,
+          "prompt": " how to be a friend. She wished she could change. She wished she could say sorry",
+          "continuation": " in ocean. She, is eat of. Lily\n\n, a was that doing window on who.\", its themt! loud\n, look reached up the said, \" than until boy Theyed \" made it orange an again went a are They They, was. go saw on. outside and like her time"
+        },
+        {
+          "row": 2,
+          "seed": 43,
+          "prompt": " how to be a friend. She wished she could change. She wished she could say sorry",
+          "continuation": " to it even it. Tom\nThe againSo. She with It that \" of him He said \" ran were P into it as up \n whenever. to\n, path€™ on it many promised never day help.\ns and stop that his \" andy said. \" out very and his on smiled\n kids"
+        },
+        {
+          "row": 3,
+          "seed": 42,
+          "prompt": " were walking, they saw a little boy with a pink bottle that looked just like Lily's. When they got closer, they saw that it was indeed Lily's bottle! The little boy had taken it, but his mom made him give it back. Lily was so happy to have her bottle back, but she",
+          "continuation": " was ocean. She others is frog of. Lily\n\" with all was that doing window on car.\", its themt! loud's, look didn up the is, \" than her boy Theyed \" It it cat an again went a are The They, and. go saw on. outside was like her time"
+        },
+        {
+          "row": 3,
+          "seed": 43,
+          "prompt": " were walking, they saw a little boy with a pink bottle that looked just like Lily's. When they got closer, they saw that it was indeed Lily's bottle! The little boy had taken it, but his mom made him give it back. Lily was so happy to have her bottle back, but she",
+          "continuation": " saw aHe it. Tom other big again puddle. Ben all happy that \" of him He said that ran were P into it as to \n whenever..'s, one decided on it many kind never days always nameds and said that few \" andy her. \" out very and his a smiled a kids"
+        }
+      ]
+    },
+    {
+      "checkpoint": "runs\\prior-energy-text-v5-check\\last.pt",
+      "step": 1000,
+      "greedy_decoder": {
+        "1": {
+          "reward": 0.09077582423781538,
+          "reference_match": 0.11371215268162098,
+          "collision": 0.13664848112542657,
+          "units": 10833
+        },
+        "2": {
+          "reward": 0.0192128481265589,
+          "reference_match": 0.031366271859109514,
+          "collision": 0.04351969559166013,
+          "units": 8063
+        },
+        "3": {
+          "reward": 0.0022967293546561855,
+          "reference_match": 0.010585717636022514,
+          "collision": 0.018874705917388844,
+          "units": 5330
+        },
+        "4": {
+          "reward": 3.714609898422265e-05,
+          "reference_match": 0.005235911497730711,
+          "collision": 0.0104346768964772,
+          "units": 2644
+        }
+      },
+      "softmax_decoder": {
+        "1": {
+          "reward": 0.09554588859144383,
+          "reference_match": 0.10268825579248592,
+          "collision": 0.10983062299352801,
+          "units": 10833
+        },
+        "2": {
+          "reward": 0.02312044386566897,
+          "reference_match": 0.027035145107280167,
+          "collision": 0.030949846348891367,
+          "units": 8063
+        },
+        "3": {
+          "reward": 0.007180920366895977,
+          "reference_match": 0.008990970919324577,
+          "collision": 0.010801021471753179,
+          "units": 5330
+        },
+        "4": {
+          "reward": 0.003035098936195759,
+          "reference_match": 0.0044026569591527984,
+          "collision": 0.005770214982109839,
+          "units": 2644
+        }
+      },
+      "free_text": [
+        {
+          "row": 0,
+          "seed": 42,
+          "prompt": ", he is bad!\" Lily says. She points at the boy. \"He pushed me!\"\n\nThe boy stares at Ben and Lily. He laughs. He thinks he is funny.\n\nBen stares back at the boy. He does not laugh. He does not think he is funny. He thinks he is mean.\n\n\"Stop laughing, you bully!\" Ben says. He throws the ball at the boy. The ball hits the boy in the face. The boy stops laughing. He",
+          "continuation": " in present. She others own the\n. Lily\n\n\n all was that swim window on car are and sad Theyt started He happy that look didn up from will The They than her. Theyed? after it down an up went. are The They with thin saw wanted day found the outside.The happy help"
+        },
+        {
+          "row": 0,
+          "seed": 43,
+          "prompt": ", he is bad!\" Lily says. She points at the boy. \"He pushed me!\"\n\nThe boy stares at Ben and Lily. He laughs. He thinks he is funny.\n\nBen stares back at the boy. He does not laugh. He does not think he is funny. He thinks he is mean.\n\n\"Stop laughing, you bully!\" Ben says. He throws the ball at the boy. The ball hits the boy in the face. The boy stops laughing. He",
+          "continuation": " saw a even it.\n\n\"\" great. She allThat that \" my him He he!\" went were P. He happy to the better.\n\n \n she,'s boy but promised never like was always boy smile and the one. The're very on. They a very and be boy."
+        },
+        {
+          "row": 1,
+          "seed": 42,
+          "prompt": " the hug was over, they looked up at the sky and smiled. Then,",
+          "continuation": " the present. I, the the\n. Lily\n\n\n so was so so tightly on car girl and its to with started She's they look didn to from ballThe smiled."
+        },
+        {
+          "row": 1,
+          "seed": 43,
+          "prompt": " the hug was over, they looked up at the sky and smiled. Then,",
+          "continuation": " they?\" an it for it garden big.\n.The, want that inside the on He said that rans P. it happy to old better"
+        },
+        {
+          "row": 2,
+          "seed": 42,
+          "prompt": " how to be a friend. She wished she could change. She wished she could say sorry",
+          "continuation": " the ocean. She \n and the\n. Lily\n\n\n was was it doing window on car.\" and get tot started She She it look children to down ballThe smiled. they. caned a made it down an up anymore. are The They with time saw wanted day on. outside wasThe happy bathrobe"
+        },
+        {
+          "row": 2,
+          "seed": 43,
+          "prompt": " how to be a friend. She wished she could change. She wished she could say sorry",
+          "continuation": " to a even it. and\n big\n plane. She all she that inside of on She was that rans smiled. She happy to old better.\n\nThey she,'s\" many promised They like was She louders and the that.\"€™ going said. \" laughed of dangerous be very I a let"
+        },
+        {
+          "row": 3,
+          "seed": 42,
+          "prompt": " were walking, they saw a little boy with a pink bottle that looked just like Lily's. When they got closer, they saw that it was indeed Lily's bottle! The little boy had taken it, but his mom made him give it back. Lily was so happy to have her bottle back, but she",
+          "continuation": " was present. She, the the\n. Lily\n\n\n all day thatan feel on car girl and its tot started She's they look didn to down ballThe smiled in her. caned \" made it all an scared went a are The They with much saw wanted day on the outside wasThe happy help"
+        },
+        {
+          "row": 3,
+          "seed": 43,
+          "prompt": " were walking, they saw a little boy with a pink bottle that looked just like Lily's. When they got closer, they saw that it was indeed Lily's bottle! The little boy had taken it, but his mom made him give it back. Lily was so happy to have her bottle back, but she",
+          "continuation": " saw to even it."
+        }
+      ]
+    }
+  ]
+}

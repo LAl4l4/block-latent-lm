@@ -9,7 +9,7 @@ import torch
 from latent_ar.checkpoints import load_model
 from latent_ar.mixture import LatentMixtureModel, MixtureModelConfig, mixture_block_nll
 from test_staged import examples, small_config
-from evaluate_text_distribution import brier_ngrams
+from experiments.evaluate_text_distribution import brier_ngrams
 
 
 def test_joint_nll_matches_enumerated_distribution_and_marginalizes_padding():

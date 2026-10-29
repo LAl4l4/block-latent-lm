@@ -1,0 +1,57 @@
+{
+  "checkpoint_step": 700,
+  "samples": 32,
+  "tokens": 1439,
+  "blocks": 367,
+  "oracle_token_accuracy": 0.9944405837387075,
+  "metrics": {
+    "model": {
+      "energy_sum": 0.6797896029189108,
+      "attraction_sum": 1.3588179918335959,
+      "spread_sum": 1.3580566530981246,
+      "sample_ce": 9.272363043726111,
+      "mixture_token_ce": 6.5717308569318975,
+      "mixture_block_nll": 28.86397043170981,
+      "decoder_confidence": 0.44989666862567324,
+      "cycle_mse": 1.3004081164783612
+    },
+    "gaussian": {
+      "energy_sum": 0.7149260518336491,
+      "attraction_sum": 1.4222524783266988,
+      "spread_sum": 1.414652894563181,
+      "sample_ce": 8.65923923813195,
+      "mixture_token_ce": 7.391649745917304,
+      "mixture_block_nll": 30.24953433668256,
+      "decoder_confidence": 0.1441369709494712,
+      "cycle_mse": 1.5978022271346006
+    },
+    "real_unconditional": {
+      "energy_sum": 0.7126564420861184,
+      "attraction_sum": 1.4197178146819653,
+      "spread_sum": 1.4141225165177431,
+      "sample_ce": 16.78272909518329,
+      "mixture_token_ce": 11.535088725351807,
+      "mixture_block_nll": 49.342408889645775,
+      "decoder_confidence": 0.8956871642430182,
+      "cycle_mse": 0.16107971077069275
+    }
+  },
+  "examples": [
+    {
+      "prompt": " to go inside and see what was in there. She walked closer and closer to the palace.\n\nSuddenly, a scary dragon appeared! The dragon seemed angry and Lily got very scared. She tried to run away, but the dragon chased her. Lily tripped and fell, hurting her leg. The dragon came closer and closer until Lily was too scared to move.\n\nThe dragon took Lily to his cave and she never saw her family again. The big palace seemed like a good",
+      "teacher": " for loved felt back was it friends. The",
+      "free": " it and! park, had! on."
+    },
+    {
+      "prompt": " started playing together.\n\nAfter a while, the boy got tired and wanted to go home. Lily asked him if he wanted to come to her house to play with her toys. The boy said yes and they went to Lily's house.\n\nWhen they got there, Lily's mom gave them some",
+      "teacher": " her nice big a big play. a and was felt He felt and went and boy thought. on mom it! he to was called ground her an!\n.\nSuddenlyWow of the story is.\" being.But an!,\n to be were said having as \" even! and by friends happily up She.",
+      "free": " hide show before became. see go to. a big on dad, became sent\n. something said not home said is a!.The It like always to"
+    }
+  ],
+  "notes": [
+    "CPU FP32 diagnostic, not a matched checkpoint training comparison.",
+    "Sample CE is not the implicit generative distribution NLL.",
+    "Mixture metrics average 8 softmax-decoder candidates; finite-sample biased NLL estimates, not argmax-generation likelihood.",
+    "Cycle error measures distance to re-encoded decoded text; it is not a standalone semantic metric."
+  ]
+}

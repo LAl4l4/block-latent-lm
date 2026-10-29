@@ -1,0 +1,57 @@
+{
+  "codec_checkpoint": "D:\\Code\\latent-ar-async-decoder\\runs\\codec-v3\\last.pt",
+  "codec_step": 10000,
+  "split": "dev",
+  "samples": 2048,
+  "full_blocks": 1660,
+  "tokens": 7419,
+  "noise_definition": "z_noisy = z + noise_std * train_latent_std * N(0,I); same Gaussian direction across scales",
+  "precision": "fp32",
+  "device": "cpu",
+  "results": [
+    {
+      "normalized_noise_std": 0.0,
+      "token_accuracy": 0.994338870048523,
+      "full_block_accuracy": 0.9783132672309875
+    },
+    {
+      "normalized_noise_std": 0.01,
+      "token_accuracy": 0.994338870048523,
+      "full_block_accuracy": 0.9783132672309875
+    },
+    {
+      "normalized_noise_std": 0.05,
+      "token_accuracy": 0.9940692782402039,
+      "full_block_accuracy": 0.9771084189414978
+    },
+    {
+      "normalized_noise_std": 0.1,
+      "token_accuracy": 0.994204044342041,
+      "full_block_accuracy": 0.9777108430862427
+    },
+    {
+      "normalized_noise_std": 0.2,
+      "token_accuracy": 0.9940692782402039,
+      "full_block_accuracy": 0.9771084189414978
+    },
+    {
+      "normalized_noise_std": 0.3,
+      "token_accuracy": 0.9935301542282104,
+      "full_block_accuracy": 0.9746987819671631
+    },
+    {
+      "normalized_noise_std": 0.5,
+      "token_accuracy": 0.992586612701416,
+      "full_block_accuracy": 0.9704819321632385
+    },
+    {
+      "normalized_noise_std": 1.0,
+      "token_accuracy": 0.9853079915046692,
+      "full_block_accuracy": 0.942168653011322
+    }
+  ],
+  "notes": [
+    "Random isotropic noise robustness does not guarantee robustness to structured prior prediction error.",
+    "Reconstruction robustness does not evaluate how easy the latent distribution is to model."
+  ]
+}

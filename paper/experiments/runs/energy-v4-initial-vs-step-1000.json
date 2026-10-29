@@ -1,0 +1,56 @@
+{
+  "current_step": 1000,
+  "source_step": 2202,
+  "samples": 32,
+  "candidates": 8,
+  "device": "cpu",
+  "precision": "fp32",
+  "metrics": {
+    "initial": {
+      "energy": 0.7942866811310563,
+      "spread": 0.6225483346050377,
+      "single_sample_ce": 8.85139928715688,
+      "mixture_token_ce": 8.524829898964125,
+      "mixture_block_nll": 33.571016316842645,
+      "tokens": 1439.0,
+      "blocks": 367.0
+    },
+    "current": {
+      "energy": 0.6808255270976137,
+      "spread": 1.349293077349338,
+      "single_sample_ce": 9.593597136412004,
+      "mixture_token_ce": 6.6744874234494445,
+      "mixture_block_nll": 29.723006827954702,
+      "tokens": 1439.0,
+      "blocks": 367.0
+    }
+  },
+  "examples": [
+    {
+      "model": "initial",
+      "row": 0,
+      "text": " it saw againfy M M momu b boy alwaysac tipiply come bird other bird alwaysip. heard N My F heardS S watched seeo they N best G. B all"
+    },
+    {
+      "model": "initial",
+      "row": 1,
+      "text": " always anyie polishing always always? He M momaor becauseyC momingo Ry,\"en uply Dw Gly M one alwaysorly G blC includingppy across B voice. Tomf blppyyyu always always mom\n or momrl Thatâ heardo Mor friend other"
+    },
+    {
+      "model": "current",
+      "row": 0,
+      "text": " it \n his the, had said.."
+    },
+    {
+      "model": "current",
+      "row": 1,
+      "text": " wind her twoœ.\n happy to"
+    }
+  ],
+  "notes": [
+    "Same fixed dev windows and candidate noise for both models.",
+    "Initial model rebuilt with the recorded seed and source backbone; not a separate saved step-0 checkpoint.",
+    "Finite-8-sample decoder mixture NLL is biased, not exact argmax-generation likelihood.",
+    "Teacher-forced history diagnostic; free text must be checked separately."
+  ]
+}

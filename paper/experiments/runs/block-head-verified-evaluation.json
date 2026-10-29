@@ -1,0 +1,640 @@
+{
+  "data_seed": 30042,
+  "samples": 32,
+  "precision": "fp32",
+  "notes": [
+    "All prediction branches use history and independent initial noise only; never noisy current targets.",
+    "Single-sample reference CE is diagnostic, not model PPL.",
+    "The local token LM score is only a fluency proxy; all unfiltered texts are included."
+  ],
+  "reports": [
+    {
+      "checkpoint": "runs\\prior-block-head-verified\\last.pt",
+      "step": 1000,
+      "zero_predictor_mse": 1.020694375038147,
+      "seeds": [
+        {
+          "seed": 42,
+          "teacher_latent_mse": 1.766985297203064,
+          "teacher_standardized_rms": 1.001496434211731,
+          "shuffled_latent_mse": 2.0177536010742188,
+          "context_mse_advantage": 0.2507683038711548,
+          "first_block_max_distance": 2.6226043701171875e-06,
+          "teacher_sample_reference_ce": 15.192760467529297,
+          "free_sample_reference_ce": 18.206649780273438,
+          "free_rater_ce": 2.662271313292252,
+          "free_repeat_trigram_fraction": 0.01281091081789906,
+          "free_mean_length": 44.75,
+          "texts": [
+            {
+              "prompt": ". She decided to go outside and play in the soil to make herself feel better. She dug and dug, making a big mess in the garden.\n\nSuddenly, Lily heard a quiet voice calling her name. It was Emily! She had come back to say sorry too. They hugged and made up, and Lily realized that saying sorry was the best thing",
+              "continuation": " she was.",
+              "length": 3,
+              "eos": true
+            },
+            {
+              "prompt": " saw. It could cut through the branches and make them shorter. Everyone was excited to see that the saw could do this.\n\nThe saw cut down the branches and made a rope to tie around the top of the tree. It was so much easier to tie to the top now because it was lower. Everyone cheered.\n\nThe tree was",
+              "continuation": " so happy to have found a new surprise. The woman said they all had to wait to show them how to the old toy. \n\nThe people were so proud of the best of work. They were so happy that they played with the fish together every day.",
+              "length": 53,
+              "eos": true
+            },
+            {
+              "prompt": " loved going to the fair on Tuesdays as it was so much fun! Every Tuesday she would wake up so excited, and make sure she had all her toys ready to put in her pocket.\n\nThe little girl was playing on the swings at the fair when she suddenly heard a loud scream. She looked up and saw a big boy running away from",
+              "continuation": " her. \n\nThe little girl and the bear looked around and saw a little girl, sitting over a big tree. He was so much fun! \n\nThe little girl smiled and said, \"You're welcome!\" \n\nThe man smiled and said, \"That's okay! I love you!\" \n\nThe",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " favorite toy all the time. \n\nOne day, she wanted to take a nap on a big, comfy mattress. So, she climbed on the mattress and blinked her eyes really fast. \n\nSuddenly, her toy came to life! It was very scary, but Daisy wasn't scared. She said to the toy, \"Let's play!\" \n\nThe toy was a bit bossy too, so it said, \"No! You need to take a nap!\" Daisy blinked really fast again, and the toy flew away.\n\nThen Daisy settled into the mattress and fell",
+              "continuation": " off with the small monster. \n\nFinally, she had a brilliant idea. She said, \"It looks so great!\" Molly was ready to help her. They ran back to the park and waited until it was time to go home. They hugged her teacher and said, \"You're welcome?\" \n\nThe little",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " tomorrow.â€\n\nThe next day, Jake and Lila wanted to play again, but Jake looked very distant. Jake saw a dark cloud move in, bringing thunder and lightning that made everyone run for cover.\n\nJake said to Lila, â€œLetâ€™s separate until the storm passes.â€\n\nLila nodded and said, â€œYes, letâ€™s start again when it's safe",
+              "continuation": "!â€ \n\nJack and the little hopped through the kitchen, but they were still tired than to ever tasted. They said, \"Let's go home, we can give a good way to find your friends.\" \n\nThe two friends hugged and the two, friends until it was time to go home.",
+              "length": 63,
+              "eos": true
+            },
+            {
+              "prompt": " one up and decided to take it home with him.\n\nWhen he got home, he showed his family the rock he had found. They all agreed it was a strange looking, even a little scary. But Sam was very excited. He wanted to repeat his discovery!\n\nWith his family in tow, Sam went",
+              "continuation": " to the water and threw it. It was such a big car. He said, \"I'm sorry to I need the game! Let's see me.\"\n\nJoe took the rock and started to play with it. His mom told him that he had a lot of fun and she was so happy. Tim felt",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " catch dolphins.\n\n\"Dolphins are nice and smart. They can jump and talk. Why do they want to catch them?\" Lily asked.\n\n\"I don't know. Maybe they want to sell them or eat them. That's bad. We have to help them,\" Tom said.\n\nThey ran to the water and waved their arms. They shouted, \"Stop! Leave the dolphins alone!",
+              "continuation": " You are smart and mean. We'll have fun!\"\n\nThey did not like they did. They did not like the noise. They had fun and had fun and was so their friends. They said at the children and felt sorry for the little boy.\n\nThey were very sad. They had had fun together",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " playground. Everyone laughed and smiled as she danced.\n\nSoon the girl found something else that made her move. It was a little razor. She used it to trace circles and lines in the sand. As she drew, she sang and hummed",
+              "continuation": ". When she had done done, the little girl was so proud. She ran outside to her mother. \"When you're very expensive, we can all the perfect way!\"\n\nLily smiled and started to cry. She understood that she had a wonderful time at the slide and knew that the whole world was a special",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " a little girl named Lily. One evening, she wanted to have a tea party with her teddy bears. She asked her mom to help her organize the tea party. Her mom said yes and they",
+              "continuation": " all the old way to the zoo.\n\nMommy told Daddy to their mom. They said, \"We are very happy! We love you.\" Lily smiled and said, \"Let's do. Thank you for a while.\" He put the bag in bed and played with the ball.\n\nAfter some time,",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": ". He picked a red lollipop and started to lick it. Suddenly, a clever fox appeared and snatched the lollipop from",
+              "continuation": " his home. \n\nHe was so excited because he'd never find it! He ran away and he couldn't believe he had found a new friend. He was so excited that he started to reach it!\n\nAt the day, he saw the boy and his mom said yes. The man smiled and said,",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " didn't know how. \n\nLily said, \"I can explain how to draw circles. It's easy!\" She showed Emily how to make a circle by drawing a big round shape. Emily was happy because now she could draw circles too! \n\nThey drew circles all day and had so much fun. When it was time for Emily to go home, she said, \"Thank you for explaining how to draw circles. You're a good friend.\" Lily smiled",
+              "continuation": " and felt happy and proud of her dream.",
+              "length": 9,
+              "eos": true
+            },
+            {
+              "prompt": " four wheels.\n\n\"Wow, your wagon is so nice!\" Max said. \"Can I try it?\"\n\n\"Sure, you can try it,\" Lily said. She was a thoughtful friend. She liked to share her things. \"But be careful, okay? It is new and I don't want it to break.\"\n\nMax nodded. He took the wagon and pulled it around the park. He had fun with it. He put his teddy bear and his ball in the wagon. He made noises like a train.\n\nLily watched him and smiled. She was happy",
+              "continuation": ". She had a new friend. She had helped her mom and Tom. They were happy and happy.",
+              "length": 21,
+              "eos": true
+            },
+            {
+              "prompt": " join us if you can gain us.\" \n\nLilly looked puzzled and asked, \"",
+              "continuation": "Let's okay!\" \n\nThe lady smiled and said, \"It's a big surprise! Let's play in the place to be together.\" \n\nWhen the car was a special, they finished the flower. They thanked the man for the helping his new friend and thanked their dad for helping him. To the end",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " feeling like she was a real cowboy! \n\nSuddenly, Sarah heard a noise coming from behind the big tree. She wondered who it was and so she crept closer to the tree and peeked around the corner. \n\nIt was her Daddy! He was trying on the new hat that he had just bought. He turned to Sarah and said, \"What do you think? Do you think this hat fits me?\" \n\nSarah nodded her head and said, \"It's perfect, Daddy! You look fit in it!\" She giggled and ran around him, still playing with her whip. \n\nSarah and her",
+              "continuation": " mom took a beautiful beautiful meal together. They looked so happy and thanked her for helping them all. They all smiled and they became good friends.",
+              "length": 29,
+              "eos": true
+            },
+            {
+              "prompt": " to play outside. She loved discovering new things. One day while she was playing, she noticed something strange in the ground. She saw a small, soft worm. She was so surprised to find the worm and called out to her dad.\n\nMia: â€œDaddy, look!â€\n\nHer dad, John, looked and saw the little worm.\n\n",
+              "continuation": "After they both laughed, they played together in the park. Mia and were the best of friends. \n\nThe next day, Jane decided to play with the park. She had a lot of fun playing with the sun and playing with her dad. They were so happy when she was time to go home.",
+              "length": 62,
+              "eos": true
+            },
+            {
+              "prompt": " and your doll. I want coins. Go away.\"\n\nTom and Mia are angry. They do not like the man. He is mean and greedy.\n\nThey have an idea. They run to the swings. They",
+              "continuation": " have to be hungry. They see a man with the old man.\n\n\"Hi Mom's dog?\" Ben.\n\"Look, I have a lot of bread. I want to share my candy. You are a good helper.\"\n\nAnna and Ben Ben and the man. They are happy. They were",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " and soon he was having a great time. He forgot all about resting and played until he was exhausted again. \n\nThe puppy was so happy that he had found some fun, even though he was tired. He thanked the little girl and they",
+              "continuation": " all said, \"I'm just glad you now.\" \n\nThe End.",
+              "length": 16,
+              "eos": true
+            },
+            {
+              "prompt": " like talking to new people. One day, Lily's mom asked her what she wanted for dinner. Lily said, \"I want pizza!\" Her mom smiled and said, \"Okay, we can have pizza for dinner.\"\n\nLater that day, Lily went to the park to play. She saw a boy who looked sad, so she went up to him and said, \"Hi, my name is Lily. Do you want to play with me?\" The boy looked surprised but then smiled and said, \"Yes, please!\"\n\nThey played together for a while, but then the boy's",
+              "continuation": " face. She was so happy to play with her friends. They all said: \"You are happy again, so much fun!\" Lily realized that sometimes, just like to do it in the time can be more careful.",
+              "length": 44,
+              "eos": true
+            },
+            {
+              "prompt": " As they hugged, a funny thought came to their minds. They decided to measure their hugs! So, they stretched their arms as wide as they could and began",
+              "continuation": ". They were proud of the fish and them had fun together. After a few moments, they came back to the old man and said goodbye. They had wonderful time to the park and was so grateful for their mom. They played all day and had fun! The end.",
+              "length": 55,
+              "eos": true
+            },
+            {
+              "prompt": " go on adventures.\n\nTom had a plan. He wanted to go to the beach and make a sand castle. But Sam didn't want to go, he was feeling a bit selfish and wanted to stay at home. So Tom waited for him to change his mind, but Sam still didn't want to go.\n\nSo",
+              "continuation": " when the boy walked out, but he couldn't see the bird. He didn't move up. Suddenly, he heard a sound of noise of Sam. He shouted, \"Look away, I found you!\" The wolf stopped and said, \"Hey, you! You are very naughty!\"\n\nBilly was very happy",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " made a plan.\n\nOne day Sam decided he wanted to build a big airplane. He was excited but also a little bit worried. He didn't know if he could make it all by himself.\n\nBut then Sam got an idea. He asked his friends and family for help. They were helpful and excited to help. Together they got to work. They gathered materials and set up a plan.\n\nWith everyone's help, they were able to start to build the airplane. They worked hard each day, until finally it was finished. Sam and his friends flew the airplane around and enjoyed the",
+              "continuation": " delicious game. From that day on the king always had a wonderful time with their friends.",
+              "length": 18,
+              "eos": true
+            },
+            {
+              "prompt": " was proud.\n\n\"Look, mom, a T-rex!\" Tom said, pointing to a huge skeleton. He ran to the dinosaur and looked up. It was taller than his house. He wanted to touch it, but there was a rope around it.\n\n\"Be careful, Tom. Don't cross the",
+              "continuation": " plane,\" she said. She gave him a big hug and him told her to look for a bite. \"What is that?\" she asked.\n\n\"Maybe it is a blue doll,\" said John. \"You have to play with it. It is a nice.\" She helped him put it out of the box",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": "Milly and Louie began to play with the toys. They built castles and pretended they were kings and queens. Suddenly they heard a noise in the distance. It was coming from the box!\n\nThey looked inside to find a friendly little mouse who had been hiding in the box. He had been looking for a place to live.\n\nMilly and Louie were so excited. They gave the mouse a home and made him their friend.\n\nWith this new friend, Milly and Louie had lots of fun. They played all day long and never felt dull again.",
+              "continuation": " \n\nLily was happy that she had been able to go on the park and have fun together.",
+              "length": 20,
+              "eos": true
+            },
+            {
+              "prompt": " the shelves. She saw a small box on the top shelf. Kitty thought it was a surprise for her.\n\nKitty jumped up to the top shelf to see the surprise. She opened the box and found a toy mouse inside. Kitty was very happy. She played with the toy mouse and had lots of fun",
+              "continuation": " playing together.",
+              "length": 3,
+              "eos": true
+            },
+            {
+              "prompt": " Baby looked up and saw a dirty old nest at the top. Mama and Baby prayed to the",
+              "continuation": " little one of the children and the birds flew away. \n\nWhen they arrived at the forest, the lady saw a old man in the kitchen. The man said, \"I want to help, I know you to find something else.\" The other people worked together to do a great place to find a little girl.",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": ". One day, he went for a walk with his mom. While walking, Tim saw a big rock. He wanted to jump over it, but his mom said, \"Be careful, Tim. It's important to watch where you walk.\"\n\nTim didn't listen and jumped over the rock. \"Ouch!\" he cried. Tim felt pain in his foot. He was very sad. His mom hugged him and said, \"I told you to be careful. Now you know why it's important to listen.\"\n\n",
+              "continuation": "Ben was sorry for being brave and wanted it go on. He wished he was not have a lot of fun. He felt happy and he learned to be careful. Timmy learned to be patient and helpful.",
+              "length": 41,
+              "eos": true
+            },
+            {
+              "prompt": " The oval taught him that if you are kind and friendly to everyone, then",
+              "continuation": " we need some people!\nâ€œ courseâ€™s make a small one of the frog.â€\n\nThe two of them gathered the birds for a long time and eventually, the bee started to help of the dragon. Then, the little boy picked up the box and grabbed food with the old lady",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " cut up the peach and gave it to her. Sarah was so excited to eat it, but when she had taken the first bite, she noticed that the peach was spoiled. Even though the peach wasn't good, Sarah still enjoyed it and she could still eat the parts that were ok. \n",
+              "continuation": "\nBut then they saw an old man who tried to help. The little girl was surprised and she was scared of the little dog. She got scared and dropped the ball up to her the old man. From then on, she was always careful when she heard a light again.",
+              "length": 56,
+              "eos": true
+            },
+            {
+              "prompt": " She hugged her mom and went to play with her brother. They played together until it was time for bed. Lily fell asleep with a smile on her face, happy to have helped her mom and made her brother happy.",
+              "continuation": "",
+              "length": 0,
+              "eos": true
+            },
+            {
+              "prompt": " play all day. He liked to run, jump, and bark with his friends.\n\nOne sunny day, Max saw a big tree with a swing. He wanted to hang on the swing and play. Max jumped up, grabbed the swing, and started to hang on it. He swung back and forth, having lots of fun.\n\nBut Max was naughty and did not wait for his turn. The other pets wanted to play on the swing too. They all learned to share and take turns. Max was",
+              "continuation": " happy that he couldn't play with his friends.",
+              "length": 10,
+              "eos": true
+            },
+            {
+              "prompt": ". \"No, you can't. You are too little and slow. Go away!\" one of them said.\n\nTom and Anna felt sad and angry. They walked away with their heads down. The sky was gloomy and it looked like it was going to rain.\n\n\"Those kids are mean. They don't want to share. They don't know how to be nice,\" Anna said.\n\nTom nodded. He had an idea. He picked up a stick and ran back to the group of big kids. He waved the stick in the air and shouted, \"Hey, you! Give us the ball",
+              "continuation": "! Look, please!\" They share and laughed. They had a fun together.\n\nThe bear and Ben were too very happy. They had a lot of fun and playing together. They all their special day, but they are the best friends ever.",
+              "length": 51,
+              "eos": true
+            },
+            {
+              "prompt": " playing, she saw a police officer walking by. She was a bit scared at first, but the police officer smiled at her and said hello. Lily was happy to meet the police officer and learn about how they help keep people safe.\n\nLater that day, Lily and her friends decided to have a race. They all ran as fast as they could, but Lily fell down and hurt her knee. Her friends helped",
+              "continuation": " her her car and took a nap. She felt happy and grateful to stay away from her. Her friends came to her to and they were happy. From that day on, Lily and Lily became friends and played together every day.",
+              "length": 46,
+              "eos": true
+            }
+          ]
+        },
+        {
+          "seed": 43,
+          "teacher_latent_mse": 1.7645102739334106,
+          "teacher_standardized_rms": 0.9983837604522705,
+          "shuffled_latent_mse": 2.0104641914367676,
+          "context_mse_advantage": 0.24595391750335693,
+          "first_block_max_distance": 2.4810433387756348e-06,
+          "teacher_sample_reference_ce": 15.303610801696777,
+          "free_sample_reference_ce": 17.90117835998535,
+          "free_rater_ce": 2.5648109790871185,
+          "free_repeat_trigram_fraction": 0.00838285229202037,
+          "free_mean_length": 40.375,
+          "texts": [
+            {
+              "prompt": ". She decided to go outside and play in the soil to make herself feel better. She dug and dug, making a big mess in the garden.\n\nSuddenly, Lily heard a quiet voice calling her name. It was Emily! She had come back to say sorry too. They hugged and made up, and Lily realized that saying sorry was the best thing",
+              "continuation": " it.",
+              "length": 2,
+              "eos": true
+            },
+            {
+              "prompt": " saw. It could cut through the branches and make them shorter. Everyone was excited to see that the saw could do this.\n\nThe saw cut down the branches and made a rope to tie around the top of the tree. It was so much easier to tie to the top now because it was lower. Everyone cheered.\n\nThe tree was",
+              "continuation": " so happy and he had saved the park. He had the best day ever after.",
+              "length": 17,
+              "eos": true
+            },
+            {
+              "prompt": " loved going to the fair on Tuesdays as it was so much fun! Every Tuesday she would wake up so excited, and make sure she had all her toys ready to put in her pocket.\n\nThe little girl was playing on the swings at the fair when she suddenly heard a loud scream. She looked up and saw a big boy running away from",
+              "continuation": " the tree. The little boy was so excited and ran inside to find his new friend.\n\nThe little boy came out to take it and the little girl was so happy to see the park. She told her mum and he was glad she had been so excited. Her friend and her dad smiled and went home.",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " favorite toy all the time. \n\nOne day, she wanted to take a nap on a big, comfy mattress. So, she climbed on the mattress and blinked her eyes really fast. \n\nSuddenly, her toy came to life! It was very scary, but Daisy wasn't scared. She said to the toy, \"Let's play!\" \n\nThe toy was a bit bossy too, so it said, \"No! You need to take a nap!\" Daisy blinked really fast again, and the toy flew away.\n\nThen Daisy settled into the mattress and fell",
+              "continuation": " asleep to the ground. The doctor smiled, and they both went up to the hospital. \n\nThe end.",
+              "length": 23,
+              "eos": true
+            },
+            {
+              "prompt": " tomorrow.â€\n\nThe next day, Jake and Lila wanted to play again, but Jake looked very distant. Jake saw a dark cloud move in, bringing thunder and lightning that made everyone run for cover.\n\nJake said to Lila, â€œLetâ€™s separate until the storm passes.â€\n\nLila nodded and said, â€œYes, letâ€™s start again when it's safe",
+              "continuation": ".â€\n\nSo the two friends went to bed and dreaming when they saw a big, blue bird. The bird flew away and they all were scared, but they would not see that the bird was too much fun. \n\nThe bunny was happy to be happy, and they found the way home.",
+              "length": 63,
+              "eos": true
+            },
+            {
+              "prompt": " one up and decided to take it home with him.\n\nWhen he got home, he showed his family the rock he had found. They all agreed it was a strange looking, even a little scary. But Sam was very excited. He wanted to repeat his discovery!\n\nWith his family in tow, Sam went",
+              "continuation": " to the store with new. The boy was so happy and proud of his mom. His mom smiled and said, \"That's amazing job Billy! Let's play together all day!\" \n\nLily smiled and hugged him. He went home and made a bite of the story.",
+              "length": 56,
+              "eos": true
+            },
+            {
+              "prompt": " catch dolphins.\n\n\"Dolphins are nice and smart. They can jump and talk. Why do they want to catch them?\" Lily asked.\n\n\"I don't know. Maybe they want to sell them or eat them. That's bad. We have to help them,\" Tom said.\n\nThey ran to the water and waved their arms. They shouted, \"Stop! Leave the dolphins alone!",
+              "continuation": " We are better and kind.\"\n\n\"Lily and Mia. We are happy.\" They went home. They did not want to leave the fence.\n\nThe driver They thought he had made them laugh. They laugh and play together. They had a great day.",
+              "length": 54,
+              "eos": true
+            },
+            {
+              "prompt": " playground. Everyone laughed and smiled as she danced.\n\nSoon the girl found something else that made her move. It was a little razor. She used it to trace circles and lines in the sand. As she drew, she sang and hummed",
+              "continuation": ".\n\nThe girl took her out and the garden was very nice, but it felt much better. Even though she had finished her, she knew she could buy her new friend. \n\nThe girl was so proud of her. He promised she was still so proud of herself for the perfect. She was very happy",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " a little girl named Lily. One evening, she wanted to have a tea party with her teddy bears. She asked her mom to help her organize the tea party. Her mom said yes and they",
+              "continuation": " ate all of the tea together. The end.",
+              "length": 10,
+              "eos": true
+            },
+            {
+              "prompt": ". He picked a red lollipop and started to lick it. Suddenly, a clever fox appeared and snatched the lollipop from",
+              "continuation": " the tree, Tim and a bird saw a dog coming towards him. The bird said, \"I will not see the dog and I play with you.\"\n\nThe bird told Spot, Max, and the squirrel, and they were very happy. They played together all had fun had a big and fun day.",
+              "length": 63,
+              "eos": true
+            },
+            {
+              "prompt": " didn't know how. \n\nLily said, \"I can explain how to draw circles. It's easy!\" She showed Emily how to make a circle by drawing a big round shape. Emily was happy because now she could draw circles too! \n\nThey drew circles all day and had so much fun. When it was time for Emily to go home, she said, \"Thank you for explaining how to draw circles. You're a good friend.\" Lily smiled",
+              "continuation": " and said, \"I'm happy to have help you.",
+              "length": 12,
+              "eos": true
+            },
+            {
+              "prompt": " four wheels.\n\n\"Wow, your wagon is so nice!\" Max said. \"Can I try it?\"\n\n\"Sure, you can try it,\" Lily said. She was a thoughtful friend. She liked to share her things. \"But be careful, okay? It is new and I don't want it to break.\"\n\nMax nodded. He took the wagon and pulled it around the park. He had fun with it. He put his teddy bear and his ball in the wagon. He made noises like a train.\n\nLily watched him and smiled. She was happy",
+              "continuation": " that Ben was too bad. They say thank the car and the snowman. They did not want to play with other friends anymore.\n\nLily was too sad. She did not want to see the fish. She said they were sorry. She wanted to help Lily. She put the red ball back. She smiled and",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " join us if you can gain us.\" \n\nLilly looked puzzled and asked, \"",
+              "continuation": "I'm sorry, I'll hurt you. I'm glad you I'll help you get a little help.\"\n\nThe bear smiled. \"I'm so glad you have to come!\"",
+              "length": 38,
+              "eos": true
+            },
+            {
+              "prompt": " feeling like she was a real cowboy! \n\nSuddenly, Sarah heard a noise coming from behind the big tree. She wondered who it was and so she crept closer to the tree and peeked around the corner. \n\nIt was her Daddy! He was trying on the new hat that he had just bought. He turned to Sarah and said, \"What do you think? Do you think this hat fits me?\" \n\nSarah nodded her head and said, \"It's perfect, Daddy! You look fit in it!\" She giggled and ran around him, still playing with her whip. \n\nSarah and her",
+              "continuation": " mommy went down the big hill, but it was time to go home. She couldn't wait to wait for the new next day.",
+              "length": 27,
+              "eos": true
+            },
+            {
+              "prompt": " to play outside. She loved discovering new things. One day while she was playing, she noticed something strange in the ground. She saw a small, soft worm. She was so surprised to find the worm and called out to her dad.\n\nMia: â€œDaddy, look!â€\n\nHer dad, John, looked and saw the little worm.\n\n",
+              "continuation": "Sarah said, \"Let's go home! I let's go home. I can be nice with you.\"\n\nTommy was so excited, she wanted to buy a big spot. She told her mom, \"Yes, mom! Let's go home!\"\n\nSo, they and the party all day playing with",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " and your doll. I want coins. Go away.\"\n\nTom and Mia are angry. They do not like the man. He is mean and greedy.\n\nThey have an idea. They run to the swings. They",
+              "continuation": " look up. They see their heads. They hear their toys. They did not like their mom.\n\nThey did not see the cat. They see the kids. They are scared. They are scared. They say, \"Can we play?\"\n\nThe park are very loud. They are very angry. They",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " and soon he was having a great time. He forgot all about resting and played until he was exhausted again. \n\nThe puppy was so happy that he had found some fun, even though he was tired. He thanked the little girl and they",
+              "continuation": " all lived happily ever after it.",
+              "length": 7,
+              "eos": true
+            },
+            {
+              "prompt": " like talking to new people. One day, Lily's mom asked her what she wanted for dinner. Lily said, \"I want pizza!\" Her mom smiled and said, \"Okay, we can have pizza for dinner.\"\n\nLater that day, Lily went to the park to play. She saw a boy who looked sad, so she went up to him and said, \"Hi, my name is Lily. Do you want to play with me?\" The boy looked surprised but then smiled and said, \"Yes, please!\"\n\nThey played together for a while, but then the boy's",
+              "continuation": " mom came to hurt her. He gave the big ball to Lily and said goodbye. Lily was happy that she knew his friend was kind to her.",
+              "length": 30,
+              "eos": true
+            },
+            {
+              "prompt": " As they hugged, a funny thought came to their minds. They decided to measure their hugs! So, they stretched their arms as wide as they could and began",
+              "continuation": " to eat it. When they arrived, they was very happy they could play with the blocks. They had made a good time and they were able to play with them and went back to the beach.",
+              "length": 40,
+              "eos": true
+            },
+            {
+              "prompt": " go on adventures.\n\nTom had a plan. He wanted to go to the beach and make a sand castle. But Sam didn't want to go, he was feeling a bit selfish and wanted to stay at home. So Tom waited for him to change his mind, but Sam still didn't want to go.\n\nSo",
+              "continuation": ", decided to play a ride in his pocket. He saw all a loud noise and he found his friend. He had to stay in the water, making it a big smile. Tom was very happy to his friends, and they all laughed. After a long time, Joe went back to the doctor for a rest of",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " made a plan.\n\nOne day Sam decided he wanted to build a big airplane. He was excited but also a little bit worried. He didn't know if he could make it all by himself.\n\nBut then Sam got an idea. He asked his friends and family for help. They were helpful and excited to help. Together they got to work. They gathered materials and set up a plan.\n\nWith everyone's help, they were able to start to build the airplane. They worked hard each day, until finally it was finished. Sam and his friends flew the airplane around and enjoyed the",
+              "continuation": " nice. They had a lot of fun and playing with a good new friend.",
+              "length": 16,
+              "eos": true
+            },
+            {
+              "prompt": " was proud.\n\n\"Look, mom, a T-rex!\" Tom said, pointing to a huge skeleton. He ran to the dinosaur and looked up. It was taller than his house. He wanted to touch it, but there was a rope around it.\n\n\"Be careful, Tom. Don't cross the",
+              "continuation": " tree!\" he said, the girl ran away. She waved goodbye from the sun and ran out to his mom and said, \"That was nice my room? When we are the best of you for me!\"\n\nThe butterfly started to feel more. Finally, the rain stopped and the little girl was so happy.",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": "Milly and Louie began to play with the toys. They built castles and pretended they were kings and queens. Suddenly they heard a noise in the distance. It was coming from the box!\n\nThey looked inside to find a friendly little mouse who had been hiding in the box. He had been looking for a place to live.\n\nMilly and Louie were so excited. They gave the mouse a home and made him their friend.\n\nWith this new friend, Milly and Louie had lots of fun. They played all day long and never felt dull again.",
+              "continuation": "",
+              "length": 0,
+              "eos": true
+            },
+            {
+              "prompt": " the shelves. She saw a small box on the top shelf. Kitty thought it was a surprise for her.\n\nKitty jumped up to the top shelf to see the surprise. She opened the box and found a toy mouse inside. Kitty was very happy. She played with the toy mouse and had lots of fun",
+              "continuation": ".\n\n\"Thank you, and it!\" said he, happy.\n\nMia felt like a special day her friend. She saw the big boy, \"This is broken, my friend. I'm stuck in the hill!\"\n\nThey said, \"Let's go there inside to play.\"\n\nThey",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " Baby looked up and saw a dirty old nest at the top. Mama and Baby prayed to the",
+              "continuation": " little girl, she saw the bird and said, \"I am too!\"\n\nThe rabbit was stuck and asked his mom, \"Can we play with your dog?\"\n\nThe little boy was so excited. He ran around the slide and soon. He had a great time playing with the butterfly.\n\nWhen",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": ". One day, he went for a walk with his mom. While walking, Tim saw a big rock. He wanted to jump over it, but his mom said, \"Be careful, Tim. It's important to watch where you walk.\"\n\nTim didn't listen and jumped over the rock. \"Ouch!\" he cried. Tim felt pain in his foot. He was very sad. His mom hugged him and said, \"I told you to be careful. Now you know why it's important to listen.\"\n\n",
+              "continuation": "John was now, and he never tried to hurt the ball car. He was happy to be careful. He saw that his mom was not looking for a long time. He felt much better and didn't use it to eat.",
+              "length": 46,
+              "eos": true
+            },
+            {
+              "prompt": " The oval taught him that if you are kind and friendly to everyone, then",
+              "continuation": " you will be to come to the end to do.\" \n\nThe fox was so happy and felt better to be better friends. From that day forward, they became the best friend and they became friends. The moral of the story is that it's important to be friends. We can go back to the things and be",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " cut up the peach and gave it to her. Sarah was so excited to eat it, but when she had taken the first bite, she noticed that the peach was spoiled. Even though the peach wasn't good, Sarah still enjoyed it and she could still eat the parts that were ok. \n",
+              "continuation": "\nSo the little girl and daddy her mommy and the little girl said goodbye, and waved goodbye to the man all day. From that day onwards, she would always watch the world with her own!",
+              "length": 40,
+              "eos": true
+            },
+            {
+              "prompt": " She hugged her mom and went to play with her brother. They played together until it was time for bed. Lily fell asleep with a smile on her face, happy to have helped her mom and made her brother happy.",
+              "continuation": "",
+              "length": 0,
+              "eos": true
+            },
+            {
+              "prompt": " play all day. He liked to run, jump, and bark with his friends.\n\nOne sunny day, Max saw a big tree with a swing. He wanted to hang on the swing and play. Max jumped up, grabbed the swing, and started to hang on it. He swung back and forth, having lots of fun.\n\nBut Max was naughty and did not wait for his turn. The other pets wanted to play on the swing too. They all learned to share and take turns. Max was",
+              "continuation": " very happy to be with the birds and the frog played with all the day.",
+              "length": 16,
+              "eos": true
+            },
+            {
+              "prompt": ". \"No, you can't. You are too little and slow. Go away!\" one of them said.\n\nTom and Anna felt sad and angry. They walked away with their heads down. The sky was gloomy and it looked like it was going to rain.\n\n\"Those kids are mean. They don't want to share. They don't know how to be nice,\" Anna said.\n\nTom nodded. He had an idea. He picked up a stick and ran back to the group of big kids. He waved the stick in the air and shouted, \"Hey, you! Give us the ball",
+              "continuation": "!\"\n\nBen and Dad watched as the bird in the river. It was a big bite. It had a lot of fun. She was happy and proud.\n\nAt the end of the day, the girl heard the voice. She had no one friend. She gave him a hug and a smile. He",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " playing, she saw a police officer walking by. She was a bit scared at first, but the police officer smiled at her and said hello. Lily was happy to meet the police officer and learn about how they help keep people safe.\n\nLater that day, Lily and her friends decided to have a race. They all ran as fast as they could, but Lily fell down and hurt her knee. Her friends helped",
+              "continuation": " her to go on their adventure and they had to share it together. Lily's mommy was very happy and they were happy to have her.",
+              "length": 28,
+              "eos": true
+            }
+          ]
+        },
+        {
+          "seed": 44,
+          "teacher_latent_mse": 1.7206947803497314,
+          "teacher_standardized_rms": 1.000523328781128,
+          "shuffled_latent_mse": 2.016761064529419,
+          "context_mse_advantage": 0.2960662841796875,
+          "first_block_max_distance": 3.039836883544922e-06,
+          "teacher_sample_reference_ce": 15.018803596496582,
+          "free_sample_reference_ce": 18.22368812561035,
+          "free_rater_ce": 2.597305112329545,
+          "free_repeat_trigram_fraction": 0.02044046681056554,
+          "free_mean_length": 44.96875,
+          "texts": [
+            {
+              "prompt": ". She decided to go outside and play in the soil to make herself feel better. She dug and dug, making a big mess in the garden.\n\nSuddenly, Lily heard a quiet voice calling her name. It was Emily! She had come back to say sorry too. They hugged and made up, and Lily realized that saying sorry was the best thing",
+              "continuation": " she had wanted to be brave and brave. She said, \"I don't want to things, I was able to help.\"\n\nLily got to her room and ran, feeling feeling sad. She had a chance for the fun. She said, \"What are you, Lily, I'm you too kind to",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " saw. It could cut through the branches and make them shorter. Everyone was excited to see that the saw could do this.\n\nThe saw cut down the branches and made a rope to tie around the top of the tree. It was so much easier to tie to the top now because it was lower. Everyone cheered.\n\nThe tree was",
+              "continuation": " filled with the red water. It was a beautiful tree that had been in the trees and the people in the park. It had all the time they had made the best of the day ever!",
+              "length": 39,
+              "eos": true
+            },
+            {
+              "prompt": " loved going to the fair on Tuesdays as it was so much fun! Every Tuesday she would wake up so excited, and make sure she had all her toys ready to put in her pocket.\n\nThe little girl was playing on the swings at the fair when she suddenly heard a loud scream. She looked up and saw a big boy running away from",
+              "continuation": " the fence. It had a little girl with her name. She had so much fun playing games, playing and it was time to go home.\n\nLily knew she had so much fun at the park. She was glad she had to go back to the park. She decided to play with the girl and all the",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " favorite toy all the time. \n\nOne day, she wanted to take a nap on a big, comfy mattress. So, she climbed on the mattress and blinked her eyes really fast. \n\nSuddenly, her toy came to life! It was very scary, but Daisy wasn't scared. She said to the toy, \"Let's play!\" \n\nThe toy was a bit bossy too, so it said, \"No! You need to take a nap!\" Daisy blinked really fast again, and the toy flew away.\n\nThen Daisy settled into the mattress and fell",
+              "continuation": " down the park. She thought the most old thing she had ever! This was such a beautiful beautiful meal!",
+              "length": 22,
+              "eos": true
+            },
+            {
+              "prompt": " tomorrow.â€\n\nThe next day, Jake and Lila wanted to play again, but Jake looked very distant. Jake saw a dark cloud move in, bringing thunder and lightning that made everyone run for cover.\n\nJake said to Lila, â€œLetâ€™s separate until the storm passes.â€\n\nLila nodded and said, â€œYes, letâ€™s start again when it's safe",
+              "continuation": ".â€",
+              "length": 3,
+              "eos": true
+            },
+            {
+              "prompt": " one up and decided to take it home with him.\n\nWhen he got home, he showed his family the rock he had found. They all agreed it was a strange looking, even a little scary. But Sam was very excited. He wanted to repeat his discovery!\n\nWith his family in tow, Sam went",
+              "continuation": " up to the hospital. He was so excited.\n\nWhen he saw many money he opened the door, he saw a big boy! He had been scared about playing, but she was so he couldn't wait to get it.\n\nJohn asked, \"What are your dad?\"\n\nHis mom said,",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " catch dolphins.\n\n\"Dolphins are nice and smart. They can jump and talk. Why do they want to catch them?\" Lily asked.\n\n\"I don't know. Maybe they want to sell them or eat them. That's bad. We have to help them,\" Tom said.\n\nThey ran to the water and waved their arms. They shouted, \"Stop! Leave the dolphins alone!",
+              "continuation": " They are so happy.\n\nThe birds went at the park. They were not friends. They played with the big toys until the storm was. They were happy to make them happy. They both hoped they had been more friends.",
+              "length": 47,
+              "eos": true
+            },
+            {
+              "prompt": " playground. Everyone laughed and smiled as she danced.\n\nSoon the girl found something else that made her move. It was a little razor. She used it to trace circles and lines in the sand. As she drew, she sang and hummed",
+              "continuation": " with a picture of her family.\n\nThe girl took it out of the rock and put her bag in the park. She smiled and said, \"I love you to do new!\" and smiled with a smile on her face.",
+              "length": 47,
+              "eos": true
+            },
+            {
+              "prompt": " a little girl named Lily. One evening, she wanted to have a tea party with her teddy bears. She asked her mom to help her organize the tea party. Her mom said yes and they",
+              "continuation": " laughed.\n\nOne day, they saw their cars and Sue. They were so happy to see the park. Lily was a happy to have a new friend. They talked for a while, but then it got high. Her mom was happy and said, \"Wow, it's a fun!\"\n\nLily was",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": ". He picked a red lollipop and started to lick it. Suddenly, a clever fox appeared and snatched the lollipop from",
+              "continuation": " the top of the hill. He had ever seen anything. He looked at the hole and saw a big tree.\n\n\"Hey, you are really scared!\" I said. \"I'm sorry I wanted you.\"\n\nThe butterfly smiled and said, \"It's okay, I'm sorry. I'm glad",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " didn't know how. \n\nLily said, \"I can explain how to draw circles. It's easy!\" She showed Emily how to make a circle by drawing a big round shape. Emily was happy because now she could draw circles too! \n\nThey drew circles all day and had so much fun. When it was time for Emily to go home, she said, \"Thank you for explaining how to draw circles. You're a good friend.\" Lily smiled",
+              "continuation": " at her and said, \"Thank you for you, Timmy. You are my best friend ever!\"",
+              "length": 20,
+              "eos": true
+            },
+            {
+              "prompt": " four wheels.\n\n\"Wow, your wagon is so nice!\" Max said. \"Can I try it?\"\n\n\"Sure, you can try it,\" Lily said. She was a thoughtful friend. She liked to share her things. \"But be careful, okay? It is new and I don't want it to break.\"\n\nMax nodded. He took the wagon and pulled it around the park. He had fun with it. He put his teddy bear and his ball in the wagon. He made noises like a train.\n\nLily watched him and smiled. She was happy",
+              "continuation": ". She said, \"Thank you, Mom. I have a fun with you.\" She was happy.\n\nBut Lily did not know that she needed to be kind to see the car. She knew that she had a friend. She thought about being kind and good care. She played with it all day on their",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " join us if you can gain us.\" \n\nLilly looked puzzled and asked, \"",
+              "continuation": "I did you want to me, I'm't so you will help you.\" \n\nThe little boy smiled and said, \"Let's go and try to find the ball.\" \n\nAfter the boat put the ice cream, Max got out of the sun and went to him. The bear said, \"You found",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " feeling like she was a real cowboy! \n\nSuddenly, Sarah heard a noise coming from behind the big tree. She wondered who it was and so she crept closer to the tree and peeked around the corner. \n\nIt was her Daddy! He was trying on the new hat that he had just bought. He turned to Sarah and said, \"What do you think? Do you think this hat fits me?\" \n\nSarah nodded her head and said, \"It's perfect, Daddy! You look fit in it!\" She giggled and ran around him, still playing with her whip. \n\nSarah and her",
+              "continuation": " dad smiled back and said, \"I'm so proud of you, so they are both very proud!\"",
+              "length": 21,
+              "eos": true
+            },
+            {
+              "prompt": " to play outside. She loved discovering new things. One day while she was playing, she noticed something strange in the ground. She saw a small, soft worm. She was so surprised to find the worm and called out to her dad.\n\nMia: â€œDaddy, look!â€\n\nHer dad, John, looked and saw the little worm.\n\n",
+              "continuation": "â€ she said. â€œLetâ€™s go to the swing.â€ \n\nThe bear thought, \"Don't worry, I will be a secret friend.\"\n\nThe two friends hugged the door and went with their bags. They went to the park to play together and had a very proud of their",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " and your doll. I want coins. Go away.\"\n\nTom and Mia are angry. They do not like the man. He is mean and greedy.\n\nThey have an idea. They run to the swings. They",
+              "continuation": " are not safe. They see the water with the other side.\n\nThe man says. He is happy. He likes Max to the park. He is happy. He wanted to play. He says, \"That is not nice. You are not nice. You are a naughty dog.\"\n\nTom Mia and",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " and soon he was having a great time. He forgot all about resting and played until he was exhausted again. \n\nThe puppy was so happy that he had found some fun, even though he was tired. He thanked the little girl and they",
+              "continuation": " all lived happily ever after.",
+              "length": 6,
+              "eos": true
+            },
+            {
+              "prompt": " like talking to new people. One day, Lily's mom asked her what she wanted for dinner. Lily said, \"I want pizza!\" Her mom smiled and said, \"Okay, we can have pizza for dinner.\"\n\nLater that day, Lily went to the park to play. She saw a boy who looked sad, so she went up to him and said, \"Hi, my name is Lily. Do you want to play with me?\" The boy looked surprised but then smiled and said, \"Yes, please!\"\n\nThey played together for a while, but then the boy's",
+              "continuation": " friends came to him. She asked her why they do it to Lily for her. The boy said, \"No, I'm so it is not to be scary.\" The doctor tried to Lily's, who was not worried.\n\nLily asked her mom, \"Don't worry, Lily's dad. I want",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " As they hugged, a funny thought came to their minds. They decided to measure their hugs! So, they stretched their arms as wide as they could and began",
+              "continuation": ". They had a lot of fun playing together.\n\nWhen they got to the store, they saw a big blanket and a great! They both laughed and wanted to play with it. They were a lot of fun.\n\n\"That was so much fun!,\" Lily said.\n\n\"Yes, it",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " go on adventures.\n\nTom had a plan. He wanted to go to the beach and make a sand castle. But Sam didn't want to go, he was feeling a bit selfish and wanted to stay at home. So Tom waited for him to change his mind, but Sam still didn't want to go.\n\nSo",
+              "continuation": " when he saw a bird playing with him with a big smile too! She told Max he was having so much fun and he couldn't wait to go back on to the bird. He was so much fun and he thought it was a small, but he couldn't tell them.\n\nThe bear was so happy he",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " made a plan.\n\nOne day Sam decided he wanted to build a big airplane. He was excited but also a little bit worried. He didn't know if he could make it all by himself.\n\nBut then Sam got an idea. He asked his friends and family for help. They were helpful and excited to help. Together they got to work. They gathered materials and set up a plan.\n\nWith everyone's help, they were able to start to build the airplane. They worked hard each day, until finally it was finished. Sam and his friends flew the airplane around and enjoyed the",
+              "continuation": " yummy game.\n\nWhen they found the food, they said, \"Thank you, Daddy! What you are my friend?\" \n\nThey hugged him and said, \"I'm glad you are very nice.\" \n\nThe bird was so happy that he had helped a new friend.",
+              "length": 58,
+              "eos": true
+            },
+            {
+              "prompt": " was proud.\n\n\"Look, mom, a T-rex!\" Tom said, pointing to a huge skeleton. He ran to the dinosaur and looked up. It was taller than his house. He wanted to touch it, but there was a rope around it.\n\n\"Be careful, Tom. Don't cross the",
+              "continuation": " thing,\" he said, and a little boy looked at the squirrel. He decided he could move in the ball and tried to grab it was. But it was too too loud. Sam started to cry and felt guilty with his bike.\n\n\"I don't want to be your friend,\" Tim said. \"Let",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": "Milly and Louie began to play with the toys. They built castles and pretended they were kings and queens. Suddenly they heard a noise in the distance. It was coming from the box!\n\nThey looked inside to find a friendly little mouse who had been hiding in the box. He had been looking for a place to live.\n\nMilly and Louie were so excited. They gave the mouse a home and made him their friend.\n\nWith this new friend, Milly and Louie had lots of fun. They played all day long and never felt dull again.",
+              "continuation": "",
+              "length": 0,
+              "eos": true
+            },
+            {
+              "prompt": " the shelves. She saw a small box on the top shelf. Kitty thought it was a surprise for her.\n\nKitty jumped up to the top shelf to see the surprise. She opened the box and found a toy mouse inside. Kitty was very happy. She played with the toy mouse and had lots of fun",
+              "continuation": ".",
+              "length": 1,
+              "eos": true
+            },
+            {
+              "prompt": " Baby looked up and saw a dirty old nest at the top. Mama and Baby prayed to the",
+              "continuation": " little boy's parents and tried to take it away. She used it to her and mommy showed her how it was right to the other side of the story and they put the food away in the air. Then he could feel the very happy. He was very proud of himself. \n\nBut then soon, the little",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": ". One day, he went for a walk with his mom. While walking, Tim saw a big rock. He wanted to jump over it, but his mom said, \"Be careful, Tim. It's important to watch where you walk.\"\n\nTim didn't listen and jumped over the rock. \"Ouch!\" he cried. Tim felt pain in his foot. He was very sad. His mom hugged him and said, \"I told you to be careful. Now you know why it's important to listen.\"\n\n",
+              "continuation": "They ran away and had to clean the broken ball. Tim was very proud of himself. He thought it was right to his mom and have fun without anything.",
+              "length": 32,
+              "eos": true
+            },
+            {
+              "prompt": " The oval taught him that if you are kind and friendly to everyone, then",
+              "continuation": " you will be friends and be nice and kind. I'm you like Tom, but I'm sorry. I'm glad you like the girl. He is very brave and kind. He did not know he would be kind and kind. You are good friends and have fun. You are rude and kids.\"\n\nJack",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " cut up the peach and gave it to her. Sarah was so excited to eat it, but when she had taken the first bite, she noticed that the peach was spoiled. Even though the peach wasn't good, Sarah still enjoyed it and she could still eat the parts that were ok. \n",
+              "continuation": "\nWhen the end, the day, Sarah returned and her mom was very happy. She showed her friends the family and they were in the park. They were so happy that she had been able to explore the perfect dress to her own.",
+              "length": 48,
+              "eos": true
+            },
+            {
+              "prompt": " She hugged her mom and went to play with her brother. They played together until it was time for bed. Lily fell asleep with a smile on her face, happy to have helped her mom and made her brother happy.",
+              "continuation": "",
+              "length": 0,
+              "eos": true
+            },
+            {
+              "prompt": " play all day. He liked to run, jump, and bark with his friends.\n\nOne sunny day, Max saw a big tree with a swing. He wanted to hang on the swing and play. Max jumped up, grabbed the swing, and started to hang on it. He swung back and forth, having lots of fun.\n\nBut Max was naughty and did not wait for his turn. The other pets wanted to play on the swing too. They all learned to share and take turns. Max was",
+              "continuation": " not so fast, they could get a new friend.",
+              "length": 11,
+              "eos": true
+            },
+            {
+              "prompt": ". \"No, you can't. You are too little and slow. Go away!\" one of them said.\n\nTom and Anna felt sad and angry. They walked away with their heads down. The sky was gloomy and it looked like it was going to rain.\n\n\"Those kids are mean. They don't want to share. They don't know how to be nice,\" Anna said.\n\nTom nodded. He had an idea. He picked up a stick and ran back to the group of big kids. He waved the stick in the air and shouted, \"Hey, you! Give us the ball",
+              "continuation": "! Let's go!\"\n\nThe moral of the story is that we can enjoy each other and not be scared. They did not like playing.\n\nTom and Sam, they were happy.\n\nThe moral of the story is: each other you: we have to be sorry for everyone. And you just",
+              "length": 64,
+              "eos": false
+            },
+            {
+              "prompt": " playing, she saw a police officer walking by. She was a bit scared at first, but the police officer smiled at her and said hello. Lily was happy to meet the police officer and learn about how they help keep people safe.\n\nLater that day, Lily and her friends decided to have a race. They all ran as fast as they could, but Lily fell down and hurt her knee. Her friends helped",
+              "continuation": " her and play with the bear, Lily's friends came to make her friends.\n\nHer brother asked her help that Lily didn't help to play, but Lily was better to be patient and her friends. From that day on, Lily learned that being naughty is good at her and good things.",
+              "length": 60,
+              "eos": true
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

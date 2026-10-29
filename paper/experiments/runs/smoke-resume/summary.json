@@ -1,0 +1,7 @@
+{
+  "last_step": 4,
+  "tokens_seen": 421,
+  "wall_seconds": 0.31113919988274574,
+  "peak_gpu_allocated_mb": null,
+  "checkpoint": "runs\\smoke-resume\\last.pt"
+}

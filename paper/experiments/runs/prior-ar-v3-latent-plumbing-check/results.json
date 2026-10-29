@@ -1,0 +1,68 @@
+{
+  "metadata": {
+    "checkpoint": "D:\\Code\\latent-ar-async-decoder\\runs\\prior-ar-v3-plumbing-check\\last.pt",
+    "checkpoint_step": 3,
+    "architecture": "latent_codec_ar_v3",
+    "max_new_tokens": 8,
+    "latent_steps": 2,
+    "temperature": 0.0,
+    "top_k": 50,
+    "seeds": [
+      42
+    ],
+    "prompt_count": 1,
+    "pair_count": 1,
+    "identical_pairs": 0,
+    "first_token_different_pairs": 1,
+    "mean_original_content_tokens": 8.0,
+    "mean_averaged_content_tokens": 8.0,
+    "mean_definition": "Per-prompt temporal mean over the complete generated latent segment; broadcast to all generated positions. Prompt latents unchanged.",
+    "limitations": "Offline perturbation diagnostic, not a separately trained no-latent baseline or a causal quality estimate.",
+    "latent_statistics": [
+      {
+        "prompt_index": 0,
+        "mean_cosine_to_average": 0.8285815715789795,
+        "relative_temporal_rms": 0.5598813891410828
+      }
+    ]
+  },
+  "pairs": [
+    {
+      "prompt_index": 0,
+      "prompt": "Once upon a time, a little girl found a strange box.",
+      "seed": 42,
+      "original": {
+        "token_ids": [
+          4010,
+          3209,
+          5212,
+          5260,
+          1295,
+          1895,
+          17,
+          2122
+        ],
+        "text": " knot dependableNot sisters tired neck. honey",
+        "content_tokens": 8,
+        "stopped_by_eos": false
+      },
+      "mean": {
+        "token_ids": [
+          2451,
+          1895,
+          5212,
+          3473,
+          2451,
+          1895,
+          5212,
+          3473
+        ],
+        "text": " almost neckNot sink almost neckNot sink",
+        "content_tokens": 8,
+        "stopped_by_eos": false
+      },
+      "identical_output": false,
+      "identical_prefix_tokens": 0
+    }
+  ]
+}

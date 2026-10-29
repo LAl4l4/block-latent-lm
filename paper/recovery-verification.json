@@ -1,0 +1,14 @@
+{
+  "step": 3100,
+  "architecture": "latent_codec_token_head_v6",
+  "resume_next_step": 3101,
+  "strict_model_load": true,
+  "optimizer_state_load": true,
+  "dataset_hash_matches": true,
+  "frozen_codec": true,
+  "checkpoint_sha256": {
+    "runs/main/last.pt": "fdb5663234ce74ade13e17a376dd1bdf26d7651bb5dda8de4226daa4187c6696",
+    "artifacts/checkpoints/main-step3100.pt": "fdb5663234ce74ade13e17a376dd1bdf26d7651bb5dda8de4226daa4187c6696"
+  },
+  "training_updates_executed": 0
+}

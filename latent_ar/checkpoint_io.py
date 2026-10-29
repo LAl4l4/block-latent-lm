@@ -14,11 +14,15 @@ def publish_checkpoint(temporary, destination, step, attempts=8):
             return destination
         except PermissionError:
             if attempt + 1 < attempts:
-                time.sleep(min(.05 * 2**attempt, .5))
+                time.sleep(min(0.05 * 2**attempt, 0.5))
     # 不删除仍然有效的 last.pt；新版本使用独立路径，避免因读锁中断训练。
-    fallback = destination.with_name(f"{destination.stem}-step{step}{destination.suffix}")
+    fallback = destination.with_name(
+        f"{destination.stem}-step{step}{destination.suffix}"
+    )
     if fallback.exists():
-        fallback = fallback.with_name(f"{fallback.stem}-{time.time_ns()}{fallback.suffix}")
+        fallback = fallback.with_name(
+            f"{fallback.stem}-{time.time_ns()}{fallback.suffix}"
+        )
     temporary.replace(fallback)
     print(f"[保存] {destination} 被占用，完整检查点另存为 {fallback}", flush=True)
     return fallback

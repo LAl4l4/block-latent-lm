@@ -413,3 +413,29 @@ def test_low_quality_codec_blocks_prior_before_creating_run(
     with pytest.raises(RuntimeError, match="尚未达到重建要求"):
         launch(monkeypatch, "prior", data, prior_config, output)
     assert not output.exists()
+
+
+def test_locked_last_checkpoint_uses_version_and_completes_training(
+    stage_files, tmp_path, monkeypatch
+):
+    from pathlib import Path
+
+    data, codec_config, prior_config = stage_files
+    launch(monkeypatch, "codec", data, codec_config, tmp_path / "codec")
+    real_replace = Path.replace
+
+    def locked(source, target):
+        if Path(target).name == "last.pt":
+            raise PermissionError("simulated Windows checkpoint read lock")
+        return real_replace(source, target)
+
+    monkeypatch.setattr(Path, "replace", locked)
+    monkeypatch.setattr("latent_ar.checkpoint_io.time.sleep", lambda delay: None)
+    run_dir = tmp_path / "locked-prior"
+    launch(monkeypatch, "prior", data, prior_config, run_dir)
+    summary = json.loads((run_dir / "summary.json").read_text())
+    saved = Path(summary["checkpoint"])
+    assert saved.name == "last-step3.pt"
+    checkpoint = torch.load(saved, weights_only=True)
+    assert checkpoint["step"] == 3
+    assert "optimizer" in checkpoint and "torch_rng" in checkpoint
