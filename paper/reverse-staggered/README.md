@@ -24,7 +24,7 @@ Local build, if TeX is installed: `pdflatex main && bibtex main && pdflatex main
 - Meet-in-the-middle and seed-42 costs: `runs/schedule-mask/*-s42/final.json`.
 - Plan experiment: `runs/schedule-plan/*/final.json`.
 - Speed/quality sweep (Table and Figure in §4): `runs/schedule-mask-tradeoff/*/final.json` plus the seed-42 arms of `runs/schedule-mask`, copied to `data/tradeoff.csv` by `make_figures.py`.
-- Wide 20k scaling: `runs/schedule-mask-wide-long/*/metrics.jsonl`.
+- Wide 20k scaling: `runs/schedule-mask-wide-long/*/metrics.jsonl` (22M tokens, overfits) and `runs/schedule-mask-wide-1m/*/metrics.jsonl` (219M tokens, `data/prepared-1m`).
 - Single-token refinement: `runs/schedule-mask-refine/*/final.json` (refinement CE) and `runs/schedule-mask-refine/sample-eval.json` (`judge_ce`, `judge_steady_by_slot`).
 - Intra-block seam in samples: `judge_steady_by_slot` in the sample-eval JSONs.
 - Parameter counts (7.2M base, 31.5M wide): the run `config.json` files. The docs' "about 10M" for the base model is wrong.

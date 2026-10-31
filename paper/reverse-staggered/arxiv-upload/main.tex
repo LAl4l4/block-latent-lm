@@ -61,7 +61,7 @@ At 1.75 tokens per step segment reversal works best: it costs 0.276 nats/token o
 Under an independent judge, the seam token's cross-entropy in samples falls from 11.3 under forward staggering to 2.9 (causal: 2.6); a smaller seam remains inside the block, and re-decoding one token afterwards only moves the break.
 The schedules are not free.
 In small models an ordering cost of 0.23--0.27 nats/token remains, and a discrete block-level plan does not remove it.
-A $4.4\times$ larger model trained $4\times$ longer cuts it to 0.146 (one seed; that causal baseline overfits).
+With $10\times$ more data, a $4.4\times$ larger model trained $4\times$ longer still pays 0.242 (one seed).
 \end{abstract}
 
 % ---------------------------------------------------------------------------
@@ -136,7 +136,8 @@ We are explicit about what the evidence does not show.
 Writing the seam last is \emph{not} free relative to a causal language model.
 Its residual cost is an ordering cost.
 A discrete block-level plan does not remove it.
-A larger model trained for longer does reduce it, from 0.226 to 0.146 nats/token in one seed, though the larger causal baseline overfits in that comparison.
+Nor does scale in the range we tested: a $4.4\times$ larger model trained $4\times$ longer on $10\times$ more data still pays 0.242 nats/token (one seed).
+An apparent drop to 0.146 on the small training set came from an overfitting causal baseline.
 
 % ---------------------------------------------------------------------------
 \section{Setup: schedules, visibility and dropped pairs}
@@ -565,7 +566,7 @@ They do not, because predicting a token eight positions ahead and infilling betw
 
 \begin{table}[t]
   \centering
-  \caption{Capacity at 5000 steps (seed 42). Cost vs.\ causal of the same size. At this step count the wide model is under-trained (Table~\ref{tab:widelong}).}
+  \caption{Capacity at 5000 steps (seed 42). Cost vs.\ causal of the same size. Longer runs are in Table~\ref{tab:widelong}.}
   \label{tab:wide}
   \small
   \begin{tabular}{lrrr}
@@ -596,40 +597,51 @@ In every setting, the information cost of reverse staggering stays small: 0.020 
 
 \begin{table}[t]
   \centering
-  \caption{Ordering cost (\sch{reverse-16-g8} $-$ \sch{causal}, steady-state CE, nats/token) at checkpoints of single 20000-step runs (seed 42) for the base and wide models. Only these two schedules were trained at the wide size for 20000 steps.}
+  \caption{Ordering cost (\sch{reverse-16-g8} $-$ \sch{causal}, steady-state CE, nats/token) at checkpoints of single 20000-step runs (seed 42). The 22M-token runs use the 100k-story training set of all other experiments; the 219M-token run uses 1M stories with the same tokenizer and the same development set. Only these two schedules were trained at the wide size for 20000 steps.}
   \label{tab:widelong}
   \small
-  \begin{tabular}{rrrrr}
+  \begin{tabular}{rrrrrrr}
     \toprule
-    & \multicolumn{2}{c}{Base (7.2M)} & \multicolumn{2}{c}{Wide (31.5M)} \\
-    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
-    Step & Causal CE & Ordering cost & Causal CE & Ordering cost \\
+    & \multicolumn{2}{c}{Base, 22M tokens} & \multicolumn{2}{c}{Wide, 22M tokens (overfits)} & \multicolumn{2}{c}{Wide, 219M tokens} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}
+    Step & Causal CE & Ordering cost & Causal CE & Ordering cost & Causal CE & Ordering cost \\
     \midrule
-    5k  & 2.041 & 0.247 & 1.878 & 0.265 \\
-    10k & 1.881 & 0.245 & 1.730 & 0.234 \\
-    15k & 1.788 & 0.233 & 1.659 & 0.190 \\
-    20k & 1.748 & 0.226 & 1.652 & \textbf{0.146} \\
+    5k  & 2.041 & 0.247 & 1.878 & 0.265 & 1.855 & 0.277 \\
+    10k & 1.881 & 0.245 & 1.730 & 0.234 & 1.685 & 0.257 \\
+    15k & 1.788 & 0.233 & 1.659 & 0.190 & 1.566 & 0.248 \\
+    20k & 1.748 & 0.226 & 1.652 & 0.146 & 1.508 & \textbf{0.242} \\
     \bottomrule
   \end{tabular}
 \end{table}
 
-\paragraph{Capacity with longer training.}
-The 5000-step comparison appears to reflect under-training.
-At 5000 steps the wide model has seen about 1.3 training tokens per parameter.
-Trained for 20000 steps (Table~\ref{tab:widelong}), its ordering cost falls from 0.265 to 0.146, while the base model's falls only from 0.247 to 0.226.
-Per slot at 20k steps, the infilled head is where most of the gain comes from: all eight of its slots fall below causal (0.71--1.54, against 1.61--1.67).
-The rest of the right half (slots 10--16) contributes too, at 1.73--2.67.
-The jump token barely moves (5.20 at 5k steps, 4.98 at 20k): it has to be predicted from text that ends a half-block earlier, and more capacity cannot supply the missing information.
-At least part of the ordering cost is therefore a learnability cost that capacity reduces, once the larger model is trained long enough.
-
-\paragraph{Caveats on the scaling result.}
-This is one seed and two model sizes, and \sch{reverse-8-g8} was not trained at the wide size for 20000 steps.
-More importantly, the wide causal baseline stops improving after 15k steps (1.659 to 1.652) while its training loss keeps falling.
+\paragraph{Capacity with longer training: an overfitting artefact.}
+Trained for 20000 steps on the usual 22M-token training set, the wide model's ordering cost appears to fall from 0.265 to 0.146 (Table~\ref{tab:widelong}).
+This drop is almost entirely an artefact of an overfitting baseline.
+The wide causal model sees that training set about 7.4 times and stops improving after 15k steps (1.659 to 1.652).
 At 20k steps its training loss is about 1.32, against a development CE of 1.705 over all blocks.
-With 22M training tokens, 20000 steps amount to about 7.4 epochs, and this baseline is overfitting.
-The order-only model overfits less (training loss about 1.69 against 1.85 on development data) and is still improving.
-Part of the shrinking gap may therefore reflect a saturating baseline rather than a falling ordering cost.
-A larger training set is needed to separate the two effects.
+The order-only model overfits much less (training loss about 1.69 against 1.85).
+We therefore reran both wide models on 1M stories (219M tokens; less than one epoch in 20000 steps).
+There, training loss and development CE stay close: about 1.51 against 1.56 over all blocks at 20k steps, and the development CE keeps falling.
+With enough data, the wide model's ordering cost is 0.242 at 20k steps, the same as the small model's.
+Over training it falls by only 0.035 while causal CE improves by 0.35, so relative to causal CE the cost rises slightly, from 15\% to 16\%.
+The small model's 20k-step runs also overfit mildly: causal training loss is about 1.67 against 1.80 on development data.
+Its 0.226 is therefore slightly optimistic, but this does not change the conclusion.
+
+\paragraph{Where the wide model pays.}
+Per slot at 20k steps on 219M tokens, causal CE is 1.47--1.53.
+The infilled head falls from 1.48 to 0.67 across its eight slots, all below causal.
+The jump token stays hard: 4.95, against 5.19 at 5k steps.
+The rest of the right half runs from 2.63 down to 1.68.
+Summed over a block, the jump token costs $+3.44$ nats and the rest of the right half $+3.05$, while the infilled head gains $-2.62$.
+The net is $+3.88$ nats per block, or 0.242 per token.
+With exact conditionals these terms would cancel (Remark~\ref{rem:chain}), but the infilled head recovers only about 40\% of what the right half loses.
+
+\paragraph{Conclusion on scale.}
+Across 7.2M--31.5M parameters and up to 20000 steps, with enough data, the ordering cost does not shrink with scale.
+That a perfect model would pay nothing is a statement about exact conditionals.
+Our data do not show models approaching it.
+Whether much larger models remove the ordering cost remains open.
+This result rests on one seed and on \sch{reverse-16-g8} only.
 
 \paragraph{Mixing causal-mask training does not help.}
 One might suspect that the ordering cost reflects a representation deficit that ordinary left-to-right training could fill.
@@ -937,8 +949,8 @@ The two approaches are complementary.
 \label{sec:limitations}
 
 \begin{itemize}
-  \item \textbf{Scale.} All results use TinyStories and models of 7.2M--31.5M parameters. At the wide size only \sch{causal} and \sch{reverse-16-g8} were trained for 20000 steps, and that causal baseline overfits the 22M-token training set. Several ablations use a single seed: segment length, the stagger sweep, meet-in-the-middle, the refinement test, mixing, 20k steps, the wide model, cross-judged samples and all plan results.
-  \item \textbf{The ordering cost remains.} In small models, reverse staggering pays an ordering cost of about 0.23--0.27 nats/token relative to a causal LM and about 0.65--0.8 judge nats in samples. For the small model this cost barely shrinks with $4\times$ training, and mixing in causal training makes it worse. A $4.4\times$ larger model trained for 20000 steps reduces it to 0.146, but this rests on one seed and an overfitting baseline.
+  \item \textbf{Scale.} All results use TinyStories and models of 7.2M--31.5M parameters. At the wide size only \sch{causal} and \sch{reverse-16-g8} were trained for 20000 steps; on the 22M-token training set that causal baseline overfits, so we report the 219M-token rerun. The small model's 20k-step runs overfit mildly. Several ablations use a single seed: segment length, the stagger sweep, meet-in-the-middle, the refinement test, mixing, 20k steps, the wide model, cross-judged samples and all plan results.
+  \item \textbf{The ordering cost remains.} At every scale we tested, reverse staggering pays an ordering cost of about 0.23--0.27 nats/token relative to a causal LM and about 0.65--0.8 judge nats in samples. For the small model this cost barely shrinks with $4\times$ training, and mixing in causal training makes it worse. A $4.4\times$ larger model trained for 20000 steps on $10\times$ more data still pays 0.242 (one seed), so in the range we tested the cost does not shrink with scale.
   \item \textbf{The plan experiment is narrow.} \S\ref{sec:latent} uses one seed, one plan size and a crude discrete plan whose likelihood bound is loose. It does not rule out that continuous block latents, as used in full block-latent systems, remove the ordering cost.
   \item \textbf{A seam inside the block.} Segment reversal leaves a smaller learnability seam at the half-block jump, visible in samples.
   \item \textbf{Missing comparisons.} We have not yet compared against LatLM-style waiting at equal parallelism, nor run a temperature sweep to separate sample entropy from disfluency.
@@ -967,18 +979,19 @@ Meet-in-the-middle pays at the blind start of its reversed blocks.
 At 1.75 tokens per step, segment-reversed staggering pays least: it skips one half-block and fills in the other.
 Its information cost there almost vanishes: 0.012--0.016 nats/token, against 0.350 for the same number of pairs when some are adjacent.
 At higher parallelism, token reversal pays least in likelihood.
-Together they form the best speed--cost front among the causal schedules we tested, and their advantage over forward staggering grows with parallelism, training and capacity.
+Together they form the best speed--cost front among the causal schedules we tested. Their advantage over forward staggering grows with parallelism and training, and at 5000 steps also with capacity.
 Re-decoding one token after the fact does not substitute for this ordering: it moves the break one position to the right.
 What remains is an ordering cost and a smaller seam inside the block.
 In small models the ordering cost is 0.23--0.27 nats/token.
 Longer training, causal-mask mixing and a discrete block-level plan barely change it.
-A $4.4\times$ larger model trained $4\times$ longer cuts it to 0.146 (one seed, with an overfitting baseline), so it behaves at least partly like a learnability cost that shrinks with scale.
-The jump token, which has to guess ahead, does not improve with scale.
-Whether larger scale or continuous block latents remove the rest remains open.
+With enough data, a $4.4\times$ larger model trained $4\times$ longer still pays 0.242 (one seed); an apparent drop to 0.146 came from an overfitting baseline.
+The jump token, which has to guess ahead, stays hard at every scale we tested.
+By the chain rule a perfect model would not pay this cost, but our data do not show it shrinking with scale.
+Whether much larger models or continuous block latents remove it remains open.
 
 % ---------------------------------------------------------------------------
 \section*{Acknowledgements}
-The idea of writing each block's head last, the meet-in-the-middle variant and the scaling hypothesis were proposed by the author.
+The author proposed three things: the idea of writing each block's head last, the meet-in-the-middle variant, and the hypothesis that the ordering cost would shrink with scale. The last was tested here and is not supported in the range we studied.
 The token- and segment-reversed staggered schedules, the distance bound, the experiments and much of the writing were developed with an AI assistant (Claude), and were checked by the author.
 
 % ---------------------------------------------------------------------------
