@@ -1,0 +1,14 @@
+arm,cost
+forward8,0.3531
+forward4,0.4226
+forward2,0.4818
+forward1,0.5221
+forward0,0.5708
+reverse8,0.3265
+reverse4,0.3559
+reverse2,0.3859
+reverse1,0.4166
+reverse0,0.4593
+reverse8g8,0.2706
+reverse4g4,0.4421
+reverse2g2,0.4695

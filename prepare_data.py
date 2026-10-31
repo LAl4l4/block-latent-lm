@@ -119,6 +119,10 @@ def main():
     parser.add_argument("--train-count", type=int, default=100_000)
     parser.add_argument("--vocab-size", type=int, default=8192)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--tokenizer", type=Path,
+        help="复用已有的 tokenizer.json（不重新拟合），使不同规模的数据集 CE 可以直接比较",
+    )
     args = parser.parse_args()
     if args.vocab_size < 260:
         raise ValueError("Byte-level BPE needs at least 256 bytes plus special tokens")
@@ -137,26 +141,31 @@ def main():
         "Selecting stories and separating exact duplicates across splits...", flush=True
     )
     splits, total_train = select_records(args.raw, args.train_count, args.seed)
-    tokenizer = Tokenizer(models.BPE(unk_token="<|unk|>"))
-    tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)
-    tokenizer.decoder = decoders.ByteLevel()
-    trainer = trainers.BpeTrainer(
-        vocab_size=args.vocab_size,
-        min_frequency=2,
-        special_tokens=SPECIAL_TOKENS,
-        initial_alphabet=pre_tokenizers.ByteLevel.alphabet(),
-    )
-    print("Fitting tokenizer on selected training stories only...", flush=True)
-    tokenizer.train_from_iterator(
-        (r["text"] for r in splits["train"]),
-        trainer=trainer,
-        length=len(splits["train"]),
-    )
+    if args.tokenizer:
+        print(f"Reusing tokenizer {args.tokenizer}...", flush=True)
+        tokenizer = Tokenizer.from_file(str(args.tokenizer))
+    else:
+        tokenizer = Tokenizer(models.BPE(unk_token="<|unk|>"))
+        tokenizer.pre_tokenizer = pre_tokenizers.ByteLevel(add_prefix_space=False)
+        tokenizer.decoder = decoders.ByteLevel()
+        trainer = trainers.BpeTrainer(
+            vocab_size=args.vocab_size,
+            min_frequency=2,
+            special_tokens=SPECIAL_TOKENS,
+            initial_alphabet=pre_tokenizers.ByteLevel.alphabet(),
+        )
+        print("Fitting tokenizer on selected training stories only...", flush=True)
+        tokenizer.train_from_iterator(
+            (r["text"] for r in splits["train"]),
+            trainer=trainer,
+            length=len(splits["train"]),
+        )
     tokenizer.save(str(args.output / "tokenizer.json"))
     metadata = {
         "format_version": 1,
         "source": source,
         "seed": args.seed,
+        "tokenizer_source": str(args.tokenizer) if args.tokenizer else None,
         "official_train_rows": total_train,
         "requested_train_count": args.train_count,
         "vocab_size": tokenizer.get_vocab_size(),

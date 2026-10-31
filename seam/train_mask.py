@@ -22,12 +22,13 @@ import torch.nn.functional as F
 from latent_ar.control import GracefulStop
 from seam.data import Windows
 from seam.models import TwoStreamLM
-from seam.schedules import SCHEDULES, visibility
+from seam.schedules import SCHEDULES, refine_queries, refine_slot, visibility
 from train import append_record, precision_context
 
 
 def arm_name(args):
     mix = f"mix{round(args.mix_causal * 100)}" if args.mix_causal else ""
+    mix += "refine" if args.refine else ""
     if args.schedule in ("causal", "delayed", "landing"):
         return f"{args.schedule}{mix}-s{args.seed}"
     if args.schedule == "reverse" and args.segment > 1:
@@ -36,26 +37,33 @@ def arm_name(args):
 
 
 @torch.inference_mode()
-def evaluate(model, data, visible, targets, args, device, autocast):
+def evaluate(model, data, visible, targets, args, device, autocast, refine=None):
     was = model.training
     model.eval()
     starts = data.random_starts(random.Random(1042), args.eval_windows)
     blocks, size = args.blocks, args.block_size
     nll = torch.zeros(blocks, size, dtype=torch.float64)
+    redo = torch.zeros(blocks, dtype=torch.float64)
     count = 0
     for begin in range(0, len(starts), args.eval_batch_size):
         ids = data.batch(starts[begin : begin + args.eval_batch_size]).to(device)
         with autocast():
             logits = model(ids, visible, targets)
-        values = F.cross_entropy(
-            logits.float().flatten(0, 1), ids[:, targets].flatten(), reduction="none"
-        ).view(ids.shape[0], blocks, size)
+            values = F.cross_entropy(
+                logits.float().flatten(0, 1), ids[:, targets].flatten(), reduction="none"
+            ).view(ids.shape[0], blocks, size)
+            if refine is not None:
+                redo += refine_nll(model, ids, refine).sum(0).double().cpu()
         nll += values.sum(0).double().cpu()
         count += ids.shape[0]
     model.train(was)
     per = nll / count
     steady = per[2:]  # 第 0、1 个生成块仍直接读 prompt，不算稳态
-    return {
+    extra = {}
+    if refine is not None:
+        # 重解码的 CE：本块其余词都已知时预测该词（不计入 steady_ce）。
+        extra["steady_refine_ce"] = float((redo / count)[2:].mean())
+    return extra | {
         "ce": float(per.mean()),
         "steady_ce": float(steady.mean()),
         "steady_ce_by_slot": steady.mean(0).tolist(),
@@ -63,6 +71,15 @@ def evaluate(model, data, visible, targets, args, device, autocast):
         "ce_by_block": per.mean(1).tolist(),
         "windows": count,
     }
+
+
+def refine_nll(model, ids, refine):
+    """跳跃词重解码的逐块 NLL [batch, blocks]：单独一次前向，内容流不读任何跳跃词。"""
+    jumps, rows, content = refine
+    logits = model(ids, content, jumps, rows)
+    return F.cross_entropy(
+        logits.float().flatten(0, 1), ids[:, jumps].flatten(), reduction="none"
+    ).view(ids.shape[0], -1)
 
 
 def main():
@@ -88,6 +105,9 @@ def main():
     p.add_argument("--eval-batch-size", type=int, default=128)
     p.add_argument("--mix-causal", type=float, default=0.0,
                    help="每步以此概率改用 causal mask 训练（同一模型），评估仍用目标调度")
+    p.add_argument("--refine", action="store_true",
+                   help="reverse/forward：每块的跳跃词（reverse）或块首（forward）加一个重解码查询，"
+                        "看本块其余全部词，作为辅助损失")
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--device", default="cuda")
     args = p.parse_args()
@@ -95,6 +115,8 @@ def main():
         p.error("forward/reverse/meet/alternate 需要 --stagger")
     if args.segment != 1 and args.schedule != "reverse":
         p.error("只有 reverse 使用 --segment")
+    if args.refine and args.schedule not in ("reverse", "forward"):
+        p.error("--refine 只用于 reverse/forward")
     if args.schedule in ("causal", "delayed", "landing") and args.stagger is not None:
         p.error("causal/delayed/landing 不使用 --stagger")
     run_dir = args.out / arm_name(args)
@@ -117,6 +139,13 @@ def main():
     causal = visibility("causal", args.prompt, args.blocks, args.block_size).to(device)
     mixer = random.Random(args.seed + 1)
     targets = torch.arange(args.prompt, length, device=device)
+    refine = None
+    if args.refine:
+        jumps, rows, content = refine_queries(
+            args.prompt, args.blocks, args.block_size,
+            refine_slot(args.schedule, args.block_size, args.segment),
+        )
+        refine = (jumps.to(device), rows.to(device), content.to(device))
     model = TwoStreamLM(
         metadata["vocab_size"], length, args.dim, args.layers, args.heads, args.ff_dim
     ).to(device)
@@ -144,6 +173,9 @@ def main():
                 loss = F.cross_entropy(
                     logits.float().flatten(0, 1), ids[:, targets].flatten()
                 )
+                if refine is not None:
+                    # 每个重解码查询算一个额外的词，按调度本身的词数平均。
+                    loss = loss + refine_nll(model, ids, refine).sum(-1).mean() / len(targets)
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
             norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
@@ -166,7 +198,7 @@ def main():
                 print(json.dumps(record), flush=True)
             if step % args.eval_every == 0 or step == args.steps or stop.requested:
                 record = {"kind": "dev", "step": step} | evaluate(
-                    model, dev, visible, targets, args, device, autocast
+                    model, dev, visible, targets, args, device, autocast, refine
                 )
                 append_record(run_dir / "metrics.jsonl", record)
                 print(json.dumps(record), flush=True)
