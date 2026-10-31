@@ -154,10 +154,10 @@ class Block(nn.Module):
 
 
 class ChunkEncoder(nn.Module):
-    """把每四个 token 按顺序拼成一块，再映射为一个 512 维向量。
+    """把每 cfg.chunk_size 个 token 按顺序拼成一块，映射为 cfg.dim 维向量。
 
     MLP 只处理块内信息；跨块上下文由后续的主干 Transformer 建立。
-    四个有效位置标志用于区分完整块与不足四个 token 的尾块。
+    每个位置的有效标志用于区分完整块与较短的尾块。
     """
 
     def __init__(self, cfg: ModelConfig):
@@ -259,12 +259,12 @@ class LocalDecoderBlock(nn.Module):
 
 
 class TextDecoder(nn.Module):
-    """只将当前 z_t 还原成四个 token 分布，不接收任何文本历史。
+    """只将当前 z_t 还原成 cfg.chunk_size 个 token 分布，不接收文本历史。
 
-    [batch, latent数, 512]
-        → 展开为 [batch, latent数, 4, 256]
+    [batch, latent数, cfg.dim]
+        → 展开为 [batch, latent数, cfg.chunk_size, cfg.decoder_dim]
         → 每块独立双向 attention
-        → [batch, latent数, 4, vocab_size]
+        → [batch, latent数, cfg.chunk_size, vocab_size]
     """
 
     def __init__(self, cfg: ModelConfig):

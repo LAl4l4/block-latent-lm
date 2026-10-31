@@ -1,0 +1,45 @@
+{
+  "gpu": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "gpu_driver": "596.21",
+  "torch": "2.11.0+cu128",
+  "cuda_runtime": "12.8",
+  "cudnn": 91900,
+  "python": "3.13.9",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "experiments": {
+    "generation-4k": {
+      "report_sha256": "8ecc650286d815e070c6135f32aa76b44138fc4c9716e5888bfea69b7c6a6fce",
+      "teacher_sha256": "1a09997a091049b4a7708054d854c84c97d4557a8c736be5e0deacd152aa89bc",
+      "student_sha256": "5ffbb048462fd47c75797055cef75bbeb6494dc79ef3d48515abb9311329c54d",
+      "test_sha256": "c6a7385d25dd3f9ddc19a6ed887686a5e7a9ccc9b1a55598b88b886a158829db",
+      "prompts": 128,
+      "max_new_tokens": 64,
+      "seed": 41,
+      "configured_precision": "bf16",
+      "actual_precision": "bf16",
+      "benchmark_repeats": 20,
+      "benchmark_warmup": 3,
+      "benchmark_batch_sizes": [
+        1,
+        4
+      ]
+    },
+    "generation-16k": {
+      "report_sha256": "184ccf1b9eff66ffe97827ffb7e291723601912b801a0e46551ca85b80b04049",
+      "teacher_sha256": "1a09997a091049b4a7708054d854c84c97d4557a8c736be5e0deacd152aa89bc",
+      "student_sha256": "3041c51903679d20ae48182c156bb052d32fa002aa80497a9cb947030ba22e52",
+      "test_sha256": "c6a7385d25dd3f9ddc19a6ed887686a5e7a9ccc9b1a55598b88b886a158829db",
+      "prompts": 128,
+      "max_new_tokens": 64,
+      "seed": 41,
+      "configured_precision": "bf16",
+      "actual_precision": "bf16",
+      "benchmark_repeats": 20,
+      "benchmark_warmup": 3,
+      "benchmark_batch_sizes": [
+        1,
+        4
+      ]
+    }
+  }
+}

@@ -1,0 +1,766 @@
+{
+  "step": 10000,
+  "checkpoint": "runs\\calm-16\\last.pt",
+  "device": "cuda",
+  "precision": "bf16",
+  "vae_source": {
+    "checkpoint": "D:\\Code\\latent-ar-async-decoder\\runs\\vae-16\\last.pt",
+    "sha256": "44670c4ae29f9f9b246cae28ab8f9fe2eb84a0b03d22105e627d62a5cf1bdd92",
+    "quality": {
+      "ce": 0.06152754920571698,
+      "kl_per_block": 655.6661639213562,
+      "token_accuracy": 0.9926070730406966,
+      "full_block_accuracy": 0.8924221921515562,
+      "tokens": 28135,
+      "blocks": 2048
+    }
+  },
+  "tokens_seen": 113634109,
+  "validation_512_windows": {
+    "energy": 26.210855865000784,
+    "attraction": 26.29261400465228,
+    "spread": 26.374371838554712,
+    "tokens": 23360,
+    "blocks": 1597,
+    "conditional_energy_advantage": 1.575461467057373,
+    "brier_prefix_reward": [
+      0.053224798291921616,
+      0.006329114083200693,
+      0.00128369708545506,
+      0.0
+    ]
+  },
+  "validation_curve": [
+    {
+      "kind": "dev",
+      "step": 250,
+      "energy": 27.391217158390926,
+      "attraction": 26.770913344163162,
+      "spread": 26.1506107036884,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 0.0315023568960342,
+      "brier_prefix_reward": [
+        0.028846153989434242,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 500,
+      "energy": 27.1421139056866,
+      "attraction": 26.97173837515024,
+      "spread": 26.801361670860878,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 0.2699320866511421,
+      "brier_prefix_reward": [
+        0.004807692486792803,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 750,
+      "energy": 27.053555415226864,
+      "attraction": 26.80285820594201,
+      "spread": 26.552163344163162,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 0.34978485107421875,
+      "brier_prefix_reward": [
+        0.014423076994717121,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 1000,
+      "energy": 26.933626028207634,
+      "attraction": 26.870275057279148,
+      "spread": 26.806924673227165,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 0.5148597130408632,
+      "brier_prefix_reward": [
+        0.014423076994717121,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 1250,
+      "energy": 26.865320645845852,
+      "attraction": 26.71637725830078,
+      "spread": 26.56743680513822,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 0.7361720158503609,
+      "brier_prefix_reward": [
+        -0.004807692486792803,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 1500,
+      "energy": 26.843609149639423,
+      "attraction": 26.78608938363882,
+      "spread": 26.728568443885216,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 0.755946232722355,
+      "brier_prefix_reward": [
+        0.014423076994717121,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 1750,
+      "energy": 26.827086228590744,
+      "attraction": 26.748016944298378,
+      "spread": 26.66894766000601,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 0.830505957970253,
+      "brier_prefix_reward": [
+        0.01923076994717121,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 2000,
+      "energy": 26.75604248046875,
+      "attraction": 26.582341707669773,
+      "spread": 26.408639174241287,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 0.9404631394606362,
+      "brier_prefix_reward": [
+        0.028846153989434242,
+        -0.009708737954497337,
+        -0.004950494971126318,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 2250,
+      "energy": 26.722904498760517,
+      "attraction": 26.480816180889423,
+      "spread": 26.238728449894833,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.0207660381610566,
+      "brier_prefix_reward": [
+        0.05288461595773697,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 2500,
+      "energy": 26.63089810884916,
+      "attraction": 26.49744826096755,
+      "spread": 26.36399665245643,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.09363262469952,
+      "brier_prefix_reward": [
+        0.05288461595773697,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 2750,
+      "energy": 26.569242624136116,
+      "attraction": 26.424388005183292,
+      "spread": 26.27953397310697,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.13868126502404,
+      "brier_prefix_reward": [
+        0.04326923191547394,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 3000,
+      "energy": 26.50053288386418,
+      "attraction": 26.44896991436298,
+      "spread": 26.397405184232273,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.185008122370796,
+      "brier_prefix_reward": [
+        0.024038461968302727,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 3250,
+      "energy": 26.481831477238583,
+      "attraction": 26.350633474496696,
+      "spread": 26.219435471754807,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.2308437640850336,
+      "brier_prefix_reward": [
+        0.03846153989434242,
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 3500,
+      "energy": 26.43070103571965,
+      "attraction": 26.354567307692307,
+      "spread": 26.278431819035458,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.3020459688626822,
+      "brier_prefix_reward": [
+        0.04326923191547394,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 3750,
+      "energy": 26.418788616473858,
+      "attraction": 26.259469252366287,
+      "spread": 26.10014871450571,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.3599460308368378,
+      "brier_prefix_reward": [
+        0.05288461595773697,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 4000,
+      "energy": 26.374350327711838,
+      "attraction": 26.291005061222958,
+      "spread": 26.207660381610577,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.341279249924881,
+      "brier_prefix_reward": [
+        0.028846153989434242,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 4250,
+      "energy": 26.310029836801384,
+      "attraction": 26.233543982872597,
+      "spread": 26.157056368314304,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.3747288630558891,
+      "brier_prefix_reward": [
+        0.05288461595773697,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 4500,
+      "energy": 26.30731494610126,
+      "attraction": 26.27032235952524,
+      "spread": 26.233329186072716,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.3684897789588355,
+      "brier_prefix_reward": [
+        0.03365384787321091,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 4750,
+      "energy": 26.380267216609074,
+      "attraction": 26.22432180551382,
+      "spread": 26.06837639441857,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.3580662653996391,
+      "brier_prefix_reward": [
+        0.04326923191547394,
+        0.014563106931746006,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 5000,
+      "energy": 26.30393805870643,
+      "attraction": 26.208563584547775,
+      "spread": 26.113190284142128,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.4829565194936905,
+      "brier_prefix_reward": [
+        0.03846153989434242,
+        0.014563106931746006,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 5250,
+      "energy": 26.30700977032001,
+      "attraction": 26.25349543644832,
+      "spread": 26.199981102576622,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.3838313176081734,
+      "brier_prefix_reward": [
+        0.04326923191547394,
+        0.014563106931746006,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 5500,
+      "energy": 26.28655301607572,
+      "attraction": 26.25950915996845,
+      "spread": 26.23246530386118,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.547761183518631,
+      "brier_prefix_reward": [
+        0.04326923191547394,
+        0.019417475908994675,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 5750,
+      "energy": 26.278589101938103,
+      "attraction": 26.132644653320312,
+      "spread": 25.98670137845553,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.4562647892878573,
+      "brier_prefix_reward": [
+        0.048076923936605453,
+        0.014563106931746006,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 6000,
+      "energy": 26.280363229604866,
+      "attraction": 26.230891887958233,
+      "spread": 26.181419372558594,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.4358702439528273,
+      "brier_prefix_reward": [
+        0.057692307978868484,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 6250,
+      "energy": 26.253023587740383,
+      "attraction": 26.16522686298077,
+      "spread": 26.077430725097656,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.5033469566932105,
+      "brier_prefix_reward": [
+        0.04326923191547394,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 6500,
+      "energy": 26.227300790640022,
+      "attraction": 26.21533379187951,
+      "spread": 26.20336737999549,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.454224806565506,
+      "brier_prefix_reward": [
+        0.03846153989434242,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 6750,
+      "energy": 26.25402362530048,
+      "attraction": 26.19819817176232,
+      "spread": 26.142373891977165,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.4711837768554688,
+      "brier_prefix_reward": [
+        0.024038461968302727,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 7000,
+      "energy": 26.242552537184494,
+      "attraction": 26.20621549166166,
+      "spread": 26.16988020676833,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.475226182204029,
+      "brier_prefix_reward": [
+        0.03365384787321091,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 7250,
+      "energy": 26.21386542687049,
+      "attraction": 26.283939068134014,
+      "spread": 26.354012709397537,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.5211657010591964,
+      "brier_prefix_reward": [
+        0.04326923191547394,
+        0.014563106931746006,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 7500,
+      "energy": 26.192247244027946,
+      "attraction": 26.229608975923977,
+      "spread": 26.266973055326023,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.6057668832632181,
+      "brier_prefix_reward": [
+        0.048076923936605453,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 7750,
+      "energy": 26.223352872408352,
+      "attraction": 26.22133108285757,
+      "spread": 26.2193116408128,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.5153444730318526,
+      "brier_prefix_reward": [
+        0.03846153989434242,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 8000,
+      "energy": 26.2280766413762,
+      "attraction": 26.25403771033654,
+      "spread": 26.27999995304988,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.6574830275315513,
+      "brier_prefix_reward": [
+        0.05288461595773697,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 8250,
+      "energy": 26.20912874661959,
+      "attraction": 26.26173107440655,
+      "spread": 26.31433281531701,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.5937893207256622,
+      "brier_prefix_reward": [
+        0.048076923936605453,
+        0.004854368977248669,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 8500,
+      "energy": 26.193885216346153,
+      "attraction": 26.20952899639423,
+      "spread": 26.22517336331881,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.599152785081131,
+      "brier_prefix_reward": [
+        0.057692307978868484,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 8750,
+      "energy": 26.215846721942608,
+      "attraction": 26.19996290940505,
+      "spread": 26.184078509990986,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.588227492112381,
+      "brier_prefix_reward": [
+        0.05288461595773697,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 9000,
+      "energy": 26.210712139423077,
+      "attraction": 26.13991018442007,
+      "spread": 26.06910881629357,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.6644574678861197,
+      "brier_prefix_reward": [
+        0.04326923191547394,
+        0.014563106931746006,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 9250,
+      "energy": 26.197907081017128,
+      "attraction": 26.174756563626804,
+      "spread": 26.15160663311298,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.6435699462890625,
+      "brier_prefix_reward": [
+        0.04326923191547394,
+        0.009708737954497337,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 9500,
+      "energy": 26.194495567908653,
+      "attraction": 26.203809884878304,
+      "spread": 26.213123614971455,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.6308617225060118,
+      "brier_prefix_reward": [
+        0.057692307978868484,
+        0.019417475908994675,
+        0.004950494971126318,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 9750,
+      "energy": 26.13697052001953,
+      "attraction": 26.138758145845852,
+      "spread": 26.14054753230168,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.6872488168569717,
+      "brier_prefix_reward": [
+        0.0625,
+        0.019417475908994675,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "kind": "dev",
+      "step": 10000,
+      "energy": 26.165733337402344,
+      "attraction": 26.25272956261268,
+      "spread": 26.33972461407001,
+      "tokens": 3043,
+      "blocks": 208,
+      "conditional_energy_advantage": 1.5965998722956734,
+      "brier_prefix_reward": [
+        0.03846153989434242,
+        0.019417475908994675,
+        0.0,
+        0.0
+      ]
+    }
+  ],
+  "samples": [
+    {
+      "prompt": "Once upon a time, Lily found a little box.",
+      "seed": 42,
+      "continuation": " Tommy was not restaurant. Dave \"B my Gra Gra \"Oh these please children said Lily\nFrom\"Tim grabbed the the party and and ran back and trust read things before together.",
+      "new_tokens": 38,
+      "eos": true
+    },
+    {
+      "prompt": "Once upon a time, Lily found a little box.",
+      "seed": 43,
+      "continuation": "'ll never made some solve into another.\n\nMommy then accidentally never seen and glowing cows across and played the warm,\n\nJust when find another snack. he need his shoot.â\nLily€I'm brave?\" and finally safe from home early couldnâ€  Lee rememberedœYouâ,, stre stre?\". I doesn",
+      "new_tokens": 64,
+      "eos": false
+    },
+    {
+      "prompt": "Once upon a time, Lily found a little box.",
+      "seed": 44,
+      "continuation": " They wore also happy.\n day,\n ranch restaurant and saw with wet. that day She was a bright toys butterfly One day and was happy together. also chicken organize two a book at not just some part of Big.\n\nI figure taste of cake towers along with some bottle until pour along until each reach display",
+      "new_tokens": 64,
+      "eos": false
+    },
+    {
+      "prompt": "Tom lost his red ball. He asked his friend Lily to help him find it.",
+      "seed": 42,
+      "continuation": "Dad\nWeYay. Dave \"L ZZ Gra \"Oh these please soon said Lily\nFrom\"I is it car party when and play in and unite read things before together.",
+      "new_tokens": 38,
+      "eos": true
+    },
+    {
+      "prompt": "Tom lost his red ball. He asked his friend Lily to help him find it.",
+      "seed": 43,
+      "continuation": " could never see to speaking any another.\"\n\nMommy then't never seen and glowing cows across and played the warm,\n\nJames when find another picnic. he need his shoot.â\nLily€ he's brave?\" and finally safe from home early couldnâ€  Lee rememberedœDon,, stre stre decisiont doesn",
+      "new_tokens": 64,
+      "eos": false
+    },
+    {
+      "prompt": "Tom lost his red ball. He asked his friend Lily to help him find it.",
+      "seed": 44,
+      "continuation": " They kissed alsoYay.\n's,\n ranch restaurant and down their sand. One day\n had three bright toys toy One day and was happy together. also chicken organize two a book at not just some part of Big.\n\nI figure taste of bag towers along with some shapes until pour along with each pillows display",
+      "new_tokens": 64,
+      "eos": false
+    },
+    {
+      "prompt": "The little dog was hungry. Ben went to the kitchen and",
+      "seed": 42,
+      "continuation": " answer in our asks. Dave \"L my. Gra \"Oh these these children said Lily\nFrom\"Tim is Lily car party and and slide and and unite read friends before together.",
+      "new_tokens": 38,
+      "eos": true
+    },
+    {
+      "prompt": "The little dog was hungry. Ben went to the kitchen and",
+      "seed": 43,
+      "continuation": " wrapped hid see taste speaking into thick noise\n\nMommyJust accidentally never seen and glowing cows across and played many warm.\n\nJust when had another picnic. he need his shoot.â\nLily€I'm brave?\" I finally safe owner home early couldnâ nods.Why rememberedœYouâ,, stre stre?\". I Leave",
+      "new_tokens": 64,
+      "eos": false
+    },
+    {
+      "prompt": "The little dog was hungry. Ben went to the kitchen and",
+      "seed": 44,
+      "continuation": " be wore also sunny.\n\n\n\n ranch runs and slide the dark. One day\n had a bright toys toy Max day and was happy together. also chicken organize two a book at not just some part of Big.\n\nI figure taste of bag towers along with some bottle until pour along with each pillows display",
+      "new_tokens": 64,
+      "eos": false
+    },
+    {
+      "prompt": "It was raining outside. Mia looked out of the window and felt sad.",
+      "seed": 42,
+      "continuation": " Benny\nWe OK. ?\". âL myLittle Gra \"Oh these please soon said Lily\nFrom\"Tim is it, until when't play to so love read children before together.",
+      "new_tokens": 38,
+      "eos": true
+    },
+    {
+      "prompt": "It was raining outside. Mia looked out of the window and felt sad.",
+      "seed": 43,
+      "continuation": " could never see to solve any another.\"\n\nMommy then't never seen and glowing cows across and played the warm,\n\nJust when find another snack. he need his shoot.â\n\n€I'm brave?\" and finally safe from home early couldnâ€  Lee rememberedœYouâ,, stre stre decisiont doesn",
+      "new_tokens": 64,
+      "eos": false
+    },
+    {
+      "prompt": "It was raining outside. Mia looked out of the window and felt sad.",
+      "seed": 44,
+      "continuation": " They kissed alsoYay.\n little,\n ranch restaurant and saw the wet by that mummy\n had a three toys ball Max day and was happy together \" also chickent learned a story would not having some part of? \n\n\n lollipop pictures sorts playful lesson along taking eating withll mixed along with with fun display",
+      "new_tokens": 64,
+      "eos": false
+    }
+  ],
+  "notes": [
+    "Single latent sample then deterministic argmax decoder, not 200-candidate temperature sampling.",
+    "Brier rewards are Monte Carlo estimates; only two independent predictions per context.",
+    "12 short samples are a qualitative sanity check, not a general benchmark."
+  ]
+}

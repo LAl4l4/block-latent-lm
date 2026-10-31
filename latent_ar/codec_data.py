@@ -1,4 +1,4 @@
-"""codec 重建数据：真实故事中的四 token 小块，含自然 EOS 和短尾块。"""
+"""codec 重建数据：真实故事中配置长度的块，含自然 EOS 和短尾块。"""
 
 import torch
 
@@ -21,7 +21,7 @@ class CodecDataset:
             begin, end = self.corpus.offsets[index : index + 2]
             story = self.corpus.tokens[begin:end]
             start = rng.randrange(len(story))
-            # 额外包含短块，防止只会还原完整四 token、不认识 prompt 尾块。
+            # 额外包含短块，防止只会还原完整块、不认识 prompt 尾块。
             requested = (
                 rng.randint(1, self.chunk_size)
                 if rng.random() < 0.25

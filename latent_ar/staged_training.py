@@ -371,7 +371,7 @@ def initialize_prior(args, config, metadata, device, autocast):
     )
     print(
         f"[重建检查] token {quality['token_accuracy']:.2%} | "
-        f"完整四 token 块 {quality['full_block_accuracy']:.2%} | {quality['blocks']} 块",
+        f"完整 {cfg.chunk_size} token 块 {quality['full_block_accuracy']:.2%} | {quality['blocks']} 块",
         flush=True,
     )
     if (
@@ -380,7 +380,7 @@ def initialize_prior(args, config, metadata, device, autocast):
     ):
         raise CodecQualityError(
             f"Codec 尚未达到重建要求（token≥{gate['token_accuracy']:.2%}，"
-            f"完整四 token 块≥{gate['block_accuracy']:.2%}）。请先继续 train_codec.py；"
+            f"完整 {cfg.chunk_size} token 块≥{gate['block_accuracy']:.2%}）。请先继续 train_codec.py；"
             "达到重建要求后再训练主干。"
         )
 
@@ -485,11 +485,11 @@ def save_stage(
     return publish_checkpoint(temporary, path, step)
 
 
-def describe(stage, values):
+def describe(stage, values, chunk_size):
     if stage == "codec":
         return (
             f"CE {values['ce']:.4f} | token {values['token_accuracy']:.2%} | "
-            f"四 token 块 {values['full_block_accuracy']:.2%}"
+            f"完整 {chunk_size} token 块 {values['full_block_accuracy']:.2%}"
         )
     if "text_nll" in values:
         text = f"文字联合 NLL/token {values['text_nll']:.4f}"
@@ -527,7 +527,12 @@ def save_sample(stage, model, batch, tokenizer, run_dir, step, device, autocast,
                 batch["prompt_lengths"][:1],
                 max_new_tokens=batch["labels"].shape[1],
                 generator=torch.Generator(device=device).manual_seed(seed),
-                temperature=1.0 if model.architecture == MIXTURE_ARCHITECTURE else 0.0,
+                temperature=(
+                    1.0
+                    if model.architecture == MIXTURE_ARCHITECTURE
+                    and model.cfg.feedback_mode == "raw"
+                    else 0.0
+                ),
             )
         length = int(batch["prompt_lengths"][0])
         record = {
@@ -537,6 +542,8 @@ def save_sample(stage, model, batch, tokenizer, run_dir, step, device, autocast,
             "latent_prediction": model.architecture,
             "seed": seed,
         }
+        if model.architecture == MIXTURE_ARCHITECTURE:
+            record["feedback_mode"] = model.cfg.feedback_mode
     append_record(run_dir / "samples.jsonl", record)
 
 
@@ -597,6 +604,17 @@ def run_stage(stage):
             )
         )
         print(f"[目标] {objective}", flush=True)
+        if model.architecture == MIXTURE_ARCHITECTURE:
+            print(
+                f"[混合头] {model.cfg.mixture_components} 个共享 latent 分量 | "
+                f"每个微批最多均匀抽取 {model.cfg.mixture_train_blocks} 个目标块计损失（加权估计全量，验证全量）",
+                flush=True,
+            )
+            print(
+                f"[生成] 每块 {model.cfg.chunk_size} token | 反馈 {model.cfg.feedback_mode} | "
+                "训练读取真实历史；验证 NLL 是词表概率分布指标，需另外检查自由生成",
+                flush=True,
+            )
         if model.architecture == DENOISING_ARCHITECTURE:
             print(
                 "[去噪] 训练读取带噪目标，验证 loss 是去噪误差；自由生成从纯噪声开始，只回灌 latent。",
@@ -613,7 +631,7 @@ def run_stage(stage):
             device,
             autocast,
         )
-        print(f"[{args.split}] {describe(stage, metrics)}", flush=True)
+        print(f"[{args.split}] {describe(stage, metrics, model.cfg.chunk_size)}", flush=True)
         return
 
     dataset = stage_dataset(
@@ -770,7 +788,7 @@ def run_stage(stage):
                 or stop.requested
             ):
                 print(
-                    f"[{stage}] {step}/{training['max_steps']} | {describe(stage, metrics)} | {elapsed:.2f} s/step",
+                    f"[{stage}] {step}/{training['max_steps']} | {describe(stage, metrics, model.cfg.chunk_size)} | {elapsed:.2f} s/step",
                     flush=True,
                 )
 
@@ -792,7 +810,7 @@ def run_stage(stage):
                     run_dir / "metrics.jsonl",
                     {"kind": "dev", "stage": stage, **validation},
                 )
-                print(f"[验证 {stage}] {describe(stage, metrics)}", flush=True)
+                print(f"[验证 {stage}] {describe(stage, metrics, model.cfg.chunk_size)}", flush=True)
                 sample = to_device(dev.batch(random.Random(seed + 10000), 1), device)
                 save_sample(
                     stage,

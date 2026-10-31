@@ -1,0 +1,162 @@
+{
+  "split": "dev",
+  "seed": 2043,
+  "blocks": 256,
+  "teacher_hash": "1a09997a091049b4a7708054d854c84c97d4557a8c736be5e0deacd152aa89bc",
+  "data_hash": "36b9e7dacb1d1c4b692dfb848d7d9f0a880bb3e59e25fdc4ce4afb103b202f8c",
+  "precision": "bf16",
+  "effective_precision": "bf16",
+  "note": "Fixed teacher history; CE is against teacher-generated next tokens, not corpus truth. Teacher-forced scores do not establish free-generation quality. Select thresholds on dev only.",
+  "students": {
+    "runs\\feedback-study\\scan\\n4096-h512-s2032\\best.pt": {
+      "count": 256,
+      "thresholds": {
+        "0.1": {
+          "count": 0,
+          "coverage": 0.0,
+          "delta_ce": null,
+          "kl": null,
+          "first_argmax_change_rate": null
+        },
+        "0.2": {
+          "count": 0,
+          "coverage": 0.0,
+          "delta_ce": null,
+          "kl": null,
+          "first_argmax_change_rate": null
+        },
+        "0.3": {
+          "count": 0,
+          "coverage": 0.0,
+          "delta_ce": null,
+          "kl": null,
+          "first_argmax_change_rate": null
+        },
+        "0.4": {
+          "count": 1,
+          "coverage": 0.00390625,
+          "delta_ce": 0.6470323204994202,
+          "kl": 0.24948318302631378,
+          "first_argmax_change_rate": 1
+        },
+        "0.5": {
+          "count": 11,
+          "coverage": 0.04296875,
+          "delta_ce": 0.7366513840176843,
+          "kl": 0.4965325336564671,
+          "first_argmax_change_rate": 0.9090909090909091
+        },
+        "0.6": {
+          "count": 74,
+          "coverage": 0.2890625,
+          "delta_ce": 0.8494962169914633,
+          "kl": 0.709943920927676,
+          "first_argmax_change_rate": 0.9054054054054054
+        },
+        "0.7": {
+          "count": 166,
+          "coverage": 0.6484375,
+          "delta_ce": 0.9293619438736553,
+          "kl": 0.782316294756819,
+          "first_argmax_change_rate": 0.9457831325301205
+        },
+        "0.8": {
+          "count": 228,
+          "coverage": 0.890625,
+          "delta_ce": 0.9735031332820654,
+          "kl": 0.8132985961509117,
+          "first_argmax_change_rate": 0.9605263157894737
+        },
+        "1.0": {
+          "count": 255,
+          "coverage": 0.99609375,
+          "delta_ce": 1.0034008370602832,
+          "kl": 0.8381885434336522,
+          "first_argmax_change_rate": 0.9647058823529412
+        },
+        "1.2": {
+          "count": 256,
+          "coverage": 1.0,
+          "delta_ce": 1.0015683431120124,
+          "kl": 0.8372759427147685,
+          "first_argmax_change_rate": 0.96484375
+        }
+      }
+    },
+    "runs\\feedback-study\\scan\\n16384-h512-s2032\\best.pt": {
+      "count": 256,
+      "thresholds": {
+        "0.1": {
+          "count": 0,
+          "coverage": 0.0,
+          "delta_ce": null,
+          "kl": null,
+          "first_argmax_change_rate": null
+        },
+        "0.2": {
+          "count": 0,
+          "coverage": 0.0,
+          "delta_ce": null,
+          "kl": null,
+          "first_argmax_change_rate": null
+        },
+        "0.3": {
+          "count": 0,
+          "coverage": 0.0,
+          "delta_ce": null,
+          "kl": null,
+          "first_argmax_change_rate": null
+        },
+        "0.4": {
+          "count": 2,
+          "coverage": 0.0078125,
+          "delta_ce": 0.24159711226820946,
+          "kl": 0.15534308180212975,
+          "first_argmax_change_rate": 0.5
+        },
+        "0.5": {
+          "count": 24,
+          "coverage": 0.09375,
+          "delta_ce": 0.6235122269329926,
+          "kl": 0.45455934200435877,
+          "first_argmax_change_rate": 0.9583333333333334
+        },
+        "0.6": {
+          "count": 101,
+          "coverage": 0.39453125,
+          "delta_ce": 0.7348978004907027,
+          "kl": 0.6002242055786128,
+          "first_argmax_change_rate": 0.9603960396039604
+        },
+        "0.7": {
+          "count": 179,
+          "coverage": 0.69921875,
+          "delta_ce": 0.8640375578952901,
+          "kl": 0.7152531886025847,
+          "first_argmax_change_rate": 0.9664804469273743
+        },
+        "0.8": {
+          "count": 226,
+          "coverage": 0.8828125,
+          "delta_ce": 0.8493444094417897,
+          "kl": 0.7057878519944122,
+          "first_argmax_change_rate": 0.9601769911504425
+        },
+        "1.0": {
+          "count": 255,
+          "coverage": 0.99609375,
+          "delta_ce": 0.9383580984145987,
+          "kl": 0.7810386790802666,
+          "first_argmax_change_rate": 0.9607843137254902
+        },
+        "1.2": {
+          "count": 256,
+          "coverage": 1.0,
+          "delta_ce": 0.9374796727497596,
+          "kl": 0.7811705928615993,
+          "first_argmax_change_rate": 0.9609375
+        }
+      }
+    }
+  }
+}
