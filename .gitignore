@@ -9,3 +9,9 @@ __pycache__/
 .coverage
 htmlcov/
 
+
+# Large binaries stay local (removed from history 2026-10-31)
+*.pt
+*.bin
+*.npy
+*.parquet
