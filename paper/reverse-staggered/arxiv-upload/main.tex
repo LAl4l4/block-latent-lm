@@ -68,7 +68,7 @@ With $10\times$ more data, a $4.4\times$ larger model trained $4\times$ longer s
 \section{Introduction}
 \label{sec:intro}
 
-Any generator that emits more than one token per serial step must give up some dependencies: two tokens produced in the same step, or in overlapping steps of different units, cannot condition on each other.
+Any generator that emits more than one token per serial step must give up some dependencies: tokens produced in the same step, or in overlapping steps of different units, cannot condition on each other.
 Most work on parallel decoding asks \emph{how many} dependencies can be dropped before quality suffers.
 This paper asks \emph{which} ones should be dropped.
 
@@ -77,137 +77,89 @@ Parallelized autoregressive visual generation decodes distant, weakly dependent 
 ZipAR exploits the same spatial locality~\citep{he2025zipar}.
 ReFusion measures that inter-token dependency in masked diffusion language models decays with relative distance, and serialises adjacent tokens within a slot~\citep{li2025refusion}.
 An information-theoretic analysis ties parallel-decoding error to the total correlation among tokens decoded in the same step~\citep{zhang2026generation}.
-We build on this in three ways.
-\begin{itemize}
-  \item[(i)] We turn it into a schedule-design rule for block pipelines, with a provable lower bound on the distance of every dropped dependency.
-  \item[(ii)] We quantify it in a controlled setting where the number of dropped pairs is held fixed at 216 per window and only their distance changes: 0.016 against 0.350 nats/token.
-  \item[(iii)] We separate the information cost of dropped pairs from the ordering cost of the non-left-to-right order that the rule requires.
-\end{itemize}
 
 The question is sharpest for staggered (wavefront) schedules, in which unit $t$ starts a fixed number of steps after unit $t-1$ and the two then advance together.
-Such schedules appear in image generation, where the next row starts once the current row is a window ahead~\citep{he2025zipar}; in video, along spatio-temporal diagonals~\citep{ye2025diagonal}; and in text, where lines~\citep{li2026lclm,zhang2026latlm} or fixed-length blocks~\citep{he2026psf} are generated concurrently.
-All of them keep the natural left-to-right order \emph{inside} a unit.
-As a consequence, the first token of unit $t$ is produced while the end of unit $t-1$ does not yet exist.
-The pair that is dropped is the adjacent one, which in natural language is usually the strongest dependency of all.
-Several papers identify this seam as the main source of quality loss.
-ZipAR notes that the first token of a row needs the last token of the previous row, which has not yet been generated~\citep{he2025zipar}.
-LCLM finds that line-boundary predictions dominate its loss~\citep{li2026lclm}.
-LatLM locates its cost at the first token of each line~\citep{zhang2026latlm}.
-Predictive-State Flows adds non-causal landing targets to repair block boundaries~\citep{he2026psf}.
+Such schedules appear in images~\citep{he2025zipar}, in video~\citep{ye2025diagonal} and in text, where lines~\citep{li2026lclm,zhang2026latlm} or fixed-length blocks~\citep{he2026psf} are generated concurrently.
+All of them keep left-to-right order \emph{inside} a unit, so the first token of unit $t$ is produced before the end of unit $t-1$ exists.
+The dropped pair is the adjacent one, usually the strongest dependency there is.
+Several papers identify this seam as the main source of quality loss~\citep{he2025zipar,li2026lclm,zhang2026latlm,he2026psf}.
 In our own preliminary experiments with a block-latent language model, one-block-delayed feedback cost 2.8~nats on the first token of the delayed block (single seed).
-The existing remedies either wait, which reduces parallelism, defer commitment, or read ahead non-causally.
+Existing remedies wait, which reduces parallelism; defer commitment; or read ahead non-causally.
 
-Applied to block pipelines, this suggests a different remedy: \textbf{write the seam last}.
-If the head of each block is written after the tail of the previous block, the seam token can attend to that tail, and the seam failure disappears whatever the exact schedule.
-Schedules that follow the principle still have to drop some dependencies, and they differ in what they pay instead.
-We study three instances (Figure~\ref{fig:schedule}).
-\begin{itemize}
-  \item[(a)] \textbf{Token-reversed staggering.} Each block is written from its last token to its first, and block starts are staggered by $s$ steps. Only distant pairs are dropped, at distance $L+s$ or more. The price is a high ordering cost: the first-written token has to be guessed a full block ahead of the visible context. At parallelism above 1.75 tokens per step, it is nonetheless the best schedule we tested in likelihood.
-  \item[(b)] \textbf{Segment-reversed staggering}, the best instance we found at stagger $s=L/2$. Each block is split into segments that are written in reverse order, each left to right. With two half-block segments it works as \emph{skip and fill}. In each phase the decoder writes one half-block ahead, skipping the half-block in between, while filling in the gap it skipped in the previous phase. Both neighbours of that gap are already written, so the gap is an infilling span, as in fill-in-the-middle training~\citep{bavarian2022fim}. The only blind spot is the jump over one half-block.
-  \item[(c)] \textbf{Meet-in-the-middle.} Blocks are decoded in pairs. The first block of a pair runs forward and the second runs in reverse, $d$ steps behind, so that they meet at the seam. This is a block-level adaptation of bidirectional generation from both sides to the middle~\citep{zhou2019bothsides,zhou2019sbnmt,zhang2020interleaved}.
-\end{itemize}
-Throughout, we analyse a schedule by \emph{which} dependencies it drops rather than how many.
+\begin{figure}[t]
+  \centering
+  \resizebox{\textwidth}{!}{\input{figures/schedule_grid.tex}}
+  \caption{Generation step $\tau(t,j)$ of each token for three blocks of $L=16$. The first three schedules share the stagger $s=8$, and therefore the parallelism; \sch{meet-1} pairs the first two blocks (Appendix~\ref{app:meet}). Darker cells are generated later. Outlined cells are the seam: the last token of block $t-1$ and the first token of block $t$.
+  Under \sch{forward-8} the seam token is generated at step 8, before its left neighbour (step 15), so the adjacent dependency is dropped.
+  The other three schedules write the seam last. The two reverse schedules write the seam token after its predecessor block is complete, and under \sch{meet-1} the reversed block's head is written last (step 16), after the forward block's tail (step 15).}
+  \label{fig:schedule}
+\end{figure}
+
+We propose instead to \textbf{write the seam last}.
+If each block's head is written after the previous block's tail, the seam token can attend to that tail, whatever the exact schedule.
+Schedules that follow this rule still drop dependencies, but only distant ones, and they pay an ordering cost instead.
+Figure~\ref{fig:schedule} shows the two instances we focus on.
+\emph{Token-reversed staggering} writes each block from its last token to its first, with block starts staggered by $s$ steps.
+\emph{Segment-reversed staggering} writes the two halves of each block in reverse order, each half left to right.
+It skips one half-block ahead and later fills in the gap it left, by which time both of the gap's neighbours are written.
+Its only blind spot is one jump token per block.
+A block-level meet-in-the-middle scheme, adapted from bidirectional generation~\citep{zhou2019bothsides,zhou2019sbnmt,zhang2020interleaved}, is a third instance, which we analyse in Appendix~\ref{app:meet}.
 
 \paragraph{Contributions.}
 \begin{enumerate}
-  \item \textbf{A design rule and its instances} (\S\ref{sec:setup}).
-  All three schedules are causal, keep an append-only KV cache, need no drafting or verification, and use the same attention mask in training and inference.
-  \item \textbf{Where dependencies are dropped} (\S\ref{sec:lemma}).
-  We give an exact, tight lower bound on the distance of every dependency dropped by token- and segment-reversed staggering, with a full proof.
-  Forward staggering with the same parallelism drops the same number of pairs, but some of them are adjacent.
-  Meet-in-the-middle with lag $d$ drops pairs as close as $d+1$.
-  \item \textbf{A measurement method and a controlled study} (\S\ref{sec:study}).
-  We use a two-stream Transformer in which schedules differ \emph{only} in the attention mask.
-  This separates the information cost of dropped pairs from the ordering cost of a non-left-to-right factorisation.
-  The method applies to any parallel or pipelined decoder whose dependency pattern can be written as an attention mask.
-  We apply it across 3 seeds, $4\times$ longer training and $4.4\times$ more parameters.
-  With the number of dropped pairs fixed, their distance alone changes the cost by more than a factor of twenty.
-  Segment-reversed staggering is better than meet-in-the-middle in both parallelism and cost.
-  A sweep over the stagger shows that segment reversal with $g=L/2$ is best at 1.75 tokens per step, and token reversal is best in likelihood at every higher parallelism we tested.
-  \item \textbf{Sample quality} under an independently trained judge (\S\ref{sec:samples}).
-  The seam failure between blocks is removed in samples.
-  A smaller seam remains inside the block, at the half-block jump.
-  Re-decoding one token after the block is written does not repair a seam: it moves the break one position to the right.
-  \item \textbf{Block-level plans} (\S\ref{sec:latent}).
-  A discrete plan predicted before each block reduces the ordering cost of token reversal most.
-  It does not remove the ordering cost, and at stagger $s=8$ segment reversal remains best.
+  \item \textbf{A design rule with a provable distance bound} (\S\ref{sec:lemma}). Reversed staggering drops only pairs at distance at least $L-g+1+g\lceil (s-g+1)/g\rceil^{+}$. Forward staggering at the same parallelism drops exactly as many pairs, some of them adjacent.
+  \item \textbf{A measurement method} (\S\ref{sec:study}). Mask-only controls separate the information cost of dropped pairs from the ordering cost of a non-left-to-right order. The method applies to any parallel or pipelined decoder whose dependency pattern is an attention mask. With the number of dropped pairs fixed at 216 per window, distance alone changes the cost from 0.350 to 0.016 nats/token.
+  \item \textbf{Where the price is paid} (\S\ref{sec:study}--\ref{sec:samples}). The cost sits at one jump token per block, at every scale we tested, in likelihood and in samples. Segment reversal is best at 1.75 tokens per step, and token reversal at higher parallelism (in likelihood).
 \end{enumerate}
-We are explicit about what the evidence does not show.
-Writing the seam last is \emph{not} free relative to a causal language model.
-Its residual cost is an ordering cost.
-A discrete block-level plan does not remove it.
-Nor does scale in the range we tested: a $4.4\times$ larger model trained $4\times$ longer on $10\times$ more data still pays 0.242 nats/token (one seed).
-An apparent drop to 0.146 on the small training set came from an overfitting causal baseline.
+Writing the seam last is \emph{not} free.
+An ordering cost of about 0.23--0.27 nats/token remains, and it does not shrink with $4.4\times$ more parameters given enough data (\S\ref{sec:scale}).
+Neither a discrete block-level plan (Appendix~\ref{sec:latent}) nor re-decoding a token afterwards (Appendix~\ref{app:refine}) removes it.
 
 % ---------------------------------------------------------------------------
 \section{Setup: schedules, visibility and dropped pairs}
 \label{sec:setup}
 
-\paragraph{Sequences.}
-A sequence consists of a prompt of $P$ tokens, which is fully known and causal internally, followed by $B$ generated blocks of length $L$.
-We write $(t,j)$ for slot $j\in\{0,\dots,L-1\}$ of block $t\in\{0,\dots,B-1\}$; its text position is $P+tL+j$.
-Every generated token may read the whole prompt.
-
-\paragraph{Schedules and visibility.}
-Most schedules we study are given by a \emph{clock} $\tau(t,j)\in\mathbb{Z}_{\ge 0}$, the step at which $(t,j)$ is generated.
+\paragraph{Sequences and visibility.}
+A sequence is a prompt of $P$ tokens, fully known and causal internally, followed by $B$ generated blocks of length $L$.
+We write $(t,j)$ for slot $j\in\{0,\dots,L-1\}$ of block $t\in\{0,\dots,B-1\}$; its text position is $P+tL+j$, and every generated token may read the whole prompt.
+A schedule assigns each token a \emph{clock} $\tau(t,j)\in\mathbb{Z}_{\ge 0}$, the step at which it is generated.
 Token $(t,j)$ may read $(t',j')$ if and only if
 \begin{equation}
   t'\le t \quad\text{and}\quad \tau(t',j')<\tau(t,j).
   \label{eq:visibility}
 \end{equation}
-A token never reads a block to its right, which makes the schedules causal: the context of a token is a subset of the text to its left plus its own block.
-We compare the following schedules (Figure~\ref{fig:schedule}).
+A token never reads a block to its right, so the schedules are causal.
+We compare:
 \begin{itemize}
-  \item \sch{causal}: $\tau(t,j)=Lt+j$. Ordinary left-to-right decoding.
-  \item \sch{forward-$s$}: $\tau(t,j)=st+j$. Left-to-right inside each block; block starts staggered by $s$ steps.
-  \item \sch{reverse-$s$-$g$} (segment reversal), for $g\mid L$, with $Q=L/g$ segments, $q=\lfloor j/g\rfloor$ and $r=j\bmod g$:
+  \item \sch{causal}: $\tau(t,j)=Lt+j$;
+  \item \sch{forward-$s$}: $\tau(t,j)=st+j$, left to right inside each block with block starts staggered by $s$ steps;
+  \item \sch{reverse-$s$-$g$}, for $g\mid L$, with $Q=L/g$ segments, $q=\lfloor j/g\rfloor$ and $r=j\bmod g$:
   \begin{equation}
-    \tau(t,j)=st+(Q-1-q)\,g+r .
+    \tau(t,j)=st+(Q-1-q)\,g+r ,
     \label{eq:clock}
   \end{equation}
-  Segments are written in reverse order and each segment runs left to right. \sch{reverse-$s$} denotes token-level reversal ($g=1$).
-  \item \sch{delayed}: block $t$ reads blocks $\le t-2$ and its own prefix. This is the condition of one-block-delayed feedback in block-latent pipelines.
-  \item \sch{meet-$d$} (meet-in-the-middle): blocks are decoded in pairs, one pair after another. Block $2p$ runs forward and block $2p+1$ runs in reverse, starting $d$ steps later:
-  \begin{equation}
-    \tau(2p,j)=p(L+d)+j,\qquad \tau(2p+1,j)=p(L+d)+d+(L-1-j).
-    \label{eq:meet}
-  \end{equation}
-  The two blocks meet at their common seam, and the reversed block's head is written last.
-  \item \sch{alternate-$d$}: every block starts $d$ steps after its predecessor, and directions alternate: $\tau(t,j)=td+j$ for even $t$ and $td+L-1-j$ for odd $t$.
-  \item \sch{landing} (PSF-style~\citep{he2026psf}, \emph{non-causal}): all blocks start together and run left to right ($s=0$), and every token after the first in block $t$ additionally reads the first token of block $t+1$.
+  so segments are written in reverse order and each runs left to right; \sch{reverse-$s$} is token reversal ($g=1$);
+  \item \sch{delayed}: block $t$ reads blocks $\le t-2$ and its own prefix, the condition of one-block-delayed feedback in block-latent pipelines;
+  \item \sch{landing} (PSF-style~\citep{he2026psf}, \emph{non-causal}): all blocks start together and run left to right, and every token after the first in block $t$ also reads the first token of block $t+1$.
 \end{itemize}
-Unlike sentence-level bidirectional decoders~\citep{zhou2019sbnmt,zhang2020interleaved}, \sch{meet-$d$} does not let the forward block read its reversed partner, which lies to its right.
-
-\paragraph{Skip and fill.}
-For \sch{reverse-$s$-$g$} with $s=g=L/2$, phase $p$ (steps $8p$ to $8p+7$ for $L=16$) writes two half-blocks at once.
-One is the right half of block $p$, which jumps ahead over the still-empty left half of that block.
-The other is the left half of block $p-1$, the gap skipped in the previous phase.
-That gap lies between the right half of block $p-2$ and the right half of block $p-1$, both already written, so it is filled with both neighbours in view.
-The jump is the schedule's only blind spot: the first token of the right half is predicted from text that ends a half-block earlier.
-Setting $s=L$ in \sch{reverse-$s$-$g$} gives an \emph{order-only} schedule: each block starts after its predecessor is complete, so no dependency is dropped, and only the order inside the block differs from \sch{causal}.
+Appendix~\ref{app:meet} defines \sch{meet-$d$} and \sch{alternate-$d$}.
+Setting $s=L$ gives an \emph{order-only} schedule: each block starts after its predecessor is complete, so nothing is dropped and only the order inside the block differs from \sch{causal}.
 Setting $s=0$ starts all blocks together.
 
-\begin{figure}[t]
-  \centering
-  \resizebox{\textwidth}{!}{\input{figures/schedule_grid.tex}}
-  \caption{Generation step $\tau(t,j)$ of each token for three blocks of $L=16$. The first three schedules share the stagger $s=8$, and therefore the parallelism; \sch{meet-1} pairs the first two blocks. Darker cells are generated later. Outlined cells are the seam: the last token of block $t-1$ and the first token of block $t$.
-  Under \sch{forward-8} the seam token is generated at step 8, before its left neighbour (step 15), so the adjacent dependency is dropped.
-  The other three schedules follow the principle of writing the seam last. The two reverse schedules write the seam token after its predecessor block is complete, and under \sch{meet-1} the reversed block's head is written last (step 16), after the forward block's tail (step 15).}
-  \label{fig:schedule}
-\end{figure}
+\paragraph{Skip and fill.}
+With $s=g=L/2$, phase $p$ writes two half-blocks at once.
+One is the right half of block $p$, which jumps ahead over that block's still-empty left half.
+The other is the left half of block $p-1$, the gap skipped in the previous phase, which now has both neighbours written.
+The first token of the right half, the \emph{jump token}, is predicted from text that ends a half-block earlier.
 
 \paragraph{Parallelism.}
-A token can be produced once every token it reads exists.
-For the clock schedules with $s\ge1$, block $t$'s first-written token reads the token of block $t-1$ written one step earlier, so the number of serial steps is $s(B-1)+L$.
-We report \emph{tokens per step} $=BL/\text{(serial steps)}$, which tends to $L/s$ as $B$ grows.
-With $L=16$ and $B=7$: \sch{causal} and order-only schedules give 1.00, $s=8$ gives 1.75, and $s=0$ gives 7.00.
-\sch{delayed} also gives 1.75, because pairs of blocks run concurrently, and \sch{landing} gives 7.00.
-\sch{meet-$d$} needs $\lfloor B/2\rfloor(L+d)+(B\bmod 2)L$ steps, which gives 1.67 for $d=1$ and 1.47 for $d=4$; \sch{alternate-$d$} needs $(B-1)d+L$, which gives 5.09 for $d=1$.
-Tokens per step counts serial model evaluations; it is not wall-clock speed.
+For clock schedules with $s\ge1$, block $t$'s first-written token reads the token of block $t-1$ written one step earlier, so a window takes $s(B-1)+L$ serial steps.
+We report \emph{tokens per step}, $BL$ divided by the number of serial steps, which tends to $L/s$ as $B$ grows.
+With $L=16$ and $B=7$, \sch{causal} gives 1.00, $s=8$ gives 1.75 (as does \sch{delayed}), and $s=0$ gives 7.00 (as does \sch{landing}).
+This counts serial model evaluations, not wall-clock speed.
 
 \begin{definition}[Dropped pair]
-Two distinct generated tokens form a \emph{dropped pair} if neither may read the other.
-The \emph{distance} of the pair is the absolute difference of their text positions.
+Two distinct generated tokens form a \emph{dropped pair} if neither may read the other; its \emph{distance} is the difference of their text positions.
 \end{definition}
 
 % ---------------------------------------------------------------------------
@@ -217,17 +169,324 @@ The \emph{distance} of the pair is the absolute difference of their text positio
 \begin{lemma}[Dropped-dependency distance]
 \label{lem:distance}
 Let $g\mid L$, $s\ge 0$ and $B\ge2$, and consider \sch{reverse-$s$-$g$}.
-\begin{enumerate}
-  \item[(a)] If $s\ge L$, no pair is dropped.
-  \item[(b)] If $0\le s\le L-1$, every dropped pair has distance at least
-  \begin{equation}
-    \dmin(L,s,g) \;=\; L-g+1+g\cdot\pos{\left\lceil \tfrac{s-g+1}{g}\right\rceil},
-    \label{eq:dmin}
-  \end{equation}
-  and some dropped pair has distance exactly $\dmin$.
-\end{enumerate}
+(a) If $s\ge L$, no pair is dropped.
+(b) If $0\le s\le L-1$, every dropped pair has distance at least
+\begin{equation}
+  \dmin(L,s,g) \;=\; L-g+1+g\cdot\pos{\left\lceil \tfrac{s-g+1}{g}\right\rceil},
+  \label{eq:dmin}
+\end{equation}
+and some dropped pair has distance exactly $\dmin$.
 \end{lemma}
 
+\noindent\emph{Proof sketch} (full proof in Appendix~\ref{app:proofs}).
+Pairs inside a block are never dropped, because the clock orders them.
+Consider a token in block $t-1$ and a token in block $t$, in segments $q'$ and $q$ at offsets $r'$ and $r$.
+Let $k=q-q'$ and $\delta=r-r'$.
+The pair is dropped if and only if $kg-\delta\ge s$, and its distance is $L+kg+\delta$.
+Minimising the distance over $k\ge0$ and $\delta\ge-(g-1)$ gives~\eqref{eq:dmin}, and pairs in blocks further apart are farther than $\dmin$.
+\hfill$\square$
+
+\begin{corollary}[Special cases]
+\label{cor:cases}
+For $0\le s\le L-1$:
+(i) token reversal ($g=1$) gives $\dmin=L+s$;
+(ii) $s=g<L$ gives $\dmin=L+1$, so with $s=g=L/2$ every dropped dependency spans more than a block;
+(iii) fully parallel token reversal ($s=0$, $g=1$) gives $\dmin=L$ while remaining causal, unlike landing targets;
+(iv) $s=0$ and $g>1$ give $\dmin=L-g+1$.
+\end{corollary}
+
+For $L=16$ this gives $\dmin=24$ for \sch{reverse-8}, 17 for \sch{reverse-8-g8}, 16 for \sch{reverse-0} and 13 for \sch{reverse-0-g4}.
+
+\begin{proposition}[Forward staggering drops adjacent pairs]
+\label{prop:forward}
+Under \sch{forward-$s$} with $0\le s\le L-1$ and $B\ge2$, the pair $(0,L-1),(1,0)$ is dropped and has distance~1.
+Moreover, \sch{forward-$s$} and \sch{reverse-$s$} drop the same number of pairs.
+\end{proposition}
+
+\begin{proof}
+$\tau(0,L-1)=L-1\ge s=\tau(1,0)$, so $(1,0)$ cannot read $(0,L-1)$, which never reads a block to its right.
+For blocks $t-m$ and $t$, \sch{forward-$s$} drops $(t-m,j'),(t,j)$ if and only if $j'-j\ge sm$, and \sch{reverse-$s$} if and only if $j-j'\ge sm$.
+The reflection $(j,j')\mapsto(L-1-j,\,L-1-j')$ maps one set onto the other.
+\end{proof}
+
+For $L=16$, $s=8$ and $B=7$, each pair of adjacent blocks contributes 36 dropped pairs, 216 per window, under \sch{forward-8}, \sch{reverse-8} and \sch{reverse-8-g8} alike.
+The schedules drop \emph{equally many} dependencies.
+The difference is where they lie: at distance 1 to 8 under forward staggering, but at 24 or more ($g=1$) or 17 or more ($g=8$) under reverse staggering.
+Meet-in-the-middle with lag $d$ drops pairs as close as $d+1$ (Proposition~\ref{prop:meet}, Appendix~\ref{app:meet}).
+We verified these bounds exhaustively against the visibility matrices (Appendix~\ref{app:proofs}).
+
+\begin{remark}[Information versus ordering]
+\label{rem:chain}
+By the chain rule, $\sum_i H\big(x_{\pi(i)}\mid \text{context},x_{\pi(<i)}\big)=H(\text{block}\mid\text{context})$ for any permutation $\pi$ of a block's slots.
+An order-only schedule therefore has exactly the information of \sch{causal}.
+Any excess cross-entropy it shows is a cost of \emph{learning} a non-left-to-right factorisation with a given model and budget.
+Only dropped pairs remove information.
+\end{remark}
+
+% ---------------------------------------------------------------------------
+\section{Controlled study: schedules that differ only in the mask}
+\label{sec:study}
+
+\subsection{Model, data and metric}
+
+We use a two-stream Transformer~\citep{vaswani2017attention} in the style of XLNet~\citep{yang2019xlnet}, so that schedules differ only in the attention mask.
+A \emph{content stream} carries token plus position embeddings, and each content position attends to what its schedule allows it to read, and to itself.
+A \emph{query stream} for each generated position starts from a learned vector plus that position's embedding, and attends only to the allowed content.
+Predictions are read from the query stream, so each prediction depends on exactly the tokens given by~\eqref{eq:visibility}.
+Both streams share all weights.
+The base model has width 256, 6 layers, 4 heads, a SwiGLU feed-forward of width 768, RMSNorm, learned positions and tied embeddings: 7.2M parameters.
+The wide model has width 512, 8 layers, 8 heads and feed-forward width 1536: 31.5M parameters.
+
+We train on TinyStories~\citep{eldan2023tinystories} with an 8192-token vocabulary: 100k training stories (22.0M tokens), and a disjoint development split of 10{,}995 stories.
+Windows are drawn at random from the concatenated, EOS-separated stream.
+Each has a 16-token prompt followed by $B=7$ blocks of $L=16$ tokens.
+All arms share the optimiser and budget: AdamW ($\beta=(0.9,0.95)$, weight decay 0.1), peak learning rate $10^{-3}$ with 200 warm-up steps and cosine decay to $0.1\times$, gradient clipping at 1.0, batch size 64, bf16 autocast, and 5000 steps unless stated otherwise.
+
+We report cross-entropy (CE, nats/token) on 4096 fixed development windows.
+CE is restricted to \emph{steady-state} blocks $t\ge2$, because blocks 0 and 1 still read the prompt as their predecessor.
+We report it as a cost $\Delta=\text{CE}(\text{schedule})-\text{CE}(\sch{causal})$, paired by seed.
+Following Remark~\ref{rem:chain}, we split the cost of a staggered reverse schedule into
+\begin{equation}
+  \Delta(\sch{reverse-$s$-$g$}) \;=\; \underbrace{\Delta(\sch{reverse-$L$-$g$})}_{\text{ordering cost}} \;+\; \underbrace{\Delta(\sch{reverse-$s$-$g$})-\Delta(\sch{reverse-$L$-$g$})}_{\text{information cost}} .
+  \label{eq:decomp}
+\end{equation}
+\sch{forward-$s$} keeps the natural order, so all of its cost is information cost.
+Both terms are estimates for this model family and budget, not exact entropies.
+
+\subsection{Which pairs are dropped matters more than how many}
+
+\begin{table}[t]
+  \centering
+  \caption{Schedule cost relative to \sch{causal} (5000 steps, seeds 42/43/44, $\Delta$ paired by seed, mean $\pm$ s.d.; causal steady-state CE $1.977\pm0.006$). ``Min.\ dist.'' is the smallest dropped-pair distance ($-$: none dropped). First/last-token CE are for slots $j=0$ and $j=L-1$ of steady-state blocks. $^\dagger$\,Non-causal: reads the next block's first token.}
+  \label{tab:main}
+  \small
+  \begin{tabular}{lcrrrr}
+    \toprule
+    Schedule & Tokens/step & Min.\ dist. & $\Delta$ vs.\ causal & First-token CE & Last-token CE \\
+    \midrule
+    \sch{reverse-16-g8} (order only) & 1.00 & $-$ & $0.264\pm0.007$ & 2.02 & 2.14 \\
+    \sch{reverse-16} (order only)    & 1.00 & $-$ & $0.314\pm0.008$ & 1.29 & 5.39 \\
+    \midrule
+    \textbf{\sch{reverse-8-g8}}      & 1.75 & 17 & $\mathbf{0.276\pm0.009}$ & 2.01 & 2.14 \\
+    \sch{reverse-8}                  & 1.75 & 24 & $0.330\pm0.004$ & 1.30 & 5.43 \\
+    \sch{forward-8}                  & 1.75 & 1  & $0.350\pm0.007$ & 5.24 & 1.97 \\
+    \sch{delayed}                    & 1.75 & 1  & $0.508\pm0.008$ & 5.50 & 2.06 \\
+    \midrule
+    \textbf{\sch{reverse-0}}         & 7.00 & 16 & $\mathbf{0.466\pm0.014}$ & 1.38 & 5.81 \\
+    \sch{landing}$^\dagger$          & 7.00 & 2  & $0.498\pm0.009$ & 5.83 & 1.46 \\
+    \sch{forward-0}                  & 7.00 & 1  & $0.570\pm0.006$ & 5.83 & 2.02 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Distant dropped pairs are almost free; adjacent ones are not.}
+By~\eqref{eq:decomp}, the information cost of reverse staggering at $s=8$ is $0.330-0.314=0.016$ nats/token for $g=1$, and $0.276-0.264=0.012$ for $g=8$ (Table~\ref{tab:main}).
+\sch{forward-8} drops exactly as many pairs, 216 per window, and all of its $0.350$ nats/token is information cost.
+Only the position of the dropped pairs differs, and the cost differs by more than a factor of twenty.
+
+\paragraph{Reverse staggering is the best causal schedule in Table~\ref{tab:main}.}
+At 1.75 tokens/step, \sch{reverse-8-g8} costs 0.074 nats/token less than \sch{forward-8} and 0.232 less than \sch{delayed}.
+With all blocks in parallel, \sch{reverse-0} costs 0.104 less than \sch{forward-0}.
+It also costs 0.032 less than the non-causal landing-target scheme.
+Seed standard deviations are about 0.01, and the ranking is the same in all three seeds.
+At full parallelism the bound weakens to $\dmin=16$, and the cost (0.466) is no longer close to the order-only cost (0.314).
+
+\paragraph{What remains is ordering cost.}
+Almost all of the cost of \sch{reverse-8-g8} (0.264 of 0.276) is already present in \sch{reverse-16-g8}, which drops nothing.
+The ordering cost depends on the segment length: it is lowest for $g=L/2$, because shorter segments add more jump tokens per block (Appendix~\ref{app:sweep}).
+Meet-in-the-middle drops more pairs, and closer ones, and costs more at lower parallelism (Appendix~\ref{app:meet}).
+Appendix~\ref{sec:lens} reads every schedule through this lens.
+
+\subsection{Speed and quality}
+\label{sec:tradeoff}
+
+\begin{figure}[t]
+  \centering
+  \input{figures/tradeoff.tex}
+  \caption{Speed against cost (seed 42, base model, 5000 steps; values in Appendix~\ref{app:sweep}). Reversal beats forward staggering at every speed. Segment reversal is best only at $s=L/2$; at higher parallelism token reversal is best.}
+  \label{fig:tradeoff}
+\end{figure}
+
+Figure~\ref{fig:tradeoff} sweeps the stagger $s$ from 8 to 0 (seed 42).
+Forward staggering always drops adjacent pairs, and its cost rises from 0.353 to 0.571.
+Token reversal drops only pairs 16 or more tokens apart, and its cost rises from 0.326 to 0.459.
+Its margin over forward staggering therefore grows with parallelism, from 0.027 at 1.75 tokens/step to 0.112 at 7.00.
+Segment reversal is best only at $g=L/2$ (0.271 at 1.75 tokens/step).
+With $g=s=4$ or 2, each block has three or seven jump tokens, and \sch{reverse-4-g4} is worse even than \sch{forward-4}.
+The best schedules we tested thus form one front: \sch{reverse-8-g8} at 1.75 tokens/step, then token reversal at 2.8--7.0.
+These are single-seed likelihood results.
+In samples, token reversal's advantage at higher parallelism is not established (Appendix~\ref{app:samples}).
+
+\subsection{Where the cost lives inside a block}
+
+\begin{figure}[t]
+  \centering
+  \input{figures/per_slot_ce.tex}
+  \caption{Steady-state CE per in-block slot, in text order (slot 1 is the seam token). Left: 5000 steps, mean of seeds 42--44. Right: 20000 steps, seed 42. The dotted line separates the two halves of a block for $g=8$; \sch{reverse-16-g8} and \sch{reverse-8-g8} write slots 9--16 first and then fill in slots 1--8. \sch{forward-8} pays at the seam (slot 1). \sch{reverse-16} pays at slot 16, which it writes first, a full block after the last token it can see. The $g=8$ schedules pay at slot 9, their first-written token, which skips the eight head positions, and recover part of that cost on the infilled left half, which falls below causal. Values in Appendix~\ref{app:slots}.}
+  \label{fig:slots}
+\end{figure}
+
+Figure~\ref{fig:slots} shows where each schedule pays.
+Forward staggering is near causal everywhere except at the seam: 5.24 at slot~1, against 1.98 for \sch{causal}.
+The reverse schedules have no seam spike, because the seam token is written with the previous block's tail in view.
+The cost moves to the token that is written first and predicted furthest ahead.
+Under segment reversal this is the jump token, slot 9, at 5.29 for \sch{reverse-8-g8}.
+The infilled head that follows falls \emph{below} causal, since it is written with both neighbours known.
+At 20000 steps, summed per block relative to causal, the jump token costs $+3.34$ nats and the rest of the right half $+2.79$, while the infilled head gains $-2.52$.
+The net is $+3.61$ nats per block, or 0.226 per token.
+With exact conditionals these terms would cancel (Remark~\ref{rem:chain}).
+They do not, because predicting a token far ahead and infilling between two contexts are harder conditionals to learn than next-token prediction.
+
+\subsection{The cost does not shrink with scale}
+\label{sec:scale}
+
+Over $4\times$ more training, the small model's ordering cost barely moves (0.247 to 0.226), while forward staggering's information cost stays at about 0.35.
+A wide model (31.5M parameters) trained for 20000 steps on the usual 22M-token training set appears to cut the ordering cost to 0.146.
+That drop is an artefact of an overfitting causal baseline: by then it has seen the training set about 7.4 times.
+Trained instead on 1M stories (219M tokens, less than one epoch, no sign of overfitting), the wide model still pays 0.242 at 20000 steps, the same as the small model.
+Its jump token stays at 4.95 nats.
+In the tested range of 7.2M--31.5M parameters and up to 20000 steps, the ordering cost does not shrink with scale (one seed; Appendix~\ref{app:scaling}).
+Mixing causal-mask steps into training makes it worse (Appendix~\ref{app:mixing}).
+A discrete block-level plan helps token reversal most but does not remove it either (Appendix~\ref{sec:latent}).
+
+% ---------------------------------------------------------------------------
+\section{Sample quality}
+\label{sec:samples}
+
+For 512 development prompts we sample continuations at temperature $T=1$, each schedule in its own order.
+At every serial step, all tokens that become available are sampled in parallel.
+A causal model trained independently (seed 43) with the same budget judges the samples.
+We do not let a model judge its own samples, because that measures its own entropy.
+We report judge CE over the whole continuation, and judge CE on the seam token (slot 1 of steady-state blocks).
+
+\begin{table}[t]
+  \centering
+  \caption{Sample quality, seed-42 models at 5000 steps, judged by an independently trained causal model (seed 43). Judge CE over the whole continuation (all seven blocks); seam = slot 1 of steady-state blocks. Lower is more natural under the judge. $^\dagger$\,Non-causal.}
+  \label{tab:samples}
+  \small
+  \begin{tabular}{lcrr}
+    \toprule
+    Source & Tokens/step & Judge CE & Judge CE at seam \\
+    \midrule
+    Real text            & $-$  & 2.02 & 2.04 \\
+    \sch{causal}         & 1.00 & 2.61 & 2.56 \\
+    \sch{reverse-16-g8}  & 1.00 & 3.22 & 2.90 \\
+    \midrule
+    \textbf{\sch{reverse-8-g8}} & 1.75 & \textbf{3.26} & \textbf{2.89} \\
+    \sch{reverse-8}      & 1.75 & 3.56 & 7.12 \\
+    \sch{forward-8}      & 1.75 & 3.47 & 11.29 \\
+    \sch{delayed}        & 1.75 & 3.79 & 11.43 \\
+    \midrule
+    \sch{landing}$^\dagger$ & 7.00 & 3.61 & 6.15 \\
+    \sch{reverse-0}      & 7.00 & 3.74 & 7.69 \\
+    \sch{forward-0}      & 7.00 & 3.83 & 11.53 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{The seam failure is removed.}
+Under forward staggering the judge assigns the seam token a CE of 11.29 (Table~\ref{tab:samples}): it is written blind to its left neighbour and often does not connect.
+Under \sch{reverse-8-g8} the seam CE is 2.89, close to causal samples (2.56).
+At equal parallelism, \sch{reverse-8-g8} samples are also better overall than \sch{forward-8} (3.26 against 3.47).
+The same holds at 20k steps and for the wide model (Appendix~\ref{app:samples}).
+Token reversal repairs the seam only partly in samples (7.12), so at $s=L/2$ segment reversal is the variant to use.
+
+\paragraph{The break inside the block is milder.}
+Segment reversal moves the break rather than abolishing it, but the moved break is much milder.
+In samples, per-slot judge CE of \sch{reverse-8-g8} peaks at the jump token (slot 9) at 5.56; for \sch{reverse-16-g8} it is 5.24.
+That is half the 11.29 at the \sch{forward-8} seam and 11.43 at the \sch{delayed} seam.
+Yet in likelihood the bad tokens are about equally hard: 5.29 for the jump token, against 5.25 and 5.51 for the \sch{forward-8} and \sch{delayed} seam tokens (seed 42).
+The difference lies in what is written around them.
+At a forward seam, the block's head and the previous block's tail are written blind to each other, so nothing reconciles them.
+The jump token, in contrast, is followed by the infilled head, which is written afterwards and conditions on it, so the junction is repaired from one side.
+The repair leaves its trace at slot 8, the last infilled token (3.94).
+The seam between blocks reflects missing information.
+The break inside the block is smaller and reflects learnability.
+Re-decoding one token after the block is written does not repair a break either: it moves the break one position to the right (Appendix~\ref{app:refine}).
+Relative to causal samples, \sch{reverse-8-g8} remains worse by about 0.65--0.8 judge nats in every setting we sampled (Appendix~\ref{app:samples}).
+
+% ---------------------------------------------------------------------------
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Staggered and wavefront parallelism.}
+Starting the next unit before the current one is finished is an old idea.
+Examples include wavefront parallel processing in HEVC~\citep{sullivan2012hevc}, row-staggered image generation in ZipAR~\citep{he2025zipar}, region-parallel image generation~\citep{wang2025par}, diagonal video decoding~\citep{ye2025diagonal} and MusicGen's codebook delays~\citep{copet2023musicgen}.
+StagFormer staggers along depth~\citep{cutler2025stagformer}, and Hogwild! Inference runs concurrent generators over a shared KV cache~\citep{rodionov2025hogwild}.
+All of these keep the natural order inside a unit.
+What we add is a within-unit order that moves every dropped dependency away from the seam, with a guarantee on its distance.
+
+\paragraph{Line- and block-parallel text generation.}
+The closest work is line-parallel language modelling.
+LCLM interleaves staggered lines in one causal sequence~\citep{li2026lclm}, and LatLM locates the cost at each line's first token, mitigating it by waiting or by deferring commitment~\citep{zhang2026latlm}.
+Predictive-State Flows repairs block boundaries with non-causal landing targets~\citep{he2026psf}, and continuous autoregressive LMs predict one vector per block~\citep{shao2025calm}.
+All of these write tokens left to right within a unit; Appendix~\ref{app:related} compares them in detail.
+
+\paragraph{Block diffusion and generation order.}
+Order matters in practice even though the chain rule holds for any order.
+Reversing the source sentence made LSTM sequence-to-sequence learning easier by bringing dependent words close together~\citep{sutskever2014seq2seq}, and the order of inputs and outputs changes what a model learns~\citep{vinyals2016order}.
+Writing the seam last applies the same idea inside a block pipeline: the order puts the strongest dependency where it can still be read.
+Block diffusion denoises one block at a time~\citep{arriola2025block}.
+TeCoP~\citep{tsou2026tecop}, FlowBlock~\citep{tian2026flowblock}, multi-block diffusion~\citep{jin2026multibd}, AsyncLane~\citep{ren2026asynclane} and large flow LMs~\citep{chavan2026lafa} overlap blocks and repair seams by refinement, temporary context or verification, not by a fixed write order.
+Block diffusion models prefer left-to-right unmasking~\citep{hou2026rethinking}, consistent with the ordering cost we measure.
+ReFusion serialises adjacent tokens because dependency decays with distance~\citep{li2025refusion}.
+XLNet's two-stream attention~\citep{yang2019xlnet} is our measurement device.
+$\sigma$-GPT generates in arbitrary orders~\citep{pannatier2024sigma}, and fill-in-the-middle training~\citep{bavarian2022fim} matches our infilled half-blocks.
+Order-agnostic decoding uses within-block right-to-left decoding as a baseline~\citep{yao2026orderagnostic}, and total correlation explains parallel-decoding error~\citep{zhang2026generation}.
+Generation from both sides to the middle~\citep{zhou2019bothsides,zhou2019sbnmt,zhang2020interleaved,nguyen2023meet} lets both directions read each other; our \sch{meet-$d$} is a causal, block-level adaptation.
+
+\paragraph{Semi-autoregressive, speculative and multi-token decoding.}
+Semi-autoregressive translation generates adjacent tokens at once~\citep{wang2018semi}, dropping exactly the dependencies that reverse staggering preserves, and non-autoregressive translation drops all of them~\citep{gu2018nat}.
+Several methods keep the causal distribution, exactly or approximately, by drafting and verifying: blockwise parallel decoding~\citep{stern2018blockwise}, speculative decoding~\citep{leviathan2023speculative,chen2023speculative}, EAGLE~\citep{li2024eagle}, lookahead decoding~\citep{fu2024lookahead} and multi-token prediction~\citep{gloeckle2024mtp}.
+Writing the seam last instead targets decoders that must commit tokens without verification, so the two approaches are complementary.
+
+% ---------------------------------------------------------------------------
+\section{Limitations}
+\label{sec:limitations}
+
+\begin{itemize}
+  \item \textbf{Scale and seeds.} The study uses TinyStories and 7.2M--31.5M-parameter models. Most ablations use a single seed, including the stagger sweep, meet-in-the-middle, scaling, plans, refinement and the cross-judged samples.
+  \item \textbf{The ordering cost remains.} Reverse staggering pays about 0.23--0.27 nats/token relative to a causal LM, and about 0.65--0.8 judge nats in samples. In the tested range this cost does not shrink with scale. The tests of plans, refinement and mixing are narrow and do not rule out other remedies.
+  \item \textbf{Evidence at high parallelism.} Token reversal's advantage above 1.75 tokens/step is shown in likelihood, not in samples. We ran no temperature sweep and no comparison with LatLM-style waiting.
+  \item \textbf{Practicality.} Reverse order emits text block by block, which delays the first readable token. The schedules need retraining. Tokens per step is not wall-clock speed.
+\end{itemize}
+
+% ---------------------------------------------------------------------------
+\section{Conclusion}
+
+For designers of parallel decoders, our takeaway is to choose the write order so that the dependencies a schedule must drop are the distant ones.
+That dependency decays with distance is known.
+We add a design rule for block pipelines with a provable distance bound, and a controlled measurement in which the number of dropped pairs is fixed and only their distance varies.
+We also separate information cost from ordering cost.
+In our small-scale setting, the same 216 pairs per window cost 0.350 nats/token when some are adjacent and 0.016 when all are 24 or more tokens apart.
+Writing the seam last applies this rule to block-parallel decoding and removes the seam failure.
+Segment reversal pays least at 1.75 tokens per step, and token reversal at higher parallelism.
+The price is one jump token per block, an ordering cost of about 0.23--0.27 nats/token.
+Neither scale in our tested range, nor a discrete plan, nor re-decoding a token removes it.
+Whether much larger models or continuous block latents remove it remains open.
+
+% ---------------------------------------------------------------------------
+\section*{Acknowledgements}
+The author proposed three things: the idea of writing each block's head last, the meet-in-the-middle variant, and the hypothesis that the ordering cost would shrink with scale. The last was tested here and is not supported in the range we studied.
+The token- and segment-reversed staggered schedules, the distance bound, the experiments and much of the writing were developed with an AI assistant (Claude), and were checked by the author.
+
+% ---------------------------------------------------------------------------
+\paragraph{Reproducibility.}
+The schedules, the two-stream and plan-conditioned models, the sample evaluation and exhaustive tests of Lemma~\ref{lem:distance} and Proposition~\ref{prop:meet} are implemented in a single code base.
+Per-run summaries are aggregated into the tables above.
+% TODO(author): decide on code release and add a URL; the repository is currently private.
+
+\bibliographystyle{plainnat}
+\bibliography{refs}
+
+\appendix
+
+% ---------------------------------------------------------------------------
+\section{Proofs and exhaustive verification}
+\label{app:proofs}
+\label{app:verification}
+
+\paragraph{Proof of Lemma~\ref{lem:distance}.}
 \begin{proof}
 Write $Q=L/g$ and, for slot $j$, $q=\lfloor j/g\rfloor\in\{0,\dots,Q-1\}$ and $r=j\bmod g\in\{0,\dots,g-1\}$.
 
@@ -274,35 +533,38 @@ Then $kg-\delta=k^\ast g+g-1\ge s$, since $k^\ast g\ge s-g+1$, so the pair is dr
 Its distance is $L+k^\ast g-(g-1)=\dmin$.
 \end{proof}
 
-\begin{corollary}[Special cases]
-\label{cor:cases}
-For $0\le s\le L-1$:
-(i) token reversal ($g=1$) gives $\dmin=L+s$;
-(ii) $s=g<L$ gives $\dmin=L+1$; in particular, for $s=g=L/2$ both halves of a block are written left to right, and every dropped dependency spans more than a block;
-(iii) fully parallel token reversal ($s=0$, $g=1$) gives $\dmin=L$, while remaining causal, unlike landing targets;
-(iv) for $s=0$ and $g>1$, $\dmin=L-g+1$.
-\end{corollary}
+\paragraph{Exhaustive verification.}
+For every $L\in\{8,16\}$, every segment length $g\in\{1,2,4,8\}$ with $g\mid L$, and every stagger $s=0,\dots,L$, we built the visibility matrix of \sch{reverse-$s$-$g$} for a 3-token prompt and $B=5$ blocks.
+We enumerated all dropped pairs and checked that their minimum distance equals~\eqref{eq:dmin} whenever any pair is dropped.
+For \sch{meet-$d$}, we checked against an independent simulation of the write order that the reversed block's head reads the forward block's tail, and that the minimum dropped distance is $d+1$.
+These tests are in \texttt{tests/test\_seam\_schedules.py}, and the plan model's tests are in \texttt{tests/test\_seam\_plan.py}.
+The test suite also checks the following properties.
+Every schedule's visibility relation is transitive and acyclic.
+Forward staggering drops adjacent pairs, while reverse staggering drops only distant ones.
+The reverse seam token sees the previous block's tail.
+Under \sch{reverse-0}, slot $j$ sees exactly the slots $j'>j$ of the previous block.
+Landing tokens read only the next block's first token.
+Two-stream predictions are invariant to the content of invisible tokens.
+The sampler's number of serial rounds matches each schedule's parallelism.
 
-For the schedules in our study ($L=16$), these give $\dmin=24$ for \sch{reverse-8}, $17$ for \sch{reverse-8-g8}, $16$ for \sch{reverse-0} and $13$ for \sch{reverse-0-g4}, matching Table~\ref{tab:main}.
+% ---------------------------------------------------------------------------
+\section{Meet-in-the-middle}
+\label{app:meet}
 
-\begin{proposition}[Forward staggering drops adjacent pairs]
-\label{prop:forward}
-Under \sch{forward-$s$} with $0\le s\le L-1$ and $B\ge2$, the pair $(0,L-1),(1,0)$ is dropped and has distance~1.
-Moreover, \sch{forward-$s$} and \sch{reverse-$s$} drop the same number of pairs.
-\end{proposition}
+\paragraph{Definitions.}
+We adapt generation from both sides to the middle to blocks with two schedules.
+\begin{itemize}
+  \item \sch{meet-$d$} (meet-in-the-middle): blocks are decoded in pairs, one pair after another. Block $2p$ runs forward and block $2p+1$ runs in reverse, starting $d$ steps later:
+  \begin{equation}
+    \tau(2p,j)=p(L+d)+j,\qquad \tau(2p+1,j)=p(L+d)+d+(L-1-j).
+    \label{eq:meet}
+  \end{equation}
+  The two blocks meet at their common seam, and the reversed block's head is written last.
+  \item \sch{alternate-$d$}: every block starts $d$ steps after its predecessor, and directions alternate: $\tau(t,j)=td+j$ for even $t$ and $td+L-1-j$ for odd $t$.
+\end{itemize}
+Unlike sentence-level bidirectional decoders~\citep{zhou2019sbnmt,zhang2020interleaved}, \sch{meet-$d$} does not let the forward block read its reversed partner, which lies to its right.
+\sch{meet-$d$} needs $\lfloor B/2\rfloor(L+d)+(B\bmod 2)L$ steps, which gives 1.67 for $d=1$ and 1.47 for $d=4$; \sch{alternate-$d$} needs $(B-1)d+L$, which gives 5.09 for $d=1$.
 
-\begin{proof}
-$\tau(0,L-1)=L-1\ge s=\tau(1,0)$, so $(1,0)$ cannot read $(0,L-1)$, and $(0,L-1)$ never reads a block to its right.
-For the count, take blocks $t-m$ and $t$.
-Under \sch{forward-$s$} the pair $(t-m,j'),(t,j)$ is dropped if and only if $j'-j\ge sm$.
-Under \sch{reverse-$s$} it is dropped if and only if $j-j'\ge sm$, by~\eqref{eq:dropcond} with $g=1$.
-The reflection $(j,j')\mapsto(L-1-j,\,L-1-j')$ is a bijection between the two sets.
-\end{proof}
-
-For $L=16$, $s=8$ and $B=7$, each pair of adjacent blocks contributes 36 dropped pairs, for 216 per window, under both \sch{forward-8} and \sch{reverse-8}.
-A direct count from~\eqref{eq:dropcond} with $k=1$ and $r\le r'$ gives the same 216 for \sch{reverse-8-g8}.
-The two families therefore drop \emph{equally many} dependencies.
-Under forward staggering they lie at distances $1$ to $8$, and under reverse staggering at distance $24$ or more ($g=1$) or $17$ or more ($g=8$).
 \begin{proposition}[Meet-in-the-middle]
 \label{prop:meet}
 Under \sch{meet-$d$} or \sch{alternate-$d$} with $0\le d\le L-1$ and $B\ge2$, every dropped pair has distance at least $d+1$, and some dropped pair has distance exactly $d+1$.
@@ -324,121 +586,7 @@ At similar parallelism, then, meet-in-the-middle drops both more pairs and close
 For $L=16$ and $B=7$, \sch{meet-1} (1.67 tokens/step) drops 360 pairs per window, the closest 2 tokens apart.
 \sch{reverse-8-g8} (1.75 tokens/step) drops 216, none closer than 17.
 
-We verified Lemma~\ref{lem:distance} exhaustively against the visibility matrices for $L\in\{8,16\}$, every $g\mid L$ and $s=0,\dots,L$, and Proposition~\ref{prop:meet} for several lags $d$ (Appendix~\ref{app:verification}).
-
-\begin{remark}[Information versus ordering]
-\label{rem:chain}
-By the chain rule, for any permutation $\pi$ of a block's slots,
-$\sum_i H\big(x_{\pi(i)}\mid \text{context},x_{\pi(<i)}\big)=H(\text{block}\mid\text{context})$.
-An order-only schedule ($s=L$) therefore has exactly the information of \sch{causal}.
-Any excess cross-entropy it shows is a cost of \emph{learning} a non-left-to-right factorisation with a given model and budget.
-Only dropped pairs remove information.
-\end{remark}
-
-% ---------------------------------------------------------------------------
-\section{Controlled study: schedules that differ only in the mask}
-\label{sec:study}
-
-\subsection{Model, data and metric}
-
-\paragraph{Mask-only two-stream model.}
-To compare schedules without confounding them with architecture, we use a two-stream Transformer~\citep{vaswani2017attention} in the style of XLNet~\citep{yang2019xlnet}.
-A \emph{content stream} carries token plus position embeddings.
-Each content position attends to the positions its schedule allows it to read, and to itself.
-A \emph{query stream} for each generated position starts from a learned query vector plus that position's embedding, and attends only to the content positions the schedule allows.
-Predictions are read from the query stream.
-The prediction of every token is thus a function of exactly the set of tokens given by~\eqref{eq:visibility} (or by the \sch{delayed}/\sch{landing} rules), and two arms differ only in the boolean mask.
-Both streams share all weights.
-The base model has width 256, 6 layers, 4 heads, a SwiGLU feed-forward of width 768, RMSNorm, learned positional embeddings and tied input/output embeddings, for 7.2M parameters.
-The wide model has width 512, 8 layers, 8 heads and feed-forward width 1536, for 31.5M parameters.
-
-\paragraph{Data and training.}
-We use TinyStories~\citep{eldan2023tinystories} with an 8192-token vocabulary.
-The training split has 100k stories (22.0M tokens), and the development split has 10{,}995 stories disjoint from it.
-Training windows are drawn at random from the concatenated, EOS-separated token stream.
-Each window has a 16-token prompt followed by $B=7$ blocks of $L=16$ tokens (112 generated tokens).
-Every arm uses the same optimiser and budget: AdamW ($\beta=(0.9,0.95)$, weight decay 0.1), peak learning rate $10^{-3}$ with 200 warm-up steps and cosine decay to $0.1\times$, gradient clipping at 1.0, batch size 64 and bf16 autocast.
-Runs last 5000 steps unless stated otherwise.
-
-\paragraph{Metric.}
-We report natural-corpus cross-entropy (CE, nats/token) on 4096 fixed development windows.
-We restrict it to \emph{steady-state} blocks $t\ge2$, because blocks 0 and 1 still read the fully known prompt as their predecessor context.
-We report CE averaged over these blocks, per in-block slot, and as a cost $\Delta=\text{CE}(\text{schedule})-\text{CE}(\sch{causal})$ paired by seed.
-Following Remark~\ref{rem:chain}, we decompose the cost of a staggered reverse schedule as
-\begin{equation}
-  \Delta(\sch{reverse-$s$-$g$}) \;=\; \underbrace{\Delta(\sch{reverse-$L$-$g$})}_{\text{ordering cost}} \;+\; \underbrace{\Delta(\sch{reverse-$s$-$g$})-\Delta(\sch{reverse-$L$-$g$})}_{\text{information cost}} .
-  \label{eq:decomp}
-\end{equation}
-\sch{forward-$s$} keeps the natural order, so its whole cost is information cost.
-Both terms are estimates for this model family and budget, not exact entropies.
-
-\subsection{Main result: which pairs are dropped matters more than how many}
-
-\begin{table}[t]
-  \centering
-  \caption{Schedule cost relative to \sch{causal} (5000 steps, seeds 42/43/44, $\Delta$ paired by seed, mean $\pm$ s.d.; causal steady-state CE $1.977\pm0.006$). ``Min.\ dist.'' is the smallest dropped-pair distance ($-$: none dropped). First/last-token CE are for slots $j=0$ and $j=L-1$ of steady-state blocks. $^\dagger$\,Non-causal: reads the next block's first token.}
-  \label{tab:main}
-  \small
-  \begin{tabular}{lcrrrr}
-    \toprule
-    Schedule & Tokens/step & Min.\ dist. & $\Delta$ vs.\ causal & First-token CE & Last-token CE \\
-    \midrule
-    \sch{reverse-16-g8} (order only) & 1.00 & $-$ & $0.264\pm0.007$ & 2.02 & 2.14 \\
-    \sch{reverse-16} (order only)    & 1.00 & $-$ & $0.314\pm0.008$ & 1.29 & 5.39 \\
-    \midrule
-    \textbf{\sch{reverse-8-g8}}      & 1.75 & 17 & $\mathbf{0.276\pm0.009}$ & 2.01 & 2.14 \\
-    \sch{reverse-8}                  & 1.75 & 24 & $0.330\pm0.004$ & 1.30 & 5.43 \\
-    \sch{forward-8}                  & 1.75 & 1  & $0.350\pm0.007$ & 5.24 & 1.97 \\
-    \sch{delayed}                    & 1.75 & 1  & $0.508\pm0.008$ & 5.50 & 2.06 \\
-    \midrule
-    \textbf{\sch{reverse-0}}         & 7.00 & 16 & $\mathbf{0.466\pm0.014}$ & 1.38 & 5.81 \\
-    \sch{landing}$^\dagger$          & 7.00 & 2  & $0.498\pm0.009$ & 5.83 & 1.46 \\
-    \sch{forward-0}                  & 7.00 & 1  & $0.570\pm0.006$ & 5.83 & 2.02 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-Table~\ref{tab:main} gives the main comparison.
-Three observations stand out.
-
-\paragraph{Distant dropped pairs are almost free; adjacent ones are not.}
-By~\eqref{eq:decomp}, the information cost of reverse staggering at $s=8$ is $0.330-0.314=0.016$ nats/token for $g=1$ and $0.276-0.264=0.012$ for $g=8$.
-\sch{forward-8} drops exactly as many pairs (216 per window), and all of its $0.350$ nats/token is information cost.
-The two schedules differ only in where the dropped pairs lie, and the cost differs by more than a factor of twenty.
-
-\paragraph{Reverse staggering is the best causal schedule at both parallelism levels in Table~\ref{tab:main}.}
-At 1.75 tokens/step, \sch{reverse-8-g8} costs 0.074 nats/token less than \sch{forward-8} and 0.232 less than \sch{delayed}.
-With all blocks in parallel (7.00 tokens/step), \sch{reverse-0} costs 0.104 less than \sch{forward-0}.
-It also costs 0.032 less than the landing-target scheme, which is non-causal and reads one token of the block to its right.
-Standard deviations across seeds are around 0.01, and the ranking of the arms is the same in all three seeds.
-At full parallelism the bound weakens to $\dmin=16$, and the cost is no longer close to the order-only cost: $0.466$ vs.\ $0.314$.
-Segment reversal does not help at $s=0$: \sch{reverse-0-g4} costs $0.561$ (seed 42), consistent with its smaller $\dmin=13$.
-
-\paragraph{The remaining cost is ordering cost, and its size depends on the segment length.}
-Almost all of the cost of \sch{reverse-8-g8} (0.264 of 0.276) is already present in the order-only schedule \sch{reverse-16-g8}, which drops nothing.
-Table~\ref{tab:segment} varies the segment length at seed 42.
-The information cost stays at 0.010--0.015 for every $g$, while the ordering cost is non-monotonic in $g$: 0.316 for $g=1$, 0.409 for $g=4$ and 0.256 for $g=8$.
-The per-slot CE points to backward jumps: each jump starts a segment whose first token is predicted far ahead of the visible text.
-Under \sch{reverse-16-g4} the three jump tokens of a block cost 4.11, 4.46 and 5.34 nats, while $g=8$ has a single jump (5.24).
-Token reversal also has a single far-ahead token, the tail, but writes the whole block against the natural direction (\S\ref{sec:tradeoff}).
-
-\begin{table}[t]
-  \centering
-  \caption{Effect of segment length $g$ (seed 42, 5000 steps; steady-state CE, causal 1.977). Information cost = staggered $-$ order-only CE; ordering cost = order-only cost vs.\ causal.}
-  \label{tab:segment}
-  \small
-  \begin{tabular}{crrrr}
-    \toprule
-    $g$ & Order only ($s=16$) & Staggered ($s=8$) & Information cost & Ordering cost \\
-    \midrule
-    1 & 2.294 & 2.304 & 0.010 & 0.316 \\
-    4 & 2.386 & 2.401 & 0.015 & 0.409 \\
-    \textbf{8} & \textbf{2.234} & \textbf{2.248} & 0.015 & \textbf{0.256} \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\subsection{Meet-in-the-middle pays at the start of the reversed block}
+\paragraph{Results.}
 
 \begin{table}[t]
   \centering
@@ -469,9 +617,54 @@ The first token a reversed block writes is its tail.
 At that moment its forward partner has written only $d$ tokens, so the tail has no written neighbours nearby and must be guessed about a block ahead.
 The smaller cost of about 0.13 on the forward blocks is plausibly the price of one model learning both directions.
 
-\subsection{Speed and quality}
-\label{sec:tradeoff}
+% ---------------------------------------------------------------------------
+\section{Reading every schedule by which pairs it drops}
+\label{sec:lens}
 
+The same lens accounts for every schedule we tested (Tables~\ref{tab:main} and~\ref{tab:meet}; pair counts per window from the visibility masks).
+\begin{itemize}
+  \item \sch{forward-8} and \sch{reverse-8} drop the same 216 pairs. Under \sch{forward-8} they lie at distance 1--8, and its whole cost of 0.350 is information cost. Under \sch{reverse-8} they lie at distance 24 or more, and its information cost is 0.016.
+  \item \sch{reverse-8-g8} also drops 216 pairs, and keeps every pair within distance 16. Its information cost is 0.012.
+  \item \sch{forward-0} and \sch{reverse-0} also drop equal numbers, 2856 each. The cost is 0.570 when the closest dropped pair is adjacent and 0.466 when it is 16 tokens apart.
+  \item \sch{delayed} drops all 1536 pairs between adjacent blocks, including the adjacent ones, and costs 0.508.
+  \item \sch{landing} keeps the tail: every token after a block's head reads the next block's head. It blinds the head, which is written at step~0 with only the prompt in view. Its first-token CE is 5.83, against 1.46 for its last token.
+  \item \sch{meet-1} drops more pairs than reversed staggering (360) and some near ones (distance 2), and costs 0.318 (seed 42). With a longer lag, \sch{meet-4} drops 234 pairs, none closer than 5, and costs 0.285.
+\end{itemize}
+This is a qualitative reading of a handful of schedules at one small scale, not a fitted law.
+Where the count is fixed, a larger closest distance means a lower cost.
+Across schedules, the ranking follows the pair count and the closest distance together.
+
+% ---------------------------------------------------------------------------
+\section{Segment length and the stagger sweep}
+\label{app:sweep}
+
+\begin{table}[t]
+  \centering
+  \caption{Effect of segment length $g$ (seed 42, 5000 steps; steady-state CE, causal 1.977). Information cost = staggered $-$ order-only CE; ordering cost = order-only cost vs.\ causal.}
+  \label{tab:segment}
+  \small
+  \begin{tabular}{crrrr}
+    \toprule
+    $g$ & Order only ($s=16$) & Staggered ($s=8$) & Information cost & Ordering cost \\
+    \midrule
+    1 & 2.294 & 2.304 & 0.010 & 0.316 \\
+    4 & 2.386 & 2.401 & 0.015 & 0.409 \\
+    \textbf{8} & \textbf{2.234} & \textbf{2.248} & 0.015 & \textbf{0.256} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{The remaining cost is ordering cost, and its size depends on the segment length.}
+Almost all of the cost of \sch{reverse-8-g8} (0.264 of 0.276) is already present in the order-only schedule \sch{reverse-16-g8}, which drops nothing.
+Table~\ref{tab:segment} varies the segment length at seed 42.
+The information cost stays at 0.010--0.015 for every $g$, while the ordering cost is non-monotonic in $g$: 0.316 for $g=1$, 0.409 for $g=4$ and 0.256 for $g=8$.
+The per-slot CE points to backward jumps: each jump starts a segment whose first token is predicted far ahead of the visible text.
+Under \sch{reverse-16-g4} the three jump tokens of a block cost 4.11, 4.46 and 5.34 nats, while $g=8$ has a single jump (5.24).
+Token reversal also has a single far-ahead token, the tail, but writes the whole block against the natural direction (\S\ref{sec:tradeoff}).
+Segment reversal does not help at $s=0$: \sch{reverse-0-g4} costs $0.561$ (seed 42), consistent with its smaller $\dmin=13$.
+
+
+\paragraph{The stagger sweep.}
 \begin{table}[t]
   \centering
   \caption{Cost vs.\ causal (nats/token) across the stagger $s$ (seed 42, base model, 5000 steps). Tokens per step are measured over the seven blocks of a window; in the steady state they approach $L/s$. Minimum dropped distances in parentheses. For $s=1$, segment reversal with $g=s$ is token reversal.}
@@ -490,13 +683,6 @@ The smaller cost of about 0.13 on the forward blocks is plausibly the price of o
   \end{tabular}
 \end{table}
 
-\begin{figure}[t]
-  \centering
-  \input{figures/tradeoff.tex}
-  \caption{Speed against cost (seed 42, base model, 5000 steps; values in Table~\ref{tab:tradeoff}). Reversal beats forward staggering at every speed. Segment reversal is best only at $s=L/2$; at higher parallelism token reversal is best.}
-  \label{fig:tradeoff}
-\end{figure}
-
 Table~\ref{tab:tradeoff} and Figure~\ref{fig:tradeoff} sweep the stagger $s$.
 \begin{itemize}
   \item \textbf{Reversal beats forward staggering at every speed.} Forward staggering always drops adjacent pairs, and its cost rises from 0.353 to 0.571. Token reversal drops only pairs 16 or more tokens apart, and its cost rises from 0.326 to 0.459. Its margin over forward staggering grows from 0.027 at 1.75 tokens/step to 0.112 at 7.00. Taking the best reversed schedule at each speed, the margin grows from 0.082 to 0.112.
@@ -508,44 +694,9 @@ Meet-in-the-middle and \sch{alternate-1} lie behind this front (Table~\ref{tab:m
 These are single-seed likelihood results for the small model.
 In samples, token reversal's advantage at higher parallelism is not established (\S\ref{sec:samples}).
 
-\subsection{Reading every schedule by which pairs it drops}
-\label{sec:lens}
-
-The same lens accounts for every schedule we tested (Tables~\ref{tab:main} and~\ref{tab:meet}; pair counts per window from the visibility masks).
-\begin{itemize}
-  \item \sch{forward-8} and \sch{reverse-8} drop the same 216 pairs. Under \sch{forward-8} they lie at distance 1--8, and its whole cost of 0.350 is information cost. Under \sch{reverse-8} they lie at distance 24 or more, and its information cost is 0.016.
-  \item \sch{reverse-8-g8} also drops 216 pairs, and keeps every pair within distance 16. Its information cost is 0.012.
-  \item \sch{forward-0} and \sch{reverse-0} also drop equal numbers, 2856 each. The cost is 0.570 when the closest dropped pair is adjacent and 0.466 when it is 16 tokens apart.
-  \item \sch{delayed} drops all 1536 pairs between adjacent blocks, including the adjacent ones, and costs 0.508.
-  \item \sch{landing} keeps the tail: every token after a block's head reads the next block's head. It blinds the head, which is written at step~0 with only the prompt in view. Its first-token CE is 5.83, against 1.46 for its last token.
-  \item \sch{meet-1} drops more pairs than reversed staggering (360) and some near ones (distance 2), and costs 0.318 (seed 42). With a longer lag, \sch{meet-4} drops 234 pairs, none closer than 5, and costs 0.285.
-\end{itemize}
-This is a qualitative reading of a handful of schedules at one small scale, not a fitted law.
-Where the count is fixed, a larger closest distance means a lower cost.
-Across schedules, the ranking follows the pair count and the closest distance together.
-
-\subsection{Where the cost lives inside a block}
-
-\begin{figure}[t]
-  \centering
-  \input{figures/per_slot_ce.tex}
-  \caption{Steady-state CE per in-block slot, in text order (slot 1 is the seam token). Left: 5000 steps, mean of seeds 42--44. Right: 20000 steps, seed 42. The dotted line separates the two halves of a block for $g=8$; \sch{reverse-16-g8} and \sch{reverse-8-g8} write slots 9--16 first and then fill in slots 1--8. \sch{forward-8} pays at the seam (slot 1). \sch{reverse-16} pays at slot 16, which it writes first, a full block after the last token it can see. The $g=8$ schedules pay at slot 9, their first-written token, which skips the eight head positions, and recover part of that cost on the infilled left half, which falls below causal. Values in Appendix~\ref{app:slots}.}
-  \label{fig:slots}
-\end{figure}
-
-Figure~\ref{fig:slots} shows per-slot CE.
-Forward staggering is near causal everywhere except at the seam: 5.24 at slot~1, against 1.98 for \sch{causal}.
-The reverse schedules have no seam spike.
-Their first-token CE (1.29--2.02, against 1.98 for causal) is close to or below causal, because the seam token is written with both the previous block's tail and the later part of its own block in view.
-Instead, the cost moves to the token that is written first and has to be predicted furthest ahead of the visible context.
-With $g=8$, that token is slot 9, with CE 5.29 for \sch{reverse-8-g8}.
-
-At 20000 steps (\sch{reverse-16-g8}, relative to causal, summed per block), the first-written token costs $+3.34$~nats and the rest of the right half $+2.79$, while the infilled left half \emph{gains} $-2.52$.
-The net is $+3.61$ nats per block, or 0.226 per token.
-With exact conditionals these terms would cancel (Remark~\ref{rem:chain}).
-They do not, because predicting a token eight positions ahead and infilling between two contexts are harder conditionals to learn than next-token prediction.
-
-\subsection{Does the ordering cost shrink with training or capacity?}
+% ---------------------------------------------------------------------------
+\section{Scaling study}
+\label{app:scaling}
 
 \begin{table}[t]
   \centering
@@ -566,7 +717,7 @@ They do not, because predicting a token eight positions ahead and infilling betw
 
 \begin{table}[t]
   \centering
-  \caption{Capacity at 5000 steps (seed 42). Cost vs.\ causal of the same size. Longer runs are in Table~\ref{tab:widelong}.}
+  \caption{Capacity at 5000 steps (seed 42). Cost vs.\ causal of the same size. Longer runs are reported below.}
   \label{tab:wide}
   \small
   \begin{tabular}{lrrr}
@@ -643,7 +794,10 @@ Our data do not show models approaching it.
 Whether much larger models remove the ordering cost remains open.
 This result rests on one seed and on \sch{reverse-16-g8} only.
 
-\paragraph{Mixing causal-mask training does not help.}
+% ---------------------------------------------------------------------------
+\section{Mixing causal-mask training}
+\label{app:mixing}
+
 One might suspect that the ordering cost reflects a representation deficit that ordinary left-to-right training could fill.
 We therefore trained the same model on the causal mask with probability $p$ at each step, and evaluated it under the target schedule (seed 42).
 Costs got worse throughout.
@@ -652,141 +806,6 @@ Costs got worse throughout.
 The degradation sits mostly in the infilled left half: the last-written slot (slot 8) rises from 1.19 to 1.63 for \sch{reverse-8-g8} at $p=0.5$, while the first-written right half is almost unchanged.
 The ordering cost is therefore not a representation-sharing deficit.
 Infilling is a conditional that needs its own training signal.
-
-% ---------------------------------------------------------------------------
-\section{Sample quality}
-\label{sec:samples}
-
-\paragraph{Protocol.}
-For 512 development prompts we sample continuations at temperature $T=1$.
-Each schedule samples in its own order: at each serial step, all tokens that become available are sampled in parallel, and the number of steps equals the schedule's serial depth.
-Samples are scored by a \emph{judge}: a causal model trained independently, from a different seed, with the same budget.
-We do not let a model judge its own samples, because that measures its own entropy: the seed-42 causal model scores its own samples at 2.29.
-We report the judge's CE on the continuation, its CE on the seam token (slot 1 of steady-state blocks), and the fraction of repeated 4-grams.
-
-\begin{table}[t]
-  \centering
-  \caption{Sample quality, seed-42 models at 5000 steps, judged by an independently trained causal model (seed 43). Judge CE over the whole continuation (all seven blocks); seam = slot 1 of steady-state blocks. Lower is more natural under the judge. $^\dagger$\,Non-causal.}
-  \label{tab:samples}
-  \small
-  \begin{tabular}{lcrr}
-    \toprule
-    Source & Tokens/step & Judge CE & Judge CE at seam \\
-    \midrule
-    Real text            & $-$  & 2.02 & 2.04 \\
-    \sch{causal}         & 1.00 & 2.61 & 2.56 \\
-    \sch{reverse-16-g8}  & 1.00 & 3.22 & 2.90 \\
-    \midrule
-    \textbf{\sch{reverse-8-g8}} & 1.75 & \textbf{3.26} & \textbf{2.89} \\
-    \sch{reverse-8}      & 1.75 & 3.56 & 7.12 \\
-    \sch{forward-8}      & 1.75 & 3.47 & 11.29 \\
-    \sch{delayed}        & 1.75 & 3.79 & 11.43 \\
-    \midrule
-    \sch{landing}$^\dagger$ & 7.00 & 3.61 & 6.15 \\
-    \sch{reverse-0}      & 7.00 & 3.74 & 7.69 \\
-    \sch{forward-0}      & 7.00 & 3.83 & 11.53 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\begin{table}[t]
-  \centering
-  \caption{Cross-judged samples (seed 42, 512 prompts, $T=1$). 20k-step models are judged by the wide causal model; wide models are judged by the 20k-step causal model, so judge and judged are always trained independently. Judge CE and seam CE are defined as in Table~\ref{tab:samples}. Rep.\ = fraction of repeated 4-grams.}
-  \label{tab:cross}
-  \small
-  \begin{tabular}{lcrrrrr}
-    \toprule
-    & & \multicolumn{2}{c}{20k steps} & \multicolumn{2}{c}{Wide (31.5M)} & \\
-    \cmidrule(lr){3-4}\cmidrule(lr){5-6}
-    Source & Tokens/step & Judge CE & Seam & Judge CE & Seam & Rep. \\
-    \midrule
-    Real text                   & $-$  & 1.81 & 1.80 & 1.79 & 1.81 & 0.012 \\
-    \sch{causal}                & 1.00 & 2.34 & 2.26 & 2.42 & 2.47 & 0.009 \\
-    \sch{reverse-16-g8}         & 1.00 & 3.00 & 2.57 & 3.15 & 2.80 & 0.005--0.006 \\
-    \textbf{\sch{reverse-8-g8}} & 1.75 & \textbf{3.04} & \textbf{2.64} & \textbf{3.21} & \textbf{2.83} & 0.005 \\
-    \sch{forward-8}             & 1.75 & 3.33 & 11.29 & 3.49 & 11.81 & 0.006 \\
-    \sch{reverse-16} ($g=1$)    & 1.00 & 3.30 & 5.78 & $-$ & $-$ & 0.005 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-\paragraph{The seam failure is removed.}
-Under forward staggering, the judge assigns the seam token a CE of 11.3 (Table~\ref{tab:samples}).
-The token is written blind to its left neighbour and often does not connect to it.
-Under \sch{reverse-8-g8} the seam CE is 2.89, close to causal samples (2.56).
-This holds in all three settings: 2.64 at 20k steps and 2.83 for the wide model, against 11.29 and 11.81 for \sch{forward-8} (Table~\ref{tab:cross}).
-At equal parallelism, \sch{reverse-8-g8} samples are also better overall than \sch{forward-8}: 3.26 vs.\ 3.47, 3.04 vs.\ 3.33, and 3.21 vs.\ 3.49.
-
-\paragraph{At $s=L/2$, segment reversal is the variant to use.}
-Token reversal ($g=1$) repairs the seam only partly in samples (7.12 at 5k steps, 5.78 at 20k), even though its seam token has the lowest likelihood CE of any schedule.
-Its overall sample quality is also clearly worse than $g=8$ (3.30 vs.\ 3.00 at 20k steps).
-At 5k steps, \sch{reverse-8} samples are even worse overall than \sch{forward-8} (3.56 vs.\ 3.47), despite the better seam.
-We hypothesise that, under $g=1$, the last-written seam token must reconcile the previous block with a block that was sampled right to left from far-ahead guesses, and often cannot.
-We therefore recommend $g=L/2$ at this parallelism.
-With this choice text is written left to right within each half, and the block head becomes an infilling span.
-At higher parallelism the likelihood results favour token reversal (\S\ref{sec:tradeoff}), but the samples are less clear.
-At 2.8 tokens/step, \sch{reverse-4} samples score 3.65 against 3.62 for \sch{forward-4}, although the seam improves (7.49 against 11.34).
-At 7.0, \sch{reverse-0} beats \sch{forward-0} (3.74 against 3.83) but not the non-causal \sch{landing} scheme.
-
-\paragraph{A smaller seam remains inside the block.}
-Writing the seam last does not make every slot look natural.
-Per-slot judge CE of \sch{reverse-8-g8} samples peaks at slot 9, the token that jumps over the left half: 4.76 for the 20k-step model under the wide judge.
-It is also raised at slot 8, the last infilled token, where the left half has to join the already-written right half: 3.60.
-For comparison, real text scores about 1.75 per slot under the same judge, causal samples about 2.36, and the \sch{forward-8} seam 11.29.
-The same pattern holds at 5k steps (5.56 and 3.94) and for the wide model (5.40 and 3.85).
-Segment reversal therefore moves the seam rather than abolishing it.
-The seam between blocks reflects missing information.
-It becomes a smaller boundary inside the block, which reflects learnability.
-
-\paragraph{Re-decoding one token afterwards does not repair the seam.}
-One might ask whether a seam can be patched after the fact instead of avoided by ordering.
-We test the simplest version (seed 42, base model, 5000 steps).
-After a block is written, one token is re-decoded once with both of its neighbours in view.
-Under \sch{reverse-8-g8} this is the jump token (slot 9); under \sch{forward-8}, as a control, it is the block head (slot 1).
-Training adds one refinement query per block as an auxiliary loss.
-Refinement runs as a separate forward pass in which no position reads the token being refined, because the other tokens' content streams have already seen it.
-At sampling time the window is first written with the schedule, and then that token is resampled in every block.
-Later tokens are not recomputed, which corresponds to leaving the KV cache stale.
-The auxiliary loss does not hurt the main task: steady-state CE is 2.239 against 2.248 for \sch{reverse-8-g8}, and 2.323 against 2.331 for \sch{forward-8}.
-With both sides known, the refined token is easy: its refinement CE is 1.11 for the jump token and 1.31 for the block head, against about 1.98 for causal.
-
-\begin{table}[t]
-  \centering
-  \caption{Re-decoding one token per block after the block is written (seed 42, 5000 steps, models trained with the refinement loss; 512 prompts, $T=1$, judged by the seed-43 causal model). Judge CE is over the whole continuation, as in Table~\ref{tab:samples}. The last three columns are per-slot judge CE on steady-state blocks for the refined token and the two tokens after it.}
-  \label{tab:refine}
-  \small
-  \begin{tabular}{lrrrr}
-    \toprule
-    Samples & Judge CE & Refined token & Next token & Next $+1$ \\
-    \midrule
-    Real text                                   & 2.02  & $-$   & $-$  & $-$  \\
-    \sch{reverse-8-g8}                          & 3.277 & 5.05  & 3.85 & 3.34 \\
-    \quad + refine slot 9 (jump token)          & 3.272 & 3.69  & 4.50 & 3.60 \\
-    \sch{forward-8}                             & 3.469 & 11.13 & 5.25 & 4.04 \\
-    \quad + refine slot 1 (block head)          & 3.421 & 4.97  & 8.02 & 5.04 \\
-    \bottomrule
-  \end{tabular}
-\end{table}
-
-In samples (Table~\ref{tab:refine}) the refined token itself improves: by 1.36 nats under \sch{reverse-8-g8} and by 6.16 under \sch{forward-8}.
-But the next token was written for the old value and now fails to fit, rising by 0.65 and 2.77 nats.
-The break moves one position to the right instead of disappearing, and overall judge CE changes by only $-0.005$ and $-0.048$.
-\sch{forward-8} with refinement (3.421) remains clearly worse than \sch{reverse-8-g8} without it (3.277).
-Patching the forward seam after the fact is therefore no substitute for ordering.
-This is what the principle predicts: a token fits both neighbours only if it is written after both, and patching one token afterwards makes the next token the new seam.
-The test is narrow: one seed, the small model, $T=1$, and only the variant that resamples one token without recomputing later ones.
-Stronger repairs were not tested: resampling several tokens, recomputing the rest of the block, or sampling at lower temperature.
-Because these models are trained with the extra loss, their unrefined samples differ slightly from Table~\ref{tab:samples} (3.277 against 3.260 for \sch{reverse-8-g8}).
-
-\paragraph{The ordering cost is visible in samples.}
-Relative to causal samples, \sch{reverse-8-g8} remains worse by about 0.65--0.8 judge nats: 3.26 vs.\ 2.61, 3.04 vs.\ 2.34, and 3.21 vs.\ 2.42.
-This gap does not shrink at the training lengths and model sizes we sampled from, consistent with the likelihood results at those settings.
-The gap is larger in samples than in likelihood.
-Part of it may be entropy rather than disfluency: reverse-schedule samples repeat fewer 4-grams (0.005) than causal samples (0.009) and real text (0.012).
-A temperature sweep is needed to separate the two effects.
-At full parallelism the ranking in samples is the reverse of the ranking in likelihood.
-The non-causal \sch{landing} scheme scores 3.61, better than \sch{reverse-0} at 3.74, which in turn beats \sch{forward-0} at 3.83.
-This is a single-seed comparison, and at this parallelism our evidence for reverse staggering rests on likelihood only.
 
 % ---------------------------------------------------------------------------
 \section{Does a block-level plan remove the ordering cost?}
@@ -874,22 +893,115 @@ Continuous block latents produced by a learned generative head, as in full block
 In this low-cost version, a block-level plan does not make the within-block order free.
 
 % ---------------------------------------------------------------------------
-\section{Related work}
-\label{sec:related}
+\section{Sample-quality details}
+\label{app:samples}
 
-\paragraph{Staggered and wavefront parallelism.}
-Starting the next unit before the current one is finished is an old idea.
-Wavefront parallel processing in HEVC decodes rows of coding blocks with a fixed lag~\citep{sullivan2012hevc}.
-In autoregressive image generation, ZipAR starts the next row once the current row is a window ahead, without retraining~\citep{he2025zipar}.
-It names the seam problem explicitly and fills the missing context with an approximation.
-Parallelized autoregressive visual generation generates the initial tokens of each region sequentially and then decodes distant, weakly dependent regions in parallel~\citep{wang2025par}.
-Diagonal decoding parallelises video generation along spatio-temporal diagonals~\citep{ye2025diagonal}.
-MusicGen offsets parallel codebook streams by one step each~\citep{copet2023musicgen}.
-StagFormer staggers execution along the layer axis rather than the sequence~\citep{cutler2025stagformer}.
-Hogwild! Inference runs concurrent generators that read each other's tokens through a shared KV cache~\citep{rodionov2025hogwild}.
-The principle that distant, weakly dependent tokens can be generated in parallel, and the use of staggered pipelines, are therefore not new.
-All of these schemes keep the natural order inside a unit.
-What we add is a within-unit order that moves every dropped dependency away from the seam, with a guarantee on its distance.
+Self-judging measures a model's own entropy: the seed-42 causal model scores its own samples at 2.29, against 2.61 under the independent judge.
+
+\begin{table}[t]
+  \centering
+  \caption{Cross-judged samples (seed 42, 512 prompts, $T=1$). 20k-step models are judged by the wide causal model; wide models are judged by the 20k-step causal model, so judge and judged are always trained independently. Judge CE and seam CE are defined as in Table~\ref{tab:samples}. Rep.\ = fraction of repeated 4-grams.}
+  \label{tab:cross}
+  \small
+  \begin{tabular}{lcrrrrr}
+    \toprule
+    & & \multicolumn{2}{c}{20k steps} & \multicolumn{2}{c}{Wide (31.5M)} & \\
+    \cmidrule(lr){3-4}\cmidrule(lr){5-6}
+    Source & Tokens/step & Judge CE & Seam & Judge CE & Seam & Rep. \\
+    \midrule
+    Real text                   & $-$  & 1.81 & 1.80 & 1.79 & 1.81 & 0.012 \\
+    \sch{causal}                & 1.00 & 2.34 & 2.26 & 2.42 & 2.47 & 0.009 \\
+    \sch{reverse-16-g8}         & 1.00 & 3.00 & 2.57 & 3.15 & 2.80 & 0.005--0.006 \\
+    \textbf{\sch{reverse-8-g8}} & 1.75 & \textbf{3.04} & \textbf{2.64} & \textbf{3.21} & \textbf{2.83} & 0.005 \\
+    \sch{forward-8}             & 1.75 & 3.33 & 11.29 & 3.49 & 11.81 & 0.006 \\
+    \sch{reverse-16} ($g=1$)    & 1.00 & 3.30 & 5.78 & $-$ & $-$ & 0.005 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{The seam failure is removed.}
+Under forward staggering, the judge assigns the seam token a CE of 11.3 (Table~\ref{tab:samples}).
+The token is written blind to its left neighbour and often does not connect to it.
+Under \sch{reverse-8-g8} the seam CE is 2.89, close to causal samples (2.56).
+This holds in all three settings: 2.64 at 20k steps and 2.83 for the wide model, against 11.29 and 11.81 for \sch{forward-8} (Table~\ref{tab:cross}).
+At equal parallelism, \sch{reverse-8-g8} samples are also better overall than \sch{forward-8}: 3.26 vs.\ 3.47, 3.04 vs.\ 3.33, and 3.21 vs.\ 3.49.
+
+\paragraph{At $s=L/2$, segment reversal is the variant to use.}
+Token reversal ($g=1$) repairs the seam only partly in samples (7.12 at 5k steps, 5.78 at 20k), even though its seam token has the lowest likelihood CE of any schedule.
+Its overall sample quality is also clearly worse than $g=8$ (3.30 vs.\ 3.00 at 20k steps).
+At 5k steps, \sch{reverse-8} samples are even worse overall than \sch{forward-8} (3.56 vs.\ 3.47), despite the better seam.
+We hypothesise that, under $g=1$, the last-written seam token must reconcile the previous block with a block that was sampled right to left from far-ahead guesses, and often cannot.
+We therefore recommend $g=L/2$ at this parallelism.
+With this choice text is written left to right within each half, and the block head becomes an infilling span.
+At higher parallelism the likelihood results favour token reversal (\S\ref{sec:tradeoff}), but the samples are less clear.
+At 2.8 tokens/step, \sch{reverse-4} samples score 3.65 against 3.62 for \sch{forward-4}, although the seam improves (7.49 against 11.34).
+At 7.0, \sch{reverse-0} beats \sch{forward-0} (3.74 against 3.83) but not the non-causal \sch{landing} scheme.
+
+\paragraph{A smaller seam remains inside the block.}
+Writing the seam last does not make every slot look natural.
+Per-slot judge CE of \sch{reverse-8-g8} samples peaks at slot 9, the token that jumps over the left half: 4.76 for the 20k-step model under the wide judge.
+It is also raised at slot 8, the last infilled token, where the left half has to join the already-written right half: 3.60.
+For comparison, real text scores about 1.75 per slot under the same judge, causal samples about 2.36, and the \sch{forward-8} seam 11.29.
+The same pattern holds at 5k steps (5.56 and 3.94) and for the wide model (5.40 and 3.85).
+Segment reversal therefore moves the seam rather than abolishing it.
+The seam between blocks reflects missing information.
+It becomes a smaller boundary inside the block, which reflects learnability.
+
+\paragraph{The ordering cost is visible in samples.}
+Relative to causal samples, \sch{reverse-8-g8} remains worse by about 0.65--0.8 judge nats: 3.26 vs.\ 2.61, 3.04 vs.\ 2.34, and 3.21 vs.\ 2.42.
+This gap does not shrink at the training lengths and model sizes we sampled from, consistent with the likelihood results at those settings.
+The gap is larger in samples than in likelihood.
+Part of it may be entropy rather than disfluency: reverse-schedule samples repeat fewer 4-grams (0.005) than causal samples (0.009) and real text (0.012).
+A temperature sweep is needed to separate the two effects.
+At full parallelism the ranking in samples is the reverse of the ranking in likelihood.
+The non-causal \sch{landing} scheme scores 3.61, better than \sch{reverse-0} at 3.74, which in turn beats \sch{forward-0} at 3.83.
+This is a single-seed comparison, and at this parallelism our evidence for reverse staggering rests on likelihood only.
+
+% ---------------------------------------------------------------------------
+\section{Re-decoding one token afterwards}
+\label{app:refine}
+One might ask whether a seam can be patched after the fact instead of avoided by ordering.
+We test the simplest version (seed 42, base model, 5000 steps).
+After a block is written, one token is re-decoded once with both of its neighbours in view.
+Under \sch{reverse-8-g8} this is the jump token (slot 9); under \sch{forward-8}, as a control, it is the block head (slot 1).
+Training adds one refinement query per block as an auxiliary loss.
+Refinement runs as a separate forward pass in which no position reads the token being refined, because the other tokens' content streams have already seen it.
+At sampling time the window is first written with the schedule, and then that token is resampled in every block.
+Later tokens are not recomputed, which corresponds to leaving the KV cache stale.
+The auxiliary loss does not hurt the main task: steady-state CE is 2.239 against 2.248 for \sch{reverse-8-g8}, and 2.323 against 2.331 for \sch{forward-8}.
+With both sides known, the refined token is easy: its refinement CE is 1.11 for the jump token and 1.31 for the block head, against about 1.98 for causal.
+
+\begin{table}[t]
+  \centering
+  \caption{Re-decoding one token per block after the block is written (seed 42, 5000 steps, models trained with the refinement loss; 512 prompts, $T=1$, judged by the seed-43 causal model). Judge CE is over the whole continuation, as in Table~\ref{tab:samples}. The last three columns are per-slot judge CE on steady-state blocks for the refined token and the two tokens after it.}
+  \label{tab:refine}
+  \small
+  \begin{tabular}{lrrrr}
+    \toprule
+    Samples & Judge CE & Refined token & Next token & Next $+1$ \\
+    \midrule
+    Real text                                   & 2.02  & $-$   & $-$  & $-$  \\
+    \sch{reverse-8-g8}                          & 3.277 & 5.05  & 3.85 & 3.34 \\
+    \quad + refine slot 9 (jump token)          & 3.272 & 3.69  & 4.50 & 3.60 \\
+    \sch{forward-8}                             & 3.469 & 11.13 & 5.25 & 4.04 \\
+    \quad + refine slot 1 (block head)          & 3.421 & 4.97  & 8.02 & 5.04 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+In samples (Table~\ref{tab:refine}) the refined token itself improves: by 1.36 nats under \sch{reverse-8-g8} and by 6.16 under \sch{forward-8}.
+But the next token was written for the old value and now fails to fit, rising by 0.65 and 2.77 nats.
+The break moves one position to the right instead of disappearing, and overall judge CE changes by only $-0.005$ and $-0.048$.
+\sch{forward-8} with refinement (3.421) remains clearly worse than \sch{reverse-8-g8} without it (3.277).
+Patching the forward seam after the fact is therefore no substitute for ordering.
+This is what the principle predicts: a token fits both neighbours only if it is written after both, and patching one token afterwards makes the next token the new seam.
+The test is narrow: one seed, the small model, $T=1$, and only the variant that resamples one token without recomputing later ones.
+Stronger repairs were not tested: resampling several tokens, recomputing the rest of the block, or sampling at lower temperature.
+Because these models are trained with the extra loss, their unrefined samples differ slightly from Table~\ref{tab:samples} (3.277 against 3.260 for \sch{reverse-8-g8}).
+
+% ---------------------------------------------------------------------------
+\section{Detailed comparison with closely related work}
+\label{app:related}
 
 \paragraph{Line- and block-parallel text generation.}
 The closest prior work is a series of line-parallel language models.
@@ -907,26 +1019,6 @@ Landing targets read to the right and are therefore non-causal; our \sch{landing
 Continuous autoregressive language models predict one continuous vector per block of tokens~\citep{shao2025calm}.
 The discrete plan in \S\ref{sec:latent} is a crude, low-cost stand-in for such continuous block latents.
 
-\paragraph{Block and multi-block diffusion.}
-Block diffusion interpolates between autoregressive and diffusion LMs by denoising one block at a time~\citep{arriola2025block}.
-Several recent pipelines overlap blocks.
-In TeCoP~\citep{tsou2026tecop}, FlowBlock~\citep{tian2026flowblock} and multi-block diffusion~\citep{jin2026multibd}, later blocks read tentative or noisy states of earlier ones and commit by confidence.
-AsyncLane starts the next segment early at reliable delimiters while still refining the prefix~\citep{ren2026asynclane}.
-Large flow language models bridge block boundaries with speculative drafts and verification~\citep{chavan2026lafa}.
-These methods repair seams through iterative refinement and temporary context.
-We found none that fixes the generation order inside a block or analyses the distance of dropped dependencies.
-Hou and Kwok find that block diffusion models are better suited to left-to-right unmasking~\citep{hou2026rethinking}, which is consistent with the ordering cost we measure.
-ReFusion~\citep{li2025refusion} measures that dependency between tokens decays with relative distance, and therefore decodes slots in parallel while generating the tokens inside each slot left to right.
-This is the same locality principle that our schedules exploit.
-
-\paragraph{Generation order.}
-XLNet trains over factorisation orders with two-stream attention~\citep{yang2019xlnet}, which we use as a measurement device.
-$\sigma$-GPT generates in arbitrary orders~\citep{pannatier2024sigma}.
-Fill-in-the-middle training teaches left-to-right models to infill~\citep{bavarian2022fim}; the second half of each block in our $g=L/2$ schedule is exactly such an infilling span.
-Decoding in order-agnostic LMs includes within-block right-to-left decoding as a baseline, with blocks still decoded serially~\citep{yao2026orderagnostic}.
-An information-theoretic analysis of masked diffusion relates parallel-decoding error to conditional total correlation within a step, and compares decoding orders~\citep{zhang2026generation}.
-In that language, our dropped pairs are the dependencies a schedule ignores, and the lemma controls where they lie.
-
 \paragraph{Bidirectional and meet-in-the-middle generation.}
 Generating a sequence from both ends towards the middle has been studied at the sentence level.
 \citet{zhou2019bothsides} generate from both sides to the middle, and synchronous bidirectional translation decodes left-to-right and right-to-left together~\citep{zhou2019sbnmt}.
@@ -934,93 +1026,6 @@ Interleaved bidirectional generation produces tokens from both ends in a single 
 Meet-in-the-middle pre-training trains a left-to-right and a right-to-left model to agree~\citep{nguyen2023meet}.
 In all of these, the two directions can read each other's tokens.
 Our \sch{meet-$d$} is a block-level adaptation, used here as a baseline: within a pair the forward block cannot read the reversed block to its right, which keeps the schedule causal.
-
-\paragraph{Semi-autoregressive, speculative and multi-token decoding.}
-Semi-autoregressive translation generates $k$ adjacent tokens at once~\citep{wang2018semi}, dropping exactly the adjacent dependencies that reverse staggering preserves.
-Non-autoregressive translation drops all of them~\citep{gu2018nat}.
-Blockwise parallel decoding~\citep{stern2018blockwise}, speculative decoding~\citep{leviathan2023speculative,chen2023speculative}, EAGLE~\citep{li2024eagle}, lookahead decoding~\citep{fu2024lookahead} and multi-token prediction~\citep{gloeckle2024mtp} instead keep the causal distribution, either exactly or approximately, by drafting and verifying.
-These methods are lossless or nearly so, and our schedule is not.
-Writing the seam last targets the setting where a model must commit tokens without verification, such as block-parallel latent generators and pipelined decoders.
-In that setting, some dependencies must be dropped, and the question is which ones.
-The two approaches are complementary.
-
-% ---------------------------------------------------------------------------
-\section{Limitations}
-\label{sec:limitations}
-
-\begin{itemize}
-  \item \textbf{Scale.} All results use TinyStories and models of 7.2M--31.5M parameters. At the wide size only \sch{causal} and \sch{reverse-16-g8} were trained for 20000 steps; on the 22M-token training set that causal baseline overfits, so we report the 219M-token rerun. The small model's 20k-step runs overfit mildly. Several ablations use a single seed: segment length, the stagger sweep, meet-in-the-middle, the refinement test, mixing, 20k steps, the wide model, cross-judged samples and all plan results.
-  \item \textbf{The ordering cost remains.} At every scale we tested, reverse staggering pays an ordering cost of about 0.23--0.27 nats/token relative to a causal LM and about 0.65--0.8 judge nats in samples. For the small model this cost barely shrinks with $4\times$ training, and mixing in causal training makes it worse. A $4.4\times$ larger model trained for 20000 steps on $10\times$ more data still pays 0.242 (one seed), so in the range we tested the cost does not shrink with scale.
-  \item \textbf{The plan experiment is narrow.} \S\ref{sec:latent} uses one seed, one plan size and a crude discrete plan whose likelihood bound is loose. It does not rule out that continuous block latents, as used in full block-latent systems, remove the ordering cost.
-  \item \textbf{A seam inside the block.} Segment reversal leaves a smaller learnability seam at the half-block jump, visible in samples.
-  \item \textbf{Missing comparisons.} We have not yet compared against LatLM-style waiting at equal parallelism, nor run a temperature sweep to separate sample entropy from disfluency.
-  \item \textbf{Streaming.} Reverse order emits text block by block rather than token by token. Within a block, $g=L/2$ emits the right half before the head, which increases the latency to the first readable token in interactive use.
-  \item \textbf{Retraining.} The schedules are not compatible with pretrained left-to-right LMs without retraining or fine-tuning.
-  \item \textbf{Speed.} Tokens per step counts serial model evaluations. We report no wall-clock measurements.
-\end{itemize}
-
-% ---------------------------------------------------------------------------
-\section{Conclusion}
-
-For designers of parallel decoders, our takeaway is to choose the generation order so that the dependencies the schedule must drop are the distant ones.
-That dependency decays with distance is known.
-We add three things:
-\begin{itemize}
-  \item a design rule for block pipelines with a provable distance bound;
-  \item a controlled measurement in which the number of dropped pairs is fixed and only their distance varies;
-  \item a separation of information cost from ordering cost.
-\end{itemize}
-In our small-scale setting, the same 216 pairs per window cost 0.350 nats/token when some are adjacent and 0.016 when all are 24 or more tokens apart.
-Writing the seam last is the direct application of this rule to block-parallel decoding.
-Writing each block's head after the previous block's tail removes the seam failure whatever the exact schedule.
-The instances of this principle differ in what they pay.
-Token-reversed staggering drops only distant pairs but has a high ordering cost.
-Meet-in-the-middle pays at the blind start of its reversed blocks.
-At 1.75 tokens per step, segment-reversed staggering pays least: it skips one half-block and fills in the other.
-Its information cost there almost vanishes: 0.012--0.016 nats/token, against 0.350 for the same number of pairs when some are adjacent.
-At higher parallelism, token reversal pays least in likelihood.
-Together they form the best speed--cost front among the causal schedules we tested. Their advantage over forward staggering grows with parallelism and training, and at 5000 steps also with capacity.
-Re-decoding one token after the fact does not substitute for this ordering: it moves the break one position to the right.
-What remains is an ordering cost and a smaller seam inside the block.
-In small models the ordering cost is 0.23--0.27 nats/token.
-Longer training, causal-mask mixing and a discrete block-level plan barely change it.
-With enough data, a $4.4\times$ larger model trained $4\times$ longer still pays 0.242 (one seed); an apparent drop to 0.146 came from an overfitting baseline.
-The jump token, which has to guess ahead, stays hard at every scale we tested.
-By the chain rule a perfect model would not pay this cost, but our data do not show it shrinking with scale.
-Whether much larger models or continuous block latents remove it remains open.
-
-% ---------------------------------------------------------------------------
-\section*{Acknowledgements}
-The author proposed three things: the idea of writing each block's head last, the meet-in-the-middle variant, and the hypothesis that the ordering cost would shrink with scale. The last was tested here and is not supported in the range we studied.
-The token- and segment-reversed staggered schedules, the distance bound, the experiments and much of the writing were developed with an AI assistant (Claude), and were checked by the author.
-
-% ---------------------------------------------------------------------------
-\paragraph{Reproducibility.}
-The schedules, the two-stream and plan-conditioned models, the sample evaluation and exhaustive tests of Lemma~\ref{lem:distance} and Proposition~\ref{prop:meet} are implemented in a single code base.
-Per-run summaries are aggregated into the tables above.
-% TODO(author): decide on code release and add a URL; the repository is currently private.
-
-\bibliographystyle{plainnat}
-\bibliography{refs}
-
-\appendix
-
-% ---------------------------------------------------------------------------
-\section{Exhaustive verification of the distance bound}
-\label{app:verification}
-
-For every $L\in\{8,16\}$, every segment length $g\in\{1,2,4,8\}$ with $g\mid L$, and every stagger $s=0,\dots,L$, we built the visibility matrix of \sch{reverse-$s$-$g$} for a 3-token prompt and $B=5$ blocks.
-We enumerated all dropped pairs and checked that their minimum distance equals~\eqref{eq:dmin} whenever any pair is dropped.
-For \sch{meet-$d$}, we checked against an independent simulation of the write order that the reversed block's head reads the forward block's tail, and that the minimum dropped distance is $d+1$.
-These tests are in \texttt{tests/test\_seam\_schedules.py}, and the plan model's tests are in \texttt{tests/test\_seam\_plan.py}.
-The test suite also checks the following properties.
-Every schedule's visibility relation is transitive and acyclic.
-Forward staggering drops adjacent pairs, while reverse staggering drops only distant ones.
-The reverse seam token sees the previous block's tail.
-Under \sch{reverse-0}, slot $j$ sees exactly the slots $j'>j$ of the previous block.
-Landing tokens read only the next block's first token.
-Two-stream predictions are invariant to the content of invisible tokens.
-The sampler's number of serial rounds matches each schedule's parallelism.
 
 % ---------------------------------------------------------------------------
 \section{Per-slot cross-entropy}
