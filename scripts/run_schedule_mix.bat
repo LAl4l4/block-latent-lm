@@ -16,11 +16,11 @@ call :run reverse16g8mix50-s42 --schedule reverse --stagger 16 --segment 8 --mix
 call :run reverse8g8mix50-s42 --schedule reverse --stagger 8 --segment 8 --mix-causal 0.5
 call :run reverse8g8mix25-s42 --schedule reverse --stagger 8 --segment 8 --mix-causal 0.25
 call :run reverse0mix50-s42 --schedule reverse --stagger 0 --mix-causal 0.5
-%PY% -m experiments.summarize_schedule_mask %OUT% > %OUT%\summary.md 2>&1
+%PY% -m seam.summarize %OUT% > %OUT%\summary.md 2>&1
 echo [%date% %time%] mix all done >> %LOG%
 goto :eof
 :run
 echo [%date% %time%] begin %1 >> %LOG%
-%PY% -m experiments.schedule_mask_study --out %OUT% %2 %3 %4 %5 %6 %7 %8 %9 > %OUT%\%1.log 2>&1
+%PY% -m seam.train_mask --out %OUT% %2 %3 %4 %5 %6 %7 %8 %9 > %OUT%\%1.log 2>&1
 if errorlevel 1 (echo [%date% %time%] FAILED %1 >> %LOG%) else (echo [%date% %time%] finished %1 >> %LOG%)
 goto :eof

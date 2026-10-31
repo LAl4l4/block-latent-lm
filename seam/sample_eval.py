@@ -6,6 +6,7 @@ CE 是似然指标；本脚本直接看样本：同一批 dev prompt，每个调
 衔接处首词）和重复 4-gram 比例；同时给出真实续写和 causal 自身样本作参照。
 """
 
+
 import argparse
 import json
 from pathlib import Path
@@ -15,7 +16,9 @@ import torch
 import torch.nn.functional as F
 from tokenizers import Tokenizer
 
-from experiments.schedule_mask_study import TwoStreamLM, Windows, visibility
+from seam.data import Windows
+from seam.models import TwoStreamLM
+from seam.schedules import rounds, visibility
 from train import precision_context
 
 
@@ -33,21 +36,6 @@ def load(run, device):
         c.get("segment", 1),
     )
     return model.to(device).eval(), visible.to(device), c
-
-
-def rounds(visible, prompt):
-    """每个生成位置最早能采样的轮次：所依赖的生成位置都已在更早轮次完成。"""
-    n = visible.shape[0]
-    depth = torch.zeros(n, dtype=torch.long, device=visible.device)
-    generated = torch.arange(n, device=visible.device) >= prompt
-    needs = visible & generated[None, :]
-    for _ in range(n):
-        update = torch.where(needs, depth[None, :] + 1, 0).max(1).values
-        update = torch.where(generated, update, 0)
-        if torch.equal(update, depth):
-            break
-        depth = update
-    return depth[prompt:]
 
 
 @torch.inference_mode()

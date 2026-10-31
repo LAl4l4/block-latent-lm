@@ -22,7 +22,7 @@ call :run reverse16-s42 --schedule reverse --stagger 16
 call :run reverse4-s42 --schedule reverse --stagger 4
 call :run forward4-s42 --schedule forward --stagger 4
 
-%PY% -m experiments.summarize_schedule_mask %OUT% > %OUT%\summary.md 2>&1
+%PY% -m seam.summarize %OUT% > %OUT%\summary.md 2>&1
 echo [%date% %time%] all done >> %OUT%\status.txt
 goto :eof
 
@@ -33,7 +33,7 @@ goto :eof
 :run
 set NAME=%1
 echo [%date% %time%] begin %NAME% >> %OUT%\status.txt
-%PY% -m experiments.schedule_mask_study --out %OUT% %2 %3 %4 %5 %6 %7 %8 %9 > %OUT%\%NAME%.log 2>&1
+%PY% -m seam.train_mask --out %OUT% %2 %3 %4 %5 %6 %7 %8 %9 > %OUT%\%NAME%.log 2>&1
 if errorlevel 1 (
   echo [%date% %time%] FAILED %NAME% >> %OUT%\status.txt
 ) else (
