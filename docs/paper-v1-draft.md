@@ -33,7 +33,7 @@ Schedules: causal; delayed (block t reads ≤ t−2 plus own prefix); forward-s;
 d_min = L − g + 1 + g · max(0, ⌈(s − g + 1)/g⌉), and the bound is attained.
 For forward-s (s < L) dropped pairs exist at distance 1.
 
-*Proof sketch.* Write j = qg + r. For a pair (t−1, j′), (t, j) with k = q − q′, the pair is dropped iff kg − (r − r′) ≥ s, and its distance is L + kg + (r − r′). Dropping requires k ≥ 0; minimising over r − r′ ≥ −(g − 1) gives the bound. Pairs further apart have distance > L. Verified exhaustively for L ∈ {8, 16}, all g | L, s = 0..L (`tests/test_schedule_mask_study.py`).
+*Proof sketch.* Write j = qg + r. For a pair (t−1, j′), (t, j) with k = q − q′, the pair is dropped iff kg − (r − r′) ≥ s, and its distance is L + kg + (r − r′). Dropping requires k ≥ 0; minimising over r − r′ ≥ −(g − 1) gives the bound. Pairs further apart have distance > L. Verified exhaustively for L ∈ {8, 16}, all g | L, s = 0..L (`tests/test_seam_schedules.py`).
 
 Special cases: token reversal (g=1): L + s. Half-block segments with s = g = L/2: L + 1 with left-to-right order inside both halves (the block head becomes a fill-in-the-middle span). Fully parallel (s=0, g=1): L, causal, unlike landing targets.
 
@@ -96,6 +96,7 @@ The seam failure of forward staggering (11.3) disappears under segment reversal 
 - Staggered / wavefront parallelism: ZipAR (2412.04062), Diagonal Decoding (2503.14070), PAR (CVPR 2025), WPP in video coding.
 - Line/block-parallel text: LCLM (2609.07129), LatLM (2610.23951), PSF (2610.12898).
 - Block diffusion pipelines: TeCoP (2610.27583), FlowBlock (2607.17652), MultiBD (2606.29215), AsyncLane (2606.08411), Lafa (2610.28559).
+- Reversal for shorter dependency lags: Sutskever et al. 2014 (1409.3215) reverse the *source* so the first target words sit close to the first source words; we reverse *within decoder blocks* so the seam tokens are written right after the tokens they depend on. Use this as the motivating analogy in the introduction.
 - Generation order: order-agnostic decoding (2606.00997), information-theoretic parallel decoding (2602.00286), FIM training (Bavarian et al. 2022), semi-autoregressive NMT (EMNLP 2018).
 - Speculative / multi-token: blockwise parallel decoding (Stern et al. 2018), EAGLE, MTP.
 

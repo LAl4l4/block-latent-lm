@@ -14,7 +14,7 @@
 
 论文计划见 [docs/paper-plan.md](docs/paper-plan.md)。**暂停第2节的8份/1份u对照和继续调P**；现有P蒸馏结果冻结为负面基线。
 
-第1步"同步 vs 延迟反馈"已启动：复用此前写好但从未运行的两块前瞻训练（`run_pair_pilot.bat`，此前因venv缺pytest在测试步骤即退出，现已按requirements安装pytest 8.4.1）。四组 sync / const-all / state-all / state-student 均从冻结teacher.pt出发，结果在 `runs/pair-pilot/summary.md`，判定阈值在计划文档中预先登记。评估新增第二块的错配历史CE，用于把延迟代价换算成历史优势的比例。
+第1步"同步 vs 延迟反馈"已启动：复用此前写好但从未运行的两块前瞻训练（`scripts/run_pair_pilot.bat`，此前因venv缺pytest在测试步骤即退出，现已按requirements安装pytest 8.4.1）。四组 sync / const-all / state-all / state-student 均从冻结teacher.pt出发，结果在 `runs/pair-pilot/summary.md`，判定阈值在计划文档中预先登记。评估新增第二块的错配历史CE，用于把延迟代价换算成历史优势的比例。
 
 seed 42 结果（单seed）：以第二块为准，冻结MSE学生的延迟代价是0.754（占历史优势42%）；端到端延迟训练降到0.381（21%），联合训练Q是0.381，与常量无差别。step 0时MSE学生（0.703）还不如训练反馈均值常量（0.686）。按预先登记的阈值落在中间档，下一步做u反推。详见 [计划文档第1步结果](docs/paper-plan.md)。`--train student` 首次运行因冻结教师处于eval模式、cuDNN GRU无法反传而失败，已改为始终保持训练模式（无dropout，等价）并重跑：教师冻结、只用LM loss训练Q，同一教师上的第二块代价从MSE学生的0.703降到0.415，Q相对反馈误差9.57。
 

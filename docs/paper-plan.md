@@ -37,7 +37,7 @@
 | state-all-s42 | `--mode state --train all` | P 与主干联合训练：Q(h_{t−1}) 从 MSE 学生初始化，梯度走 LM loss |
 | state-student-s42 | `--mode state --train student` | 只用 LM loss 训练 Q，教师冻结 |
 
-一键运行：`run_pair_pilot.bat`（先跑 pytest，日志和进度在 `runs\pair-pilot\`，结束后写 `summary.md`）。
+一键运行：`scripts/run_pair_pilot.bat`（先跑 pytest，日志和进度在 `runs\pair-pilot\`，结束后写 `summary.md`）。
 
 **指标**（[summarize_pair_pilot.py](../experiments/summarize_pair_pilot.py) 输出）：
 

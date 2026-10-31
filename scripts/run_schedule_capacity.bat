@@ -17,11 +17,11 @@ call :run causal-s42 --schedule causal
 call :run reverse16g8-s42 --schedule reverse --stagger 16 --segment 8
 call :run reverse8g8-s42 --schedule reverse --stagger 8 --segment 8
 call :run forward8-s42 --schedule forward --stagger 8
-%PY% -m experiments.summarize_schedule_mask %WIDE% > %WIDE%\summary.md 2>&1
+%PY% -m seam.summarize %WIDE% > %WIDE%\summary.md 2>&1
 echo [%date% %time%] wide all done >> %LOG%
 goto :eof
 :run
 echo [%date% %time%] begin wide %1 >> %LOG%
-%PY% -m experiments.schedule_mask_study --out %WIDE% --dim 512 --layers 8 --heads 8 --ff-dim 1536 %2 %3 %4 %5 %6 %7 %8 %9 > %WIDE%\%1.log 2>&1
+%PY% -m seam.train_mask --out %WIDE% --dim 512 --layers 8 --heads 8 --ff-dim 1536 %2 %3 %4 %5 %6 %7 %8 %9 > %WIDE%\%1.log 2>&1
 if errorlevel 1 (echo [%date% %time%] FAILED wide %1 >> %LOG%) else (echo [%date% %time%] finished wide %1 >> %LOG%)
 goto :eof

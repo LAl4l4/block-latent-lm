@@ -37,7 +37,7 @@ call :run landing-s42 --schedule landing
 
 rem E: sample quality, judged by causal-s42
 echo [%date% %time%] begin sample eval >> %LOG%
-%PY% -m experiments.schedule_sample_eval --runs causal-s42 delayed-s42 forward8-s42 reverse8-s42 reverse8g8-s42 reverse8g4-s42 reverse16-s42 reverse16g8-s42 reverse4-s42 forward4-s42 reverse0-s42 reverse0g4-s42 forward0-s42 landing-s42 --out %OUT%\sample-eval-s42.json > %OUT%\sample-eval.log 2>&1
+%PY% -m seam.sample_eval --runs causal-s42 delayed-s42 forward8-s42 reverse8-s42 reverse8g8-s42 reverse8g4-s42 reverse16-s42 reverse16g8-s42 reverse4-s42 forward4-s42 reverse0-s42 reverse0g4-s42 forward0-s42 landing-s42 --out %OUT%\sample-eval-s42.json > %OUT%\sample-eval.log 2>&1
 if errorlevel 1 (echo [%date% %time%] FAILED sample eval >> %LOG%) else (echo [%date% %time%] finished sample eval >> %LOG%)
 
 rem C: seeds 43 and 44 for core arms
@@ -53,7 +53,7 @@ for %%S in (43 44) do (
   call :run forward0-s%%S --schedule forward --stagger 0 --seed %%S
   call :run landing-s%%S --schedule landing --seed %%S
 )
-%PY% -m experiments.summarize_schedule_mask %OUT% > %OUT%\summary.md 2>&1
+%PY% -m seam.summarize %OUT% > %OUT%\summary.md 2>&1
 
 rem D: 20000 steps, does the order (learnability) cost shrink with training?
 call :runlong causal-s42 --schedule causal
@@ -61,18 +61,18 @@ call :runlong reverse16-s42 --schedule reverse --stagger 16
 call :runlong reverse16g8-s42 --schedule reverse --stagger 16 --segment 8
 call :runlong reverse8g8-s42 --schedule reverse --stagger 8 --segment 8
 call :runlong forward8-s42 --schedule forward --stagger 8
-%PY% -m experiments.summarize_schedule_mask %LONG% > %LONG%\summary.md 2>&1
+%PY% -m seam.summarize %LONG% > %LONG%\summary.md 2>&1
 echo [%date% %time%] all done >> %LOG%
 goto :eof
 
 :run
 echo [%date% %time%] begin %1 >> %LOG%
-%PY% -m experiments.schedule_mask_study --out %OUT% %2 %3 %4 %5 %6 %7 %8 %9 > %OUT%\%1.log 2>&1
+%PY% -m seam.train_mask --out %OUT% %2 %3 %4 %5 %6 %7 %8 %9 > %OUT%\%1.log 2>&1
 if errorlevel 1 (echo [%date% %time%] FAILED %1 >> %LOG%) else (echo [%date% %time%] finished %1 >> %LOG%)
 goto :eof
 
 :runlong
 echo [%date% %time%] begin long %1 >> %LOG%
-%PY% -m experiments.schedule_mask_study --out %LONG% --steps 20000 --eval-every 5000 %2 %3 %4 %5 %6 %7 %8 %9 > %LONG%\%1.log 2>&1
+%PY% -m seam.train_mask --out %LONG% --steps 20000 --eval-every 5000 %2 %3 %4 %5 %6 %7 %8 %9 > %LONG%\%1.log 2>&1
 if errorlevel 1 (echo [%date% %time%] FAILED long %1 >> %LOG%) else (echo [%date% %time%] finished long %1 >> %LOG%)
 goto :eof

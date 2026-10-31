@@ -5,6 +5,7 @@
 最小丢失距离与每步词数由可见关系直接计算。
 """
 
+
 from collections import defaultdict
 import json
 import re
@@ -12,8 +13,7 @@ import statistics
 import sys
 from pathlib import Path
 
-from experiments.schedule_mask_study import visibility
-from experiments.schedule_sample_eval import rounds
+from seam.schedules import rounds, visibility
 
 
 def fmt(values, digits=3):

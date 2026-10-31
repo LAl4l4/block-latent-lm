@@ -5,18 +5,9 @@ token 级双流 Transformer（XLNet 式）：内容流按生成时间因果，�
 自然语料 CE 之差就是该调度在信息上的代价下界（任何满足同一可见关系的架构都
 不可能更好，只会因结构限制更差）。
 
-序列 = prompt（完全已知，内部普通因果）+ blocks 个 L 词生成块。调度：
-  causal              普通从左到右（上界）
-  delayed             第 t 块只看到 ≤t-2 块与本块已生成前缀（现有延迟反馈的条件）
-  forward --stagger s 块内正序，相邻块错开 s 步开始
-  reverse --stagger s 块内倒序（先生成第 L 个词），相邻块错开 s 步开始
-  reverse --stagger s --segment g  按段倒序：块切成长 g 的段，段间倒序、段内正序
-                                  （g=1 即逐词倒序）
-  landing             PSF 式：所有块同时正序开始，第 2 个词起额外读右侧块首词
-s=0 时所有块同时开始（完全并行）。除 landing 外，所有调度都不读右侧的块。生成位置 i 能看到 k，当且仅当 k 生成得更早且所在块
-不在 i 右边；reverse 下丢掉的词对距离一律 ≥ L+s，见
-docs/idea-reverse-staggered-decoding.md。
+调度定义见 seam/schedules.py。
 """
+
 
 import argparse
 import json
@@ -25,138 +16,14 @@ from pathlib import Path
 import random
 import time
 
-import numpy as np
 import torch
-from torch import nn
 import torch.nn.functional as F
 
 from latent_ar.control import GracefulStop
-from latent_ar.model import RMSNorm, SwiGLU
+from seam.data import Windows
+from seam.models import TwoStreamLM
+from seam.schedules import SCHEDULES, visibility
 from train import append_record, precision_context
-
-SCHEDULES = ("causal", "delayed", "forward", "reverse", "landing")
-
-
-def visibility(schedule, prompt, blocks, block_size, stagger=None, segment=1):
-    """返回 [N, N] 布尔矩阵 V：V[i, k] 表示生成位置 i 时可以读到位置 k 的词。"""
-    if schedule not in SCHEDULES:
-        raise ValueError(f"schedule must be one of {SCHEDULES}")
-    if prompt < 1 or blocks < 1 or block_size < 1:
-        raise ValueError("prompt, blocks and block_size must be positive")
-    n = prompt + blocks * block_size
-    position = torch.arange(n)
-    generated = position >= prompt
-    block = torch.where(generated, (position - prompt) // block_size, -1)
-    slot = torch.where(generated, (position - prompt) % block_size, 0)
-    if schedule == "delayed":
-        same = block[:, None] == block[None, :]
-        allowed = (block[None, :] <= block[:, None] - 2) | (
-            same & (slot[None, :] < slot[:, None])
-        )
-    else:
-        if schedule == "causal":
-            order, step = slot, block_size
-        elif schedule == "landing":
-            order, step = slot, 0
-        else:
-            if stagger is None or not 0 <= stagger <= block_size:
-                raise ValueError("stagger must be in [0, block_size]")
-            if schedule == "forward":
-                order = slot
-            else:
-                if segment < 1 or block_size % segment:
-                    raise ValueError("segment must divide block_size")
-                # 段间倒序：最后一段最先写，块头所在的第一段最后写；段内仍从左到右。
-                last = block_size // segment - 1
-                order = (last - slot // segment) * segment + slot % segment
-            step = stagger
-        clock = block * step + order
-        allowed = (clock[None, :] < clock[:, None]) & (block[None, :] <= block[:, None])
-        if schedule == "landing":
-            # 着陆目标：右侧块首词最先生成，本块其余词都能读到它。
-            allowed |= (
-                (block[None, :] == block[:, None] + 1)
-                & (slot[None, :] == 0)
-                & (slot[:, None] >= 1)
-            )
-    rows, keys = generated[:, None], generated[None, :]
-    # prompt 完全已知：生成位置都能读；prompt 内部普通因果，读不到任何生成位置。
-    allowed = torch.where(rows & ~keys, True, allowed)
-    allowed = torch.where(~rows, ~keys & (position[None, :] < position[:, None]), allowed)
-    return allowed
-
-
-class TwoStreamLayer(nn.Module):
-    def __init__(self, dim, heads, ff_dim):
-        super().__init__()
-        self.heads = heads
-        self.norm1, self.norm2 = RMSNorm(dim), RMSNorm(dim)
-        self.qkv = nn.Linear(dim, 3 * dim, bias=False)
-        self.out = nn.Linear(dim, dim, bias=False)
-        self.ff = SwiGLU(dim, ff_dim)
-
-    def forward(self, content, query, mask):
-        batch, n, width = content.shape
-        x = torch.cat((content, query), 1)
-        q, k, v = (
-            self.qkv(self.norm1(x))
-            .view(batch, x.shape[1], 3, self.heads, width // self.heads)
-            .transpose(1, 3)
-            .unbind(2)
-        )
-        # 两个流的 key/value 都只来自内容流；查询流不被任何位置读取。
-        value = F.scaled_dot_product_attention(q, k[:, :, :n], v[:, :, :n], attn_mask=mask)
-        x = x + self.out(value.transpose(1, 2).reshape(batch, x.shape[1], width))
-        x = x + self.ff(self.norm2(x))
-        return x[:, :n], x[:, n:]
-
-
-class TwoStreamLM(nn.Module):
-    def __init__(self, vocab_size, length, dim, layers, heads, ff_dim):
-        super().__init__()
-        self.token = nn.Embedding(vocab_size, dim)
-        self.position = nn.Embedding(length, dim)
-        self.query = nn.Parameter(torch.zeros(dim))
-        self.layers = nn.ModuleList(
-            TwoStreamLayer(dim, heads, ff_dim) for _ in range(layers)
-        )
-        self.norm = RMSNorm(dim)
-        self.output = nn.Linear(dim, vocab_size, bias=False)
-        self.output.weight = self.token.weight
-        for module in self.modules():
-            if isinstance(module, (nn.Linear, nn.Embedding)):
-                nn.init.normal_(module.weight, std=0.02)
-
-    def forward(self, ids, visible, targets):
-        """visible 为 [N, N]；targets 是要预测的位置下标，返回其 logits。"""
-        n = ids.shape[1]
-        positions = torch.arange(n, device=ids.device)
-        content = self.token(ids) + self.position(positions)
-        query = (self.query + self.position(targets)).expand(ids.shape[0], -1, -1)
-        # 内容流位置 k 额外看到自己；查询流只看到调度允许的词，看不到自己。
-        content_mask = visible | torch.eye(n, dtype=torch.bool, device=ids.device)
-        mask = torch.cat((content_mask, visible[targets]), 0)
-        for layer in self.layers:
-            content, query = layer(content, query, mask)
-        return self.output(self.norm(query))
-
-
-class Windows:
-    """在拼接后的故事 token 流上取定长窗口；故事之间已有 EOS 分隔。"""
-
-    def __init__(self, path, length):
-        self.tokens = np.memmap(path, mode="r", dtype="<u4")
-        self.length = length
-        if len(self.tokens) <= length:
-            raise ValueError("Token stream shorter than one window")
-
-    def batch(self, starts):
-        return torch.from_numpy(
-            np.stack([self.tokens[s : s + self.length] for s in starts]).astype(np.int64)
-        )
-
-    def random_starts(self, rng, count):
-        return [rng.randrange(len(self.tokens) - self.length) for _ in range(count)]
 
 
 def arm_name(args):
@@ -224,8 +91,8 @@ def main():
     p.add_argument("--seed", type=int, default=42)
     p.add_argument("--device", default="cuda")
     args = p.parse_args()
-    if args.schedule in ("forward", "reverse") and args.stagger is None:
-        p.error("forward/reverse 需要 --stagger")
+    if args.schedule in ("forward", "reverse", "meet", "alternate") and args.stagger is None:
+        p.error("forward/reverse/meet/alternate 需要 --stagger")
     if args.segment != 1 and args.schedule != "reverse":
         p.error("只有 reverse 使用 --segment")
     if args.schedule in ("causal", "delayed", "landing") and args.stagger is not None:
