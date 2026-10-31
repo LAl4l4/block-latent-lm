@@ -18,7 +18,7 @@ from tokenizers import Tokenizer
 
 from seam.data import Windows
 from seam.models import TwoStreamLM
-from seam.schedules import rounds, visibility
+from seam.schedules import refine_queries, refine_slot, rounds, visibility
 from train import precision_context
 
 
@@ -53,6 +53,26 @@ def sample(model, visible, prompts, prompt, temperature, generator, autocast):
         draws = torch.multinomial(probs.flatten(0, 1), 1, generator=generator)
         ids[:, targets[chosen]] = draws.view(ids.shape[0], -1)
     return ids, int(order.max()) + 1
+
+
+@torch.inference_mode()
+def refine(model, ids, c, temperature, generator, autocast):
+    """重解码：每块在本块其余词都已知时重采跳跃词或块首（单独一次前向，不读任何待重解码的词）。
+
+    之后写的词仍是按旧跳跃词写的，不重算（相当于不修 KV cache）。
+    """
+    jumps, rows, content = refine_queries(
+        c["prompt"], c["blocks"], c["block_size"],
+        refine_slot(c["schedule"], c["block_size"], c.get("segment", 1)),
+    )
+    jumps, rows, content = jumps.to(ids.device), rows.to(ids.device), content.to(ids.device)
+    with autocast():
+        logits = model(ids, content, jumps, rows).float()
+    probs = (logits / temperature).softmax(-1)
+    draws = torch.multinomial(probs.flatten(0, 1), 1, generator=generator)
+    ids = ids.clone()
+    ids[:, jumps] = draws.view(ids.shape[0], -1)
+    return ids
 
 
 @torch.inference_mode()
@@ -126,20 +146,28 @@ def main():
                                 prompt, args.temperature, generator, autocast)
             parts.append(ids)
         ids = torch.cat(parts)
-        results[name] = score(ids) | {
-            "serial_steps": steps,
-            "tokens_per_step": blocks * size / steps,
-            "examples": [
-                {
-                    "prompt": tokenizer.decode(ids[i, :prompt].tolist()),
-                    "continuation": tokenizer.decode(ids[i, prompt:].tolist()),
-                }
-                for i in range(4)
-            ],
-        }
-        print(name, json.dumps({k: v for k, v in results[name].items()
-                                if k not in ("examples", "judge_steady_by_slot")}),
-              flush=True)
+        variants = {name: ids}
+        if c.get("refine"):
+            variants[name + "+refine"] = torch.cat([
+                refine(model, ids[i : i + args.batch_size], c,
+                       args.temperature, generator, autocast)
+                for i in range(0, args.prompts, args.batch_size)
+            ])
+        for label, ids in variants.items():
+            results[label] = score(ids) | {
+                "serial_steps": steps,
+                "tokens_per_step": blocks * size / steps,
+                "examples": [
+                    {
+                        "prompt": tokenizer.decode(ids[i, :prompt].tolist()),
+                        "continuation": tokenizer.decode(ids[i, prompt:].tolist()),
+                    }
+                    for i in range(4)
+                ],
+            }
+            print(label, json.dumps({k: v for k, v in results[label].items()
+                                     if k not in ("examples", "judge_steady_by_slot")}),
+                  flush=True)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(results, indent=2, ensure_ascii=False), encoding="utf-8")
 

@@ -142,3 +142,36 @@ def plan_visibility(schedule, prompt, blocks, block_size, codes, stagger=None, s
     allowed[prompt:n, prompt:n] = words[prompt:, prompt:]
     allowed[n:, :prompt] = True
     return allowed
+
+
+def refine_slot(schedule, block_size, segment=1):
+    """要重解码的块内槽：按段倒序是最先写的跳跃词（槽 L−g），正序错开是块首（槽 0）。"""
+    if schedule == "reverse":
+        return block_size - segment
+    if schedule == "forward":
+        return 0
+    raise ValueError("refine is defined for reverse and forward only")
+
+
+def refine_queries(prompt, blocks, block_size, slot):
+    """每块写完后把槽 slot 的词再预测一次（重解码）。
+
+    重解码单独做一次前向，返回 (位置 [blocks], 查询可见行 [blocks, N], 内容流可见 [N, N])。
+    其他词的内容流在调度里读过这个词，直接复用会把答案漏给重解码查询；所以这次前向里
+    任何位置都不读任何待重解码的词。生成词读 prompt 和不在右侧的块（块内双向，此时已写完）；
+    prompt 内部仍是普通因果。
+    """
+    if not 0 <= slot < block_size:
+        raise ValueError("slot must be in [0, block_size)")
+    n = prompt + blocks * block_size
+    position = torch.arange(n)
+    generated = position >= prompt
+    block = torch.where(generated, (position - prompt) // block_size, -1)
+    jumps = prompt + torch.arange(blocks) * block_size + slot
+    jump = torch.zeros(n, dtype=torch.bool)
+    jump[jumps] = True
+    content = (block[None, :] <= block[:, None]) & ~jump[None, :]
+    content = torch.where(
+        ~generated[:, None], ~generated[None, :] & (position[None, :] < position[:, None]), content
+    )
+    return jumps, content[jumps], content

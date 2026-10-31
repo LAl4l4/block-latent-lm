@@ -49,18 +49,19 @@
 
 \begin{abstract}
 Block-parallel and pipelined generators start a block before its predecessor is finished, so some token pairs can no longer condition on each other.
-It is known that dependency between tokens decays with distance, so distant tokens are safer to generate in parallel.
+It is known that dependency between tokens decays with distance.
 We turn this into a schedule-design rule for block pipelines and quantify it.
 Staggered schemes that keep left-to-right order inside each block drop the strongest dependency: the one between a block's first token and the end of the block before it.
 Our rule is to \emph{write the seam last}: if each block's head is written after the previous block's tail, the seam token can condition on that tail, whatever the exact schedule.
 We compare three instances: token-reversed staggering, segment-reversed staggering and a block-level meet-in-the-middle scheme.
 We prove that reversed staggering drops only pairs at distance at least $L-g+1+g\lceil (s-g+1)/g\rceil^{+}$.
-We then run a TinyStories study with small models in which schedules differ only in the attention mask (3 seeds), which separates information cost from ordering cost.
+A mask-only TinyStories study with small models (3 seeds) separates information cost from ordering cost.
 Forward and token-reversed staggering drop the same 216 pairs per window, yet the dropped pairs cost 0.350 nats/token at distance 1--8 and 0.016 at distance 24 or more.
-Segment reversal works best: at 1.75 tokens per step it costs 0.276 nats/token over a causal LM, against 0.350 for forward staggering and 0.508 for one-block-delayed conditioning, and it beats meet-in-the-middle in both parallelism and cost.
-Under an independent judge, the seam token's cross-entropy in samples falls from 11.3 under forward staggering to 2.9 (causal: 2.6); a smaller seam remains inside the block.
-The schedules are not free: an ordering cost of about 0.23--0.27 nats/token remains.
-It barely shrinks with $4\times$ more training, does not shrink with $4.4\times$ more parameters, and is not removed by a discrete block-level plan.
+At 1.75 tokens per step segment reversal works best: it costs 0.276 nats/token over a causal LM, against 0.350 for forward staggering and 0.508 for one-block-delayed conditioning, and it beats meet-in-the-middle. At higher parallelism token reversal is best in likelihood.
+Under an independent judge, the seam token's cross-entropy in samples falls from 11.3 under forward staggering to 2.9 (causal: 2.6); a smaller seam remains inside the block, and re-decoding one token afterwards only moves the break.
+The schedules are not free.
+In small models an ordering cost of 0.23--0.27 nats/token remains, and a discrete block-level plan does not remove it.
+A $4.4\times$ larger model trained $4\times$ longer cuts it to 0.146 (one seed; that causal baseline overfits).
 \end{abstract}
 
 % ---------------------------------------------------------------------------
@@ -101,8 +102,8 @@ If the head of each block is written after the tail of the previous block, the s
 Schedules that follow the principle still have to drop some dependencies, and they differ in what they pay instead.
 We study three instances (Figure~\ref{fig:schedule}).
 \begin{itemize}
-  \item[(a)] \textbf{Token-reversed staggering.} Each block is written from its last token to its first, and block starts are staggered by $s$ steps. Only distant pairs are dropped, at distance $L+s$ or more. The price is a high ordering cost: the first-written token has to be guessed a full block ahead of the visible context.
-  \item[(b)] \textbf{Segment-reversed staggering}, the best instance we found. Each block is split into segments that are written in reverse order, each left to right. With two half-block segments it works as \emph{skip and fill}. In each phase the decoder writes one half-block ahead, skipping the half-block in between, while filling in the gap it skipped in the previous phase. Both neighbours of that gap are already written, so the gap is an infilling span, as in fill-in-the-middle training~\citep{bavarian2022fim}. The only blind spot is the jump over one half-block.
+  \item[(a)] \textbf{Token-reversed staggering.} Each block is written from its last token to its first, and block starts are staggered by $s$ steps. Only distant pairs are dropped, at distance $L+s$ or more. The price is a high ordering cost: the first-written token has to be guessed a full block ahead of the visible context. At parallelism above 1.75 tokens per step, it is nonetheless the best schedule we tested in likelihood.
+  \item[(b)] \textbf{Segment-reversed staggering}, the best instance we found at stagger $s=L/2$. Each block is split into segments that are written in reverse order, each left to right. With two half-block segments it works as \emph{skip and fill}. In each phase the decoder writes one half-block ahead, skipping the half-block in between, while filling in the gap it skipped in the previous phase. Both neighbours of that gap are already written, so the gap is an infilling span, as in fill-in-the-middle training~\citep{bavarian2022fim}. The only blind spot is the jump over one half-block.
   \item[(c)] \textbf{Meet-in-the-middle.} Blocks are decoded in pairs. The first block of a pair runs forward and the second runs in reverse, $d$ steps behind, so that they meet at the seam. This is a block-level adaptation of bidirectional generation from both sides to the middle~\citep{zhou2019bothsides,zhou2019sbnmt,zhang2020interleaved}.
 \end{itemize}
 Throughout, we analyse a schedule by \emph{which} dependencies it drops rather than how many.
@@ -122,16 +123,20 @@ Throughout, we analyse a schedule by \emph{which} dependencies it drops rather t
   We apply it across 3 seeds, $4\times$ longer training and $4.4\times$ more parameters.
   With the number of dropped pairs fixed, their distance alone changes the cost by more than a factor of twenty.
   Segment-reversed staggering is better than meet-in-the-middle in both parallelism and cost.
+  A sweep over the stagger shows that segment reversal with $g=L/2$ is best at 1.75 tokens per step, and token reversal is best in likelihood at every higher parallelism we tested.
   \item \textbf{Sample quality} under an independently trained judge (\S\ref{sec:samples}).
   The seam failure between blocks is removed in samples.
   A smaller seam remains inside the block, at the half-block jump.
+  Re-decoding one token after the block is written does not repair a seam: it moves the break one position to the right.
   \item \textbf{Block-level plans} (\S\ref{sec:latent}).
   A discrete plan predicted before each block reduces the ordering cost of token reversal most.
-  It does not remove the ordering cost, and under staggering segment reversal remains best.
+  It does not remove the ordering cost, and at stagger $s=8$ segment reversal remains best.
 \end{enumerate}
 We are explicit about what the evidence does not show.
 Writing the seam last is \emph{not} free relative to a causal language model.
-Its residual cost is an ordering cost that neither our scaling experiments nor a discrete plan remove.
+Its residual cost is an ordering cost.
+A discrete block-level plan does not remove it.
+A larger model trained for longer does reduce it, from 0.226 to 0.146 nats/token in one seed, though the larger causal baseline overfits in that comparison.
 
 % ---------------------------------------------------------------------------
 \section{Setup: schedules, visibility and dropped pairs}
@@ -400,7 +405,7 @@ By~\eqref{eq:decomp}, the information cost of reverse staggering at $s=8$ is $0.
 \sch{forward-8} drops exactly as many pairs (216 per window), and all of its $0.350$ nats/token is information cost.
 The two schedules differ only in where the dropped pairs lie, and the cost differs by more than a factor of twenty.
 
-\paragraph{Reverse staggering is the best causal schedule at both parallelism levels we tested.}
+\paragraph{Reverse staggering is the best causal schedule at both parallelism levels in Table~\ref{tab:main}.}
 At 1.75 tokens/step, \sch{reverse-8-g8} costs 0.074 nats/token less than \sch{forward-8} and 0.232 less than \sch{delayed}.
 With all blocks in parallel (7.00 tokens/step), \sch{reverse-0} costs 0.104 less than \sch{forward-0}.
 It also costs 0.032 less than the landing-target scheme, which is non-causal and reads one token of the block to its right.
@@ -412,7 +417,9 @@ Segment reversal does not help at $s=0$: \sch{reverse-0-g4} costs $0.561$ (seed 
 Almost all of the cost of \sch{reverse-8-g8} (0.264 of 0.276) is already present in the order-only schedule \sch{reverse-16-g8}, which drops nothing.
 Table~\ref{tab:segment} varies the segment length at seed 42.
 The information cost stays at 0.010--0.015 for every $g$, while the ordering cost is non-monotonic in $g$: 0.316 for $g=1$, 0.409 for $g=4$ and 0.256 for $g=8$.
-One possible explanation, which we have not tested, is that $g=4$ forces three backward jumps per block, $g=8$ only one, while $g=1$ uses a single uniform right-to-left order.
+The per-slot CE points to backward jumps: each jump starts a segment whose first token is predicted far ahead of the visible text.
+Under \sch{reverse-16-g4} the three jump tokens of a block cost 4.11, 4.46 and 5.34 nats, while $g=8$ has a single jump (5.24).
+Token reversal also has a single far-ahead token, the tail, but writes the whole block against the natural direction (\S\ref{sec:tradeoff}).
 
 \begin{table}[t]
   \centering
@@ -460,6 +467,45 @@ Meet-in-the-middle does remove the seam failure, but almost all of its cost sits
 The first token a reversed block writes is its tail.
 At that moment its forward partner has written only $d$ tokens, so the tail has no written neighbours nearby and must be guessed about a block ahead.
 The smaller cost of about 0.13 on the forward blocks is plausibly the price of one model learning both directions.
+
+\subsection{Speed and quality}
+\label{sec:tradeoff}
+
+\begin{table}[t]
+  \centering
+  \caption{Cost vs.\ causal (nats/token) across the stagger $s$ (seed 42, base model, 5000 steps). Tokens per step are measured over the seven blocks of a window; in the steady state they approach $L/s$. Minimum dropped distances in parentheses. For $s=1$, segment reversal with $g=s$ is token reversal.}
+  \label{tab:tradeoff}
+  \small
+  \begin{tabular}{crrrr}
+    \toprule
+    Tokens/step & $s$ & \sch{forward-$s$} & \sch{reverse-$s$} (token) & \sch{reverse-$s$-g$s$} (segment) \\
+    \midrule
+    1.75 & 8 & 0.353 (1) & 0.326 (24) & \textbf{0.271} (17) \\
+    2.80 & 4 & 0.423 (1) & \textbf{0.356} (20) & 0.442 (17) \\
+    4.00 & 2 & 0.482 (1) & \textbf{0.386} (18) & 0.470 (17) \\
+    5.09 & 1 & 0.522 (1) & \textbf{0.417} (17) & $-$ \\
+    7.00 & 0 & 0.571 (1) & \textbf{0.459} (16) & $-$ \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{figure}[t]
+  \centering
+  \input{figures/tradeoff.tex}
+  \caption{Speed against cost (seed 42, base model, 5000 steps; values in Table~\ref{tab:tradeoff}). Reversal beats forward staggering at every speed. Segment reversal is best only at $s=L/2$; at higher parallelism token reversal is best.}
+  \label{fig:tradeoff}
+\end{figure}
+
+Table~\ref{tab:tradeoff} and Figure~\ref{fig:tradeoff} sweep the stagger $s$.
+\begin{itemize}
+  \item \textbf{Reversal beats forward staggering at every speed.} Forward staggering always drops adjacent pairs, and its cost rises from 0.353 to 0.571. Token reversal drops only pairs 16 or more tokens apart, and its cost rises from 0.326 to 0.459. Its margin over forward staggering grows from 0.027 at 1.75 tokens/step to 0.112 at 7.00. Taking the best reversed schedule at each speed, the margin grows from 0.082 to 0.112.
+  \item \textbf{Segment reversal is best only at $g=L/2$.} Shorter segments add backward jumps, each a token predicted far ahead: three per block for $g=4$ and seven for $g=2$. Under \sch{reverse-4-g4} the three jump tokens cost 4.13, 4.52 and 5.47 nats, against about 1.98 for causal. The schedule (0.442) is then worse even than \sch{forward-4} (0.423). \sch{reverse-2-g2} (0.470) is slightly better than \sch{forward-2} (0.482) but far behind token reversal (0.386).
+  \item \textbf{At higher parallelism, token reversal is the best schedule we tested in likelihood.} It makes one jump per block, writing the tail first. Its per-slot CE is a smooth ramp, from 1.34 at the head to 5.58 at the tail for \sch{reverse-2}, and its cost grows slowly with parallelism.
+\end{itemize}
+The best schedules we tested therefore form one front: \sch{reverse-8-g8} at 1.75 tokens/step (0.271), then token reversal at 2.8, 4.0, 5.09 and 7.0 tokens/step (0.356, 0.386, 0.417 and 0.459).
+Meet-in-the-middle and \sch{alternate-1} lie behind this front (Table~\ref{tab:meet}).
+These are single-seed likelihood results for the small model.
+In samples, token reversal's advantage at higher parallelism is not established (\S\ref{sec:samples}).
 
 \subsection{Reading every schedule by which pairs it drops}
 \label{sec:lens}
@@ -509,9 +555,9 @@ They do not, because predicting a token eight positions ahead and infilling betw
     \toprule
     Step & Causal CE & \sch{reverse-16} & \sch{reverse-16-g8} & \sch{reverse-8-g8} & \sch{forward-8} & \sch{forward-8} $-$ \sch{reverse-8-g8} \\
     \midrule
-    5k  & 2.041 & 0.299 & 0.248 & 0.265 & 0.350 & 0.085 \\
+    5k  & 2.041 & 0.299 & 0.247 & 0.265 & 0.350 & 0.085 \\
     10k & 1.881 & 0.289 & 0.245 & 0.262 & 0.356 & 0.094 \\
-    15k & 1.788 & 0.280 & 0.234 & 0.253 & 0.359 & 0.106 \\
+    15k & 1.788 & 0.280 & 0.233 & 0.252 & 0.359 & 0.106 \\
     20k & 1.748 & 0.270 & 0.226 & 0.246 & 0.355 & 0.109 \\
     \bottomrule
   \end{tabular}
@@ -519,7 +565,7 @@ They do not, because predicting a token eight positions ahead and infilling betw
 
 \begin{table}[t]
   \centering
-  \caption{Capacity (seed 42, 5000 steps). Cost vs.\ causal of the same size. The wide model is likely under-trained at this step count.}
+  \caption{Capacity at 5000 steps (seed 42). Cost vs.\ causal of the same size. At this step count the wide model is under-trained (Table~\ref{tab:widelong}).}
   \label{tab:wide}
   \small
   \begin{tabular}{lrrr}
@@ -538,22 +584,60 @@ They do not, because predicting a token eight positions ahead and infilling betw
 \paragraph{Training length.}
 Over $4\times$ more training (Table~\ref{tab:long}), the forward schedule's cost stays at about 0.35.
 That cost is information loss, and no amount of training recovers it.
-The ordering cost of \sch{reverse-16-g8} shrinks, but slowly: from 0.248 to 0.226, about 9\%, while causal CE itself falls by 0.29.
+For the small model, the ordering cost of \sch{reverse-16-g8} shrinks only slowly: from 0.247 to 0.226, about 9\%, while causal CE itself falls by 0.29.
 Because one cost is flat and the other decreases, the advantage of reverse over forward staggering grows from 0.085 to 0.109.
 
-\paragraph{Capacity.}
-With $4.4\times$ more parameters at the same step count (Table~\ref{tab:wide}), the ordering cost does not shrink (0.256 to 0.272), while the forward schedule's information cost \emph{grows} (0.353 to 0.389).
+\paragraph{Capacity at 5000 steps.}
+With $4.4\times$ more parameters at 5000 steps (Table~\ref{tab:wide}), the ordering cost does not shrink (0.256 to 0.272).
+Meanwhile the forward schedule's information cost \emph{grows} (0.353 to 0.389).
 A plausible reading is that a stronger model exploits adjacent dependencies more, and so loses more when they are cut.
 The advantage of reverse staggering grows in this direction too (0.083 to 0.093).
 In every setting, the information cost of reverse staggering stays small: 0.020 at 20k steps and 0.024 for the wide model.
+
+\begin{table}[t]
+  \centering
+  \caption{Ordering cost (\sch{reverse-16-g8} $-$ \sch{causal}, steady-state CE, nats/token) at checkpoints of single 20000-step runs (seed 42) for the base and wide models. Only these two schedules were trained at the wide size for 20000 steps.}
+  \label{tab:widelong}
+  \small
+  \begin{tabular}{rrrrr}
+    \toprule
+    & \multicolumn{2}{c}{Base (7.2M)} & \multicolumn{2}{c}{Wide (31.5M)} \\
+    \cmidrule(lr){2-3}\cmidrule(lr){4-5}
+    Step & Causal CE & Ordering cost & Causal CE & Ordering cost \\
+    \midrule
+    5k  & 2.041 & 0.247 & 1.878 & 0.265 \\
+    10k & 1.881 & 0.245 & 1.730 & 0.234 \\
+    15k & 1.788 & 0.233 & 1.659 & 0.190 \\
+    20k & 1.748 & 0.226 & 1.652 & \textbf{0.146} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\paragraph{Capacity with longer training.}
+The 5000-step comparison appears to reflect under-training.
+At 5000 steps the wide model has seen about 1.3 training tokens per parameter.
+Trained for 20000 steps (Table~\ref{tab:widelong}), its ordering cost falls from 0.265 to 0.146, while the base model's falls only from 0.247 to 0.226.
+Per slot at 20k steps, the infilled head is where most of the gain comes from: all eight of its slots fall below causal (0.71--1.54, against 1.61--1.67).
+The rest of the right half (slots 10--16) contributes too, at 1.73--2.67.
+The jump token barely moves (5.20 at 5k steps, 4.98 at 20k): it has to be predicted from text that ends a half-block earlier, and more capacity cannot supply the missing information.
+At least part of the ordering cost is therefore a learnability cost that capacity reduces, once the larger model is trained long enough.
+
+\paragraph{Caveats on the scaling result.}
+This is one seed and two model sizes, and \sch{reverse-8-g8} was not trained at the wide size for 20000 steps.
+More importantly, the wide causal baseline stops improving after 15k steps (1.659 to 1.652) while its training loss keeps falling.
+At 20k steps its training loss is about 1.32, against a development CE of 1.705 over all blocks.
+With 22M training tokens, 20000 steps amount to about 7.4 epochs, and this baseline is overfitting.
+The order-only model overfits less (training loss about 1.69 against 1.85 on development data) and is still improving.
+Part of the shrinking gap may therefore reflect a saturating baseline rather than a falling ordering cost.
+A larger training set is needed to separate the two effects.
 
 \paragraph{Mixing causal-mask training does not help.}
 One might suspect that the ordering cost reflects a representation deficit that ordinary left-to-right training could fill.
 We therefore trained the same model on the causal mask with probability $p$ at each step, and evaluated it under the target schedule (seed 42).
 Costs got worse throughout.
 \sch{reverse-8-g8} went from 0.271 at $p=0$ to 0.291 at $p=0.25$ and 0.351 at $p=0.5$.
-\sch{reverse-16-g8} went from 0.256 to 0.338 at $p=0.5$, and \sch{reverse-0} from 0.460 to 0.658 at $p=0.5$.
-The degradation sits mostly in the infilled left half: the last-written slot (slot 8) rises from 1.20 to 1.63 for \sch{reverse-8-g8} at $p=0.5$, while the first-written right half is almost unchanged.
+\sch{reverse-16-g8} went from 0.256 to 0.338 at $p=0.5$, and \sch{reverse-0} from 0.459 to 0.658 at $p=0.5$.
+The degradation sits mostly in the infilled left half: the last-written slot (slot 8) rises from 1.19 to 1.63 for \sch{reverse-8-g8} at $p=0.5$, while the first-written right half is almost unchanged.
 The ordering cost is therefore not a representation-sharing deficit.
 Infilling is a conditional that needs its own training signal.
 
@@ -621,13 +705,16 @@ Under \sch{reverse-8-g8} the seam CE is 2.89, close to causal samples (2.56).
 This holds in all three settings: 2.64 at 20k steps and 2.83 for the wide model, against 11.29 and 11.81 for \sch{forward-8} (Table~\ref{tab:cross}).
 At equal parallelism, \sch{reverse-8-g8} samples are also better overall than \sch{forward-8}: 3.26 vs.\ 3.47, 3.04 vs.\ 3.33, and 3.21 vs.\ 3.49.
 
-\paragraph{Segment reversal is the variant to use.}
+\paragraph{At $s=L/2$, segment reversal is the variant to use.}
 Token reversal ($g=1$) repairs the seam only partly in samples (7.12 at 5k steps, 5.78 at 20k), even though its seam token has the lowest likelihood CE of any schedule.
 Its overall sample quality is also clearly worse than $g=8$ (3.30 vs.\ 3.00 at 20k steps).
 At 5k steps, \sch{reverse-8} samples are even worse overall than \sch{forward-8} (3.56 vs.\ 3.47), despite the better seam.
 We hypothesise that, under $g=1$, the last-written seam token must reconcile the previous block with a block that was sampled right to left from far-ahead guesses, and often cannot.
-We therefore recommend $g=L/2$.
+We therefore recommend $g=L/2$ at this parallelism.
 With this choice text is written left to right within each half, and the block head becomes an infilling span.
+At higher parallelism the likelihood results favour token reversal (\S\ref{sec:tradeoff}), but the samples are less clear.
+At 2.8 tokens/step, \sch{reverse-4} samples score 3.65 against 3.62 for \sch{forward-4}, although the seam improves (7.49 against 11.34).
+At 7.0, \sch{reverse-0} beats \sch{forward-0} (3.74 against 3.83) but not the non-causal \sch{landing} scheme.
 
 \paragraph{A smaller seam remains inside the block.}
 Writing the seam last does not make every slot look natural.
@@ -639,9 +726,49 @@ Segment reversal therefore moves the seam rather than abolishing it.
 The seam between blocks reflects missing information.
 It becomes a smaller boundary inside the block, which reflects learnability.
 
+\paragraph{Re-decoding one token afterwards does not repair the seam.}
+One might ask whether a seam can be patched after the fact instead of avoided by ordering.
+We test the simplest version (seed 42, base model, 5000 steps).
+After a block is written, one token is re-decoded once with both of its neighbours in view.
+Under \sch{reverse-8-g8} this is the jump token (slot 9); under \sch{forward-8}, as a control, it is the block head (slot 1).
+Training adds one refinement query per block as an auxiliary loss.
+Refinement runs as a separate forward pass in which no position reads the token being refined, because the other tokens' content streams have already seen it.
+At sampling time the window is first written with the schedule, and then that token is resampled in every block.
+Later tokens are not recomputed, which corresponds to leaving the KV cache stale.
+The auxiliary loss does not hurt the main task: steady-state CE is 2.239 against 2.248 for \sch{reverse-8-g8}, and 2.323 against 2.331 for \sch{forward-8}.
+With both sides known, the refined token is easy: its refinement CE is 1.11 for the jump token and 1.31 for the block head, against about 1.98 for causal.
+
+\begin{table}[t]
+  \centering
+  \caption{Re-decoding one token per block after the block is written (seed 42, 5000 steps, models trained with the refinement loss; 512 prompts, $T=1$, judged by the seed-43 causal model). Judge CE is over the whole continuation, as in Table~\ref{tab:samples}. The last three columns are per-slot judge CE on steady-state blocks for the refined token and the two tokens after it.}
+  \label{tab:refine}
+  \small
+  \begin{tabular}{lrrrr}
+    \toprule
+    Samples & Judge CE & Refined token & Next token & Next $+1$ \\
+    \midrule
+    Real text                                   & 2.02  & $-$   & $-$  & $-$  \\
+    \sch{reverse-8-g8}                          & 3.277 & 5.05  & 3.85 & 3.34 \\
+    \quad + refine slot 9 (jump token)          & 3.272 & 3.69  & 4.50 & 3.60 \\
+    \sch{forward-8}                             & 3.469 & 11.13 & 5.25 & 4.04 \\
+    \quad + refine slot 1 (block head)          & 3.421 & 4.97  & 8.02 & 5.04 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+In samples (Table~\ref{tab:refine}) the refined token itself improves: by 1.36 nats under \sch{reverse-8-g8} and by 6.16 under \sch{forward-8}.
+But the next token was written for the old value and now fails to fit, rising by 0.65 and 2.77 nats.
+The break moves one position to the right instead of disappearing, and overall judge CE changes by only $-0.005$ and $-0.048$.
+\sch{forward-8} with refinement (3.421) remains clearly worse than \sch{reverse-8-g8} without it (3.277).
+Patching the forward seam after the fact is therefore no substitute for ordering.
+This is what the principle predicts: a token fits both neighbours only if it is written after both, and patching one token afterwards makes the next token the new seam.
+The test is narrow: one seed, the small model, $T=1$, and only the variant that resamples one token without recomputing later ones.
+Stronger repairs were not tested: resampling several tokens, recomputing the rest of the block, or sampling at lower temperature.
+Because these models are trained with the extra loss, their unrefined samples differ slightly from Table~\ref{tab:samples} (3.277 against 3.260 for \sch{reverse-8-g8}).
+
 \paragraph{The ordering cost is visible in samples.}
 Relative to causal samples, \sch{reverse-8-g8} remains worse by about 0.65--0.8 judge nats: 3.26 vs.\ 2.61, 3.04 vs.\ 2.34, and 3.21 vs.\ 2.42.
-This gap does not shrink with training or capacity, consistent with the likelihood results.
+This gap does not shrink at the training lengths and model sizes we sampled from, consistent with the likelihood results at those settings.
 The gap is larger in samples than in likelihood.
 Part of it may be entropy rather than disfluency: reverse-schedule samples repeat fewer 4-grams (0.005) than causal samples (0.009) and real text (0.012).
 A temperature sweep is needed to separate the two effects.
@@ -810,8 +937,8 @@ The two approaches are complementary.
 \label{sec:limitations}
 
 \begin{itemize}
-  \item \textbf{Scale.} All results use TinyStories and models of 7.2M--31.5M parameters. The wide model was trained for only 5000 steps. Several ablations use a single seed: segment length, meet-in-the-middle, mixing, 20k steps, the wide model, cross-judged samples and all plan results.
-  \item \textbf{The ordering cost remains.} Relative to a causal LM, reverse staggering costs about 0.23--0.27 nats/token in likelihood and about 0.65--0.8 judge nats in samples. In our experiments this cost barely shrinks with $4\times$ training and does not shrink with $4.4\times$ capacity, and mixing in causal training makes it worse.
+  \item \textbf{Scale.} All results use TinyStories and models of 7.2M--31.5M parameters. At the wide size only \sch{causal} and \sch{reverse-16-g8} were trained for 20000 steps, and that causal baseline overfits the 22M-token training set. Several ablations use a single seed: segment length, the stagger sweep, meet-in-the-middle, the refinement test, mixing, 20k steps, the wide model, cross-judged samples and all plan results.
+  \item \textbf{The ordering cost remains.} In small models, reverse staggering pays an ordering cost of about 0.23--0.27 nats/token relative to a causal LM and about 0.65--0.8 judge nats in samples. For the small model this cost barely shrinks with $4\times$ training, and mixing in causal training makes it worse. A $4.4\times$ larger model trained for 20000 steps reduces it to 0.146, but this rests on one seed and an overfitting baseline.
   \item \textbf{The plan experiment is narrow.} \S\ref{sec:latent} uses one seed, one plan size and a crude discrete plan whose likelihood bound is loose. It does not rule out that continuous block latents, as used in full block-latent systems, remove the ordering cost.
   \item \textbf{A seam inside the block.} Segment reversal leaves a smaller learnability seam at the half-block jump, visible in samples.
   \item \textbf{Missing comparisons.} We have not yet compared against LatLM-style waiting at equal parallelism, nor run a temperature sweep to separate sample entropy from disfluency.
@@ -837,12 +964,17 @@ Writing each block's head after the previous block's tail removes the seam failu
 The instances of this principle differ in what they pay.
 Token-reversed staggering drops only distant pairs but has a high ordering cost.
 Meet-in-the-middle pays at the blind start of its reversed blocks.
-Segment-reversed staggering, which skips one half-block and fills in the other, pays least.
-At 1.75 tokens per step its information cost almost vanishes: 0.012--0.016 nats/token, against 0.350 for the same number of pairs when some are adjacent.
-It is the best causal schedule we tested, and its advantage over forward staggering grows with training and capacity.
-What remains is an ordering cost of about 0.23--0.27 nats/token and a smaller seam inside the block.
-Neither more training, more capacity, causal-mask mixing nor a discrete block-level plan removes it.
-Whether richer, continuous block latents can remove it remains open.
+At 1.75 tokens per step, segment-reversed staggering pays least: it skips one half-block and fills in the other.
+Its information cost there almost vanishes: 0.012--0.016 nats/token, against 0.350 for the same number of pairs when some are adjacent.
+At higher parallelism, token reversal pays least in likelihood.
+Together they form the best speed--cost front among the causal schedules we tested, and their advantage over forward staggering grows with parallelism, training and capacity.
+Re-decoding one token after the fact does not substitute for this ordering: it moves the break one position to the right.
+What remains is an ordering cost and a smaller seam inside the block.
+In small models the ordering cost is 0.23--0.27 nats/token.
+Longer training, causal-mask mixing and a discrete block-level plan barely change it.
+A $4.4\times$ larger model trained $4\times$ longer cuts it to 0.146 (one seed, with an overfitting baseline), so it behaves at least partly like a learnability cost that shrinks with scale.
+The jump token, which has to guess ahead, does not improve with scale.
+Whether larger scale or continuous block latents remove the rest remains open.
 
 % ---------------------------------------------------------------------------
 \section*{Acknowledgements}

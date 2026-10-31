@@ -30,10 +30,16 @@
   - 信息代价只有 0.01 到 0.02。
   - 样本中衔接处的评委 CE 从约 11.5 降到约 2.7。
   - 相对正序的优势随训练和容量扩大。
+- **速度与质量的权衡：**
+  - 倒序在 1.75 到 7 词/步的每个速度上都优于正序，差距从 0.08 增大到 0.11。
+  - 2 倍速时按段倒序 reverse8g8 最好；更高并行时逐词倒序最好（0.356 到 0.459）。
+  - 段更短的按段倒序跳跃词太多，反而变差。
 - **未解决的部分：**
-  - 倒着写更难学，约 0.25 的排序代价不随训练或容量缩小。
-  - 混合 causal 训练也降不下来。
-- **下一步：** 检验块级潜变量计划能否消掉排序代价。先用 codec 潜变量作为每块的"计划"做 mask 实验；如果成立，再接入完整的块级系统。
+  - 倒着写更难学，小模型上约 0.25 的排序代价不随训练缩小，混合 causal 训练也降不下来。
+  - 宽模型（3150 万参数）训练 20000 步后排序代价降到 0.146，但基线过拟合（训练集只有 2200 万词），结论待 100 万故事数据的重跑确认。
+  - 块级离散计划只是把代价从词搬到计划码上。
+  - 事后重解码一个词只会把断裂往后挪一格，替代不了顺序设计。
+- **下一步：** 在不过拟合的数据上确认规模效应（`runs/schedule-mask-wide-1m`），再把逐词倒序用到更大的预训练模型上。
 
 完整数字与判断见 [想法记录](docs/idea-reverse-staggered-decoding.md)，论文草稿见 [paper-v1-draft.md](docs/paper-v1-draft.md)。
 
@@ -46,8 +52,8 @@
 ```
 
 - 调度可选 `causal`、`delayed`、`forward`、`reverse`、`landing`。
-- 参数含义：`--stagger` 是错开步数 s，`--segment` 是段长 g，`--mix-causal` 是混合 causal 训练的比例。
-- 批量脚本：`scripts/run_schedule_mask.bat`（批次 A）、`scripts/run_schedule_overnight.bat`（多 seed、长训练）、`scripts/run_schedule_capacity.bat`（宽模型）、`scripts/run_schedule_samples2.bat`（交叉评委）、`scripts/run_schedule_mix.bat`（混合训练）。
+- 参数含义：`--stagger` 是错开步数 s，`--segment` 是段长 g，`--mix-causal` 是混合 causal 训练的比例，`--refine` 给跳跃词（reverse）或块首（forward）加重解码查询，`--data data/prepared-1m` 用 100 万故事的数据。
+- 批量脚本：`scripts/run_schedule_mask.bat`（批次 A）、`scripts/run_schedule_overnight.bat`（多 seed、长训练）、`scripts/run_schedule_capacity.bat`（宽模型）、`scripts/run_schedule_samples2.bat`（交叉评委）、`scripts/run_schedule_mix.bat`（混合训练）、`scripts/run_schedule_wide_long.bat`（宽模型 20000 步）、`scripts/run_schedule_tradeoff.bat`（权衡曲线）、`scripts/run_schedule_refine_wide1m.bat`（重解码与 1M 数据重跑）。
 - 结果写入 `runs/schedule-mask*/`，这些目录不进 Git。
 - 测试：`python -m pytest tests/test_seam_schedules.py`。
 
