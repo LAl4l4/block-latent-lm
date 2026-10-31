@@ -9,6 +9,10 @@ from tokenizers import Tokenizer
 from latent_ar.checkpoints import (
     BLOCK_ARCHITECTURE,
     CODEC_ARCHITECTURE,
+    VAE_ARCHITECTURE,
+    CALM_ARCHITECTURE,
+    CONDITIONAL_FLOW_ARCHITECTURE,
+    CALM_TOKEN_ARCHITECTURE,
     FLOW_ARCHITECTURE,
     ENERGY_ARCHITECTURE,
     MIXTURE_ARCHITECTURE,
@@ -46,6 +50,10 @@ def main():
     parser.add_argument("--flow-steps", type=int, help=argparse.SUPPRESS)
     parser.add_argument("--latent-temperature", type=float, help=argparse.SUPPRESS)
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--feedback-mode", choices=["text", "raw"],
+        help="有限混合头的逐块反馈对照：text 回灌实际文本编码，raw 回灌预测 latent；均要求 temperature=0",
+    )
     parser.add_argument("--device", default="auto")
     args = parser.parse_args()
     if not 0 <= args.min_new_tokens <= args.max_new_tokens:
@@ -54,7 +62,9 @@ def main():
     checkpoint = torch.load(args.checkpoint, map_location="cpu", weights_only=True)
     device = select_device(args.device)
     architecture = checkpoint_architecture(checkpoint)
-    if architecture == CODEC_ARCHITECTURE:
+    if architecture in {CODEC_ARCHITECTURE, VAE_ARCHITECTURE}:
+        if architecture == VAE_ARCHITECTURE:
+            parser.error("这是 VAE 重建检查点。请先用 train_calm.py 训练主干，再生成续写。")
         parser.error(
             "这是 codec 重建检查点。请先用 train_prior.py 训练主干，再生成续写。"
         )
@@ -69,6 +79,9 @@ def main():
                 ENERGY_ARCHITECTURE,
                 DENOISING_ARCHITECTURE,
                 TOKEN_HEAD_ARCHITECTURE,
+                CALM_ARCHITECTURE,
+                CONDITIONAL_FLOW_ARCHITECTURE,
+                CALM_TOKEN_ARCHITECTURE,
             }
             else (
                 1.0
@@ -76,7 +89,21 @@ def main():
                 else 0.8
             )
         )
+        if architecture == MIXTURE_ARCHITECTURE and (
+            checkpoint["model_config"].get("feedback_mode") == "text"
+            or args.feedback_mode is not None
+        ):
+            args.temperature = 0.0
     prior_options = {}
+    if args.feedback_mode is not None:
+        if architecture != MIXTURE_ARCHITECTURE:
+            parser.error("--feedback-mode 当前仅支持有限混合头检查点")
+        prior_options["feedback_mode"] = args.feedback_mode
+    if architecture == MIXTURE_ARCHITECTURE and (
+        checkpoint["model_config"].get("feedback_mode") == "text"
+        or args.feedback_mode is not None
+    ) and args.temperature != 0:
+        parser.error("真实反馈实验固定 decoder 为 argmax，请使用 --temperature 0")
     if architecture == FLOW_ARCHITECTURE:
         if args.flow_steps is not None:
             prior_options["flow_steps"] = args.flow_steps

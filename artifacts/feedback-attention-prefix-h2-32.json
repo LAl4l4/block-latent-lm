@@ -1,0 +1,136 @@
+{
+  "student_architecture": "feedback_student_attention_v1",
+  "student_config": {
+    "context_dim": 512,
+    "feedback_dim": 512,
+    "hidden_dim": 256,
+    "layers": 2,
+    "heads": 4,
+    "history_blocks": 2,
+    "noise_dim": 0,
+    "use_prompt_history": true
+  },
+  "student_step": 500,
+  "prompts": 128,
+  "max_new_tokens": 32,
+  "teacher_snapshot_sha256": "1a09997a091049b4a7708054d854c84c97d4557a8c736be5e0deacd152aa89bc",
+  "student_sha256": "06f2619272ae282f0710a15eb029b4b002bf13b441e4d6333597214269b94f8d",
+  "common_prefix_tokens": 1843,
+  "matched_tokens": 1874,
+  "compared_tokens": 3152,
+  "max_length_tokens": 3340,
+  "teacher_tokens": 3231,
+  "student_tokens": 3261,
+  "teacher_eos": 55,
+  "student_eos": 51,
+  "first_block_matches": 128,
+  "first_block_comparable": 128,
+  "feedback_mse_sum": 19.6564422249794,
+  "feedback_cos_sum": 71.46121752262115,
+  "feedback_blocks": 97,
+  "mean_common_prefix_tokens": 14.3984375,
+  "token_match_rate": 0.5945431472081218,
+  "token_match_rate_max_length": 0.5610778443113772,
+  "first_block_match_rate": 1.0,
+  "feedback_mse": 0.20264373427813814,
+  "feedback_cosine": 0.7367135827074346,
+  "samples": [
+    {
+      "story_id": 0,
+      "prompt": " didn't have many at home. One day, she asked her mommy if they could go to the library to find some new stories to read.\n\nMommy said, \"Of course, Lily! Let's go create a library card for you so you can borrow books.\"\n\nLily was so excited to have her very own library card. She picked out lots of books and brought them home to read. As she read, she noticed that some of the stories had harsh words in them. She asked",
+      "teacher": " her mom, \"Can I have a picture of a picture?\"\n\nHer mom replied, \"Of course, Lily. You can have a great time and",
+      "student": " her mom, \"Can I have a picture of a picture?\"\n\nHer, \"I'm so happy to see you, Lily. I'm so happy"
+    },
+    {
+      "story_id": 1,
+      "prompt": ", there was a jolly little girl named Lily. She loved to walk in the park with her mommy and daddy. One day, while they were walking, Lily saw a pretty flower and wanted to pick it. But her mommy said no because it was too close to a big, scary dog.\n\nLily was sad and started to cry. Her daddy saw how upset she was and decided to help. He walked over to the flower and picked it for her. Lily was so happy and hugged her daddy tightly.\n\nBut then, the big, scary dog started to bark and run towards them!",
+      "teacher": " Lily was so scared and ran away. She never saw the dog again and again. The end. \n\nFrom that day on, Lily and her friends were",
+      "student": " Lily was so scared and ran away. She never saw the dog again and again wanted to play with her friends. The end."
+    },
+    {
+      "story_id": 2,
+      "prompt": " in a big barn with all his pig friends. One day, Oink decided to go outside and play in the mud. He loved the feeling of the squishy mud on his feet. \n\nSuddenly, Oink heard a voice say, \"Ew, you're filthy!\" It was his friend, Cow. Oink was sad because",
+      "teacher": " he had to go to the pond. He said, \"I want to be a friend, I want to play with you.\"\n\nThe frog said,",
+      "student": " he had to go to the pond. He said, \"I want to be play with the other animals in the forest.\n\nThe rabbit was so happy"
+    },
+    {
+      "story_id": 3,
+      "prompt": " Lily. He helps her up.\n\n\"Are you okay, Lily?\" he asks. He hugs her.\n\n",
+      "teacher": "\"I'm sorry, Lily. I'm sorry. I'm sorry. I was just playing. I'm sorry. I was mean to you. I'm",
+      "student": "\"I'm sorry, Lily. I'm sorry. I'm sorry. I want to play with you. But you have to be careful. You are not"
+    },
+    {
+      "story_id": 4,
+      "prompt": ", there was a bright comet in the sky. Two little girls, Jacky and Ella, were looking up at it.\n\n\"Wow!\" said Jacky. \"Look at that comet!\"\n\n\"It's so loud!\" said Ella. Loud meant it was very big.\n\nBut then the comet started to shrink. Little by little, it became smaller and smaller until it was gone.\n\nJacky and Ella looked around, but the comet was nowhere to be found.\n\n\"Where did it go?\" asked Jacky.\n\n\"I don't know,\" said Ella",
+      "teacher": ".\n\nSo, the two of them went to the park and saw a big, scary monster. The monster was so happy and it was so much fun",
+      "student": ".\n\nSo, the two of them went to the park and saw a we can find it,\" said the butterfly.\n\n\"Let's go home"
+    },
+    {
+      "story_id": 5,
+      "prompt": " a cute bear. He loved to explore the woods and was very brave. One day, he came across a huge billboard. It was so tall and scary that it made the bear shiver. He asked a fox nearby why the billboard was so tall and the fox replied, \"They're getting married today!\" The bear was puzzled and asked the fox, \"Who's getting married?\". The fox said, \"It's two birds! They love each other very much and they're getting married today. We better go and watch the wedding, it's going to be very exciting!\"\n\nSo, off they went to the wedding of the two",
+      "teacher": " animals in the forest. They were so happy to see the bear and the rabbit was so happy. They all had a wonderful time together and the bear was so",
+      "student": " animals in the forest. They were so happy to see the bear and the rabbit to be a friend like a rabbit. They were so happy to have a new"
+    },
+    {
+      "story_id": 6,
+      "prompt": " and thanked the police animals and the repair animal.\n\nFrom that day on, Jerry was more careful when he walked in the jungle. He knew that if he ever needed help again, the police animals and the repair animal would be there",
+      "teacher": ".",
+      "student": "."
+    },
+    {
+      "story_id": 7,
+      "prompt": "The little boy was very happy. He was so proud that he was able to pick the bookshelf all by himself. He hugged his dad",
+      "teacher": " and said, \"Thank you for helping me. You are so good! You are very kind and helpful.\"\n\nThe boy smiled and said, \"I",
+      "student": " and said, \"Thank you for helping me. You are so good! You!\" \n\nThe boy smiled and said, \"I'm glad you're safe"
+    },
+    {
+      "story_id": 8,
+      "prompt": ", \"but don't worry, we will find it.\"\n\nTom and the cow looked all around the farm. They asked all their friends if they had seen the toy. But no one knew where it was. Tom started to worry more and more.\n\nFinally, they found the toy under a big tree. Tom was so happy! He said, \"Thank you for helping me find my toy. I will try not to worry so much next time.\" Tom and his friends played with the",
+      "teacher": " toys all day long.",
+      "student": " toys all day long."
+    },
+    {
+      "story_id": 9,
+      "prompt": " the boy if he could please play with his truck somewhere else because it was too noisy. The boy said okay and moved to a different spot.\n\nLily was happy because she could play with her toys in peace. She opened her purse and put her toys inside. Then, she looked up and saw a butterfly flying",
+      "teacher": " on the ground. She was so happy to see her new friend. She was so happy that she could play with her friends again. \n\nFrom that day",
+      "student": " on the ground. She was so happy to see her new friend. She was wanted to play with her friends forever. From that day, Lily and her friends"
+    },
+    {
+      "story_id": 10,
+      "prompt": " not understand why she ran away. He sighed and sat in his chair to take a nap. \n\n",
+      "teacher": "The next morning, he woke up and saw a big mess. He was so sad and he started to cry. His mom was so mad that he didn't",
+      "student": "The next morning, he woke up and saw a big mess. He was so wanted to go to the park. He said, \"I'm sorry, I"
+    },
+    {
+      "story_id": 11,
+      "prompt": ". She thinks Ben must be somewhere near. She looks behind the tree and sees a pair of shoes sticking out. She smiles and runs to the tree. She pulls Ben out and says, \"I found you! You are not hidden very well. Your shoes gave you away!\"\n\nBen is surprised and sad. He thought he was hidden very well. He did not think Anna would see his shoes. He says, \"You are a very good seeker, Anna. You found me. You win the game.\"\n\nAnna is happy and hugs Ben. She says",
+      "teacher": ", \"Thank you, Ben. You are a good friend. You are a good friend. You are a good friend. You are a good friend. You",
+      "student": ", \"Thank you, Ben. You are a good friend. You are a my friend.\"\n\nThey hug and smile. They say, \"Thank you"
+    },
+    {
+      "story_id": 12,
+      "prompt": " you turn the knob slowly, it will be easier to open.\" \n\nLily tried the trick and it worked! She was so happy and thanked her mom. Her mom then said, \"Remember, when things are difficult, don't complain. Try to find a solution instead.\" \n\nLily nodded and smiled. From that day on, whenever she faced a difficult situation, she remembered",
+      "teacher": " her mom's words and never felt so bad.",
+      "student": " her mom's words and never felt so bad."
+    },
+    {
+      "story_id": 13,
+      "prompt": " started playing with her. Suddenly, her little brother came in and wanted to play too. \n\nLily said, \"You can play with my doll,",
+      "teacher": " but I can't play with it.\"\n\nLily thought about what she said and said, \"I want to play with you, but I want to play",
+      "student": " but I can't play with it.\"\n\nLily thought about what she said don't want to play with you,\" she said.\n\nThe boy smiled"
+    },
+    {
+      "story_id": 14,
+      "prompt": " help her. She suggested they put some food on the grill and have a picnic in the garden. Jamie smiled, feeling a little better.\n\nWhen they",
+      "teacher": " arrived, they saw a big, juicy apple. It was a big, juicy, juicy apple. It was so yummy!\n\nThe two friends were so",
+      "student": " arrived, they saw a big, juicy apple. It was a big, juicy was so happy to have a new friend.\n\nThe two friends were so"
+    },
+    {
+      "story_id": 15,
+      "prompt": " and the ground was full of puddles. The boy saw a board and he couldn't resist the temptation to jump on it. It was so much fun splashing the water around. His mum saw him and smiled.\n\nAfter a while the boy said it was time to leave. He said goodbye to the board and ran back to his mum. She was holding a big, green umbrella so he was not very wet at all.",
+      "teacher": "\n\nThe boy smiled and said, \"I'm glad you like it. I'm glad you're safe.\" And that was so happy that he had been",
+      "student": "\n\nThe boy smiled and said, \"I'm glad you like it. wanted to play with the other kids in the park. He was so happy to"
+    }
+  ],
+  "note": "学生历史下的真实与预测反馈比较；闭环质量诊断，不测异步速度。"
+}

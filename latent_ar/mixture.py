@@ -1,4 +1,4 @@
-"""有限 latent 混合分布，对四 token 联合概率做精确边缘化。"""
+"""有限 latent 混合分布，对一个文本块的联合概率做精确边缘化。"""
 
 from dataclasses import dataclass
 
@@ -17,9 +17,13 @@ class MixtureModelConfig(StagedModelConfig):
     mixture_hidden_dim: int = 512
     mixture_layers: int = 2
     mixture_train_blocks: int = 64
+    # 旧检查点保持原始 latent 回灌；新实验显式选择实际文本回灌。
+    feedback_mode: str = "raw"
 
     def __post_init__(self):
         super().__post_init__()
+        if self.feedback_mode not in {"raw", "text"}:
+            raise ValueError("feedback_mode must be raw or text")
         if (
             min(
                 self.mixture_components,
@@ -84,7 +88,7 @@ class MixtureHead(nn.Module):
 
 
 class LatentMixtureModel(LatentPriorModel):
-    """一次主干 + K 个 latent；训练边缘化，推理抽一个 latent 并直接回灌。"""
+    """一次主干预测 K 个 latent 及权重，生成可选择真实文本回灌。"""
 
     architecture = "latent_codec_mixture_v5"
 
@@ -92,6 +96,52 @@ class LatentMixtureModel(LatentPriorModel):
         super().__init__(cfg)
         self.latent_head = MixtureHead(cfg)
         self.latent_head.apply(BlockCodec._initialize)
+
+    def generate(
+        self,
+        prompt,
+        prompt_lengths,
+        max_new_tokens=64,
+        temperature=0.0,
+        top_k=50,
+        use_latents=True,
+        generator=None,
+        min_new_tokens=0,
+        feedback_mode=None,
+        return_trace=False,
+    ):
+        """新配置逐块解码并回灌；旧配置默认保留原生成行为。
+
+        显式传入 feedback_mode='raw' 也走逐块接口，便于与 text 做配对
+        比较。该接口不是异步性能实现。trace 留给后续反馈蒸馏收集数据。
+        """
+        mode = self.cfg.feedback_mode if feedback_mode is None else feedback_mode
+        if mode == "raw" and feedback_mode is None and not return_trace:
+            return super().generate(
+                prompt,
+                prompt_lengths,
+                max_new_tokens,
+                temperature,
+                top_k,
+                use_latents,
+                generator,
+                min_new_tokens,
+            )
+        from latent_ar.feedback import generate_with_feedback
+
+        return generate_with_feedback(
+            self,
+            prompt,
+            prompt_lengths,
+            max_new_tokens=max_new_tokens,
+            temperature=temperature,
+            top_k=top_k,
+            use_latents=use_latents,
+            generator=generator,
+            min_new_tokens=min_new_tokens,
+            feedback_mode=mode,
+            return_trace=return_trace,
+        )
 
     def generation_generators(self, generator, device):
         seeds = torch.randint(

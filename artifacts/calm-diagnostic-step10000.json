@@ -1,0 +1,42 @@
+{
+  "checkpoint": "runs\\calm-16\\last.pt",
+  "step": 10000,
+  "device": "cpu",
+  "dev_blocks": 64,
+  "bank_blocks": 256,
+  "prediction_samples": 8,
+  "target_samples": 100,
+  "scores": {
+    "conditional": {
+      "energy": 26.06407356262207,
+      "attraction": 26.045618057250977,
+      "spread": 26.027164459228516
+    },
+    "shuffled_history": {
+      "energy": 27.323970794677734,
+      "attraction": 26.694265365600586,
+      "spread": 26.064565658569336
+    },
+    "unconditional_bank": {
+      "energy": 27.17108726501465,
+      "attraction": 27.130807876586914,
+      "spread": 27.09052848815918
+    },
+    "oracle_posterior": {
+      "energy": 8.795653343200684,
+      "attraction": 8.79593276977539,
+      "spread": 8.79621410369873
+    }
+  },
+  "target_std_mean": 0.27094000577926636,
+  "target_variance_sum_mean": 45.140296936035156,
+  "target_mean_norm_mean": 17.859756469726562,
+  "target_sample_norm_mean": 19.166446685791016,
+  "predicted_sample_norm_mean": 19.1507625579834,
+  "notes": [
+    "真实后验参考知道未来目标，不是语言模型可达到的下界。",
+    "打乱条件按验证块循环移位；同一故事的其他块可能仍相邻。",
+    "所有分数共享同一批目标样本；无条件分布来自独立训练集完整块。",
+    "有限样本导致估计有方差；欧氏 Energy 数值依赖 latent 尺度。"
+  ]
+}

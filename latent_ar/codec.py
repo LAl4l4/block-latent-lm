@@ -1,4 +1,4 @@
-"""阶段一：四 token 块的 encoder / decoder 重建，不训练语言主干。"""
+"""阶段一：配置长度的 token 块的 encoder / decoder 重建，不训练语言主干。"""
 
 import torch
 from torch import nn

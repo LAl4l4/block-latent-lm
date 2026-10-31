@@ -10,6 +10,10 @@ MIXTURE_ARCHITECTURE = "latent_codec_mixture_v5"
 TOKEN_HEAD_ARCHITECTURE = "latent_codec_token_head_v6"
 ENERGY_TEXT_ARCHITECTURE = "latent_codec_energy_text_v5"
 DENOISING_ARCHITECTURE = "latent_codec_denoising_v7"
+VAE_ARCHITECTURE = "block_vae_v1"
+CALM_ARCHITECTURE = "latent_calm_v1"
+CONDITIONAL_FLOW_ARCHITECTURE = "latent_conditional_flow_v1"
+CALM_TOKEN_ARCHITECTURE = "latent_calm_token_v1"
 TRAINABLE_PRIOR_ARCHITECTURES = {
     PRIOR_ARCHITECTURE,
     ENERGY_ARCHITECTURE,
@@ -40,6 +44,10 @@ def checkpoint_architecture(checkpoint):
         TOKEN_HEAD_ARCHITECTURE,
         ENERGY_TEXT_ARCHITECTURE,
         DENOISING_ARCHITECTURE,
+        VAE_ARCHITECTURE,
+        CALM_ARCHITECTURE,
+        CONDITIONAL_FLOW_ARCHITECTURE,
+        CALM_TOKEN_ARCHITECTURE,
     }:
         raise ValueError(f"Unknown checkpoint architecture: {architecture}")
     return architecture
@@ -74,6 +82,18 @@ def load_model(checkpoint, device):
     elif architecture == DENOISING_ARCHITECTURE:
         from latent_ar.denoising import LatentDenoisingModel as LatentARModel
         from latent_ar.denoising import DenoisingConfig as ModelConfig
+    elif architecture == VAE_ARCHITECTURE:
+        from latent_ar.vae import BlockVAE as LatentARModel
+        from latent_ar.vae import VAEConfig as ModelConfig
+    elif architecture == CALM_ARCHITECTURE:
+        from latent_ar.calm import CalmModel as LatentARModel
+        from latent_ar.calm import CalmConfig as ModelConfig
+    elif architecture == CONDITIONAL_FLOW_ARCHITECTURE:
+        from latent_ar.conditional_flow import ConditionalFlowModel as LatentARModel
+        from latent_ar.conditional_flow import FlowConfig as ModelConfig
+    elif architecture == CALM_TOKEN_ARCHITECTURE:
+        from latent_ar.calm_token import CalmTokenModel as LatentARModel
+        from latent_ar.calm_token import CalmTokenConfig as ModelConfig
     else:
         from latent_ar.legacy_model import LatentARModel, ModelConfig
 

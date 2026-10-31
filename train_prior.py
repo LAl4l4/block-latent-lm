@@ -1,4 +1,4 @@
-"""阶段二：冻结合格的 codec，用 Energy loss 训练下一块 latent 分布。"""
+"""阶段二：冻结合格的 codec，按配置训练下一块的条件分布。"""
 
 from latent_ar.staged_training import CodecQualityError, run_stage
 

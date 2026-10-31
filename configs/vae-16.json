@@ -1,0 +1,20 @@
+{
+  "name": "vae-16",
+  "model": {
+    "chunk_size": 16, "dim": 512, "encoder_dim": 256,
+    "layers": 8, "heads": 8, "ff_dim": 1536,
+    "decoder_dim": 256, "decoder_layers": 1,
+    "decoder_heads": 4, "decoder_ff_dim": 768,
+    "vae_kl_weight": 0.001, "vae_kl_floor": 0.5,
+    "vae_input_dropout": 0.15, "vae_latent_dropout": 0.15
+  },
+  "training": {
+    "seed": 42, "precision": "bf16", "cpu_threads": 4,
+    "batch_size": 128, "grad_accum": 2,
+    "max_steps": 30000, "learning_rate": 0.0003,
+    "lr_schedule": "constant", "warmup_steps": 100,
+    "min_lr_ratio": 1.0, "weight_decay": 0.1, "grad_clip": 1.0,
+    "log_every": 10, "eval_every": 250,
+    "eval_batches": 16, "eval_batch_size": 128, "save_every": 100
+  }
+}
