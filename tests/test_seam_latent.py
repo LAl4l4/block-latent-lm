@@ -81,3 +81,23 @@ def test_posterior_reads_only_its_own_block():
     mean2, _ = model.encode(changed, P)
     same = (mean - mean2).abs().amax(-1)[0].view(B, K)
     assert (same[[0, 1, 3]] == 0).all() and (same[2] > 0).any()
+
+
+def test_sampling_never_reads_unwritten_positions():
+    """占位值不同、随机种子相同时，采出的词和潜变量必须完全一致。"""
+    from seam.latent_samples import sample
+
+    torch.manual_seed(0)
+    model = LatentLM(50, P + B * L, B, L, K, D, 32, 2, 2, 64, encoder_dim=8).double().eval()
+    prompt_ids = torch.randint(0, 50, (2, P))
+    for schedule, stagger, segment in ARMS[:4]:
+        c = {"schedule": schedule, "prompt": P, "blocks": B, "block_size": L,
+             "latents": K, "latent_dim": D, "stagger": stagger, "segment": segment}
+        v = build(schedule, stagger, segment)
+        out = [
+            sample(model, v, c, prompt_ids, 1.0, torch.Generator().manual_seed(1), fill)
+            for fill in (0, 7)
+        ]
+        assert torch.equal(out[0][0], out[1][0]), schedule
+        assert torch.allclose(out[0][1].double(), out[1][1].double()), schedule
+        assert torch.equal(out[0][0][:, :P], prompt_ids)
