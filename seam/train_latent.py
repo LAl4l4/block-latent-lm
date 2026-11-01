@@ -84,6 +84,8 @@ def evaluate(model, data, visible, args, device, autocast):
 
 def arm_name(args):
     latent = f"latent{args.latents}x{args.latent_dim}"
+    if args.free_bits > 0:
+        latent += f"fb{args.free_bits:g}"
     if args.schedule == "causal":
         return f"causal-{latent}-s{args.seed}"
     if args.schedule == "reverse" and args.segment > 1:
@@ -99,6 +101,8 @@ def main():
     p.add_argument("--latents", type=int, default=4, help="每块潜变量槽个数 K")
     p.add_argument("--latent-dim", type=int, default=16, help="每个潜变量槽的维数 d_z")
     p.add_argument("--kl-warmup", type=int, default=1000, help="KL 权重从 0 升到 1 的步数")
+    p.add_argument("--free-bits", type=float, default=0.0,
+                   help="每块 KL 的免罚额度 λ（nats，均分到 K 个槽）；0 表示不用")
     p.add_argument("--data", type=Path, default=Path("data/prepared"))
     p.add_argument("--out", type=Path, default=Path("runs/schedule-latent"))
     p.add_argument("--prompt", type=int, default=16)
@@ -167,7 +171,11 @@ def main():
                 word_nll, kl = losses(model, ids, visible, args.prompt)
                 # 每词平均：词 CE + β·KL 摊到块内各词。
                 kl_per_block = kl.sum((-1, -2)).mean()
-                loss = word_nll.mean() + beta * kl_per_block / args.block_size
+                # free bits：每个潜变量槽的批平均 KL 低于 λ/K 的部分不罚，防止后验塌缩。
+                # 只改训练目标；评估仍用真实 KL，报告的总 CE 仍是合法上界。
+                kl_slot = kl.sum(-1).mean(0).clamp(min=args.free_bits / args.latents)
+                penalty = kl_slot.sum(-1).mean() if args.free_bits > 0 else kl_per_block
+                loss = word_nll.mean() + beta * penalty / args.block_size
             optimizer.zero_grad(set_to_none=True)
             loss.backward()
             norm = torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
