@@ -1,19 +1,23 @@
 # arXiv submission metadata (v1)
 
+The upload is `arxiv-upload.zip`, built from `main.tex` (ICLR 2027 layout, "Preprint" header, named author) by `scripts/make_upload.py`.
+
 ## Title
 
-Write the Seam Last: Reverse-Staggered Decoding for Block-Parallel Language Models
+Write the Seam Last: Which Dependencies Should a Block-Parallel Decoder Drop?
 
 ## Authors
 
-TODO(author): names as they should appear on arXiv, matching `\author{}` in `main.tex`.
+Qiran Li
 
-## Abstract (plain text, 1880 characters; arXiv limit 1920)
+(The paper lists the affiliation as "Independent researcher". No email is printed.)
 
-Paste this exactly. It contains no LaTeX, and the formula is written in ASCII.
+## Abstract (plain text, 1210 characters; arXiv limit 1920)
+
+Paste this exactly. It contains no LaTeX (the paper's $20\times$ is written 20x).
 
 ```text
-Block-parallel and pipelined generators start a block before its predecessor is finished, so some token pairs can no longer condition on each other. It is known that dependency between tokens decays with distance. We turn this into a schedule-design rule for block pipelines and quantify it. Staggered schemes that keep left-to-right order inside each block drop the strongest dependency: the one between a block's first token and the end of the block before it. Our rule is to write the seam last: if each block's head is written after the previous block's tail, the seam token can condition on that tail, whatever the exact schedule. We compare three instances: token-reversed staggering, segment-reversed staggering and a block-level meet-in-the-middle scheme. We prove that reversed staggering drops only pairs at distance at least L-g+1+g*max(0, ceil((s-g+1)/g)). A mask-only TinyStories study with small models (3 seeds) separates information cost from ordering cost. Forward and token-reversed staggering drop the same 216 pairs per window, yet the dropped pairs cost 0.350 nats/token at distance 1-8 and 0.016 at distance 24 or more. At 1.75 tokens per step segment reversal works best: it costs 0.276 nats/token over a causal LM, against 0.350 for forward staggering and 0.508 for one-block-delayed conditioning, and it beats meet-in-the-middle. At higher parallelism token reversal is best in likelihood. Under an independent judge, the seam token's cross-entropy in samples falls from 11.3 under forward staggering to 2.9 (causal: 2.6); a smaller seam remains inside the block, and re-decoding one token afterwards only moves the break. The schedules are not free. In small models an ordering cost of 0.23-0.27 nats/token remains, and a discrete block-level plan does not remove it. With 10x more data, a 4.4x larger model trained 4x longer still pays 0.242 (one seed).
+Block-parallel decoders speed up language-model generation by starting a block before the previous one is finished, so some dependencies between tokens must be dropped. Prior work asks how many dependencies a decoder can afford to drop; we ask which ones. Staggered pipelines write every block left to right and so drop the seam, the dependency between a block's first token and the token just before it. We show that reordering the tokens inside each block so that the seam is written last leaves both the parallelism and the number of dropped dependencies unchanged, yet moves every dropped dependency at least a block away. To measure what this buys, we train models that differ only in their attention mask, which separates the information a schedule loses from the cost of learning a non-left-to-right order. Moved away from the seam, the same dropped dependencies become more than 20x cheaper, and the seam failure largely disappears from samples. What remains is an ordering cost concentrated at a single token per block, which neither scale nor a block-level plan removes in our experiments; this points to learnability, rather than lost information, as the next bottleneck for block-parallel decoding.
 ```
 
 ## Categories
@@ -21,11 +25,11 @@ Block-parallel and pipelined generators start a block before its predecessor is 
 - Primary: cs.CL (Computation and Language)
 - Cross-list: cs.LG (Machine Learning)
 
+If the endorser can only endorse cs.LG, make cs.LG primary and cross-list cs.CL.
+
 ## Comments field
 
-`N pages, 3 figures, 12 tables`
-
-TODO(author): replace N with the page count of the PDF that Overleaf compiles.
+`23 pages, 3 figures, 15 tables`
 
 ## License
 
@@ -33,6 +37,7 @@ CC BY 4.0 (Creative Commons Attribution 4.0 International). This is the author's
 
 ## Before submitting
 
-- Fill in the author names and affiliation in `main.tex`, and remove the `TODO(author)` comments. arXiv publishes the source, comments included.
-- Decide on the code-release line in the Reproducibility paragraph.
-- arXiv does not run BibTeX. Download `main.bbl` from Overleaf and add it to the upload next to `main.tex`.
+- Recompile with `--keep-intermediates` and rerun `scripts/make_upload.py` after any edit, so that `main.bbl` matches the source; the script refuses a stale `.bbl`.
+- arXiv publishes the source, comments included. `main.tex` has no TODO comments; keep it that way.
+- The Reproducibility statement says the code is in a single code base but gives no link, because the repository is private. Add a URL if the code is released.
+- Check the PDF that arXiv builds in its preview before confirming.

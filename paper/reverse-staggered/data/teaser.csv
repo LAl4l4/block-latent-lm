@@ -1,0 +1,7 @@
+arm,cost,seam_judge_ce
+causal,0.0000,2.5605
+forward8,0.3500,11.2908
+reverse8,0.3300,7.1228
+reverse16,0.3140,6.6973
+reverse8g8,0.2760,2.8912
+reverse16g8,0.2640,2.9015

@@ -1,0 +1,313 @@
+\begin{thebibliography}{42}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Arriola et~al.(2025)Arriola, Gokaslan, Chiu, Yang, Qi, Han, Sahoo, and
+  Kuleshov]{arriola2025block}
+Marianne Arriola, Aaron Gokaslan, Justin~T. Chiu, Zhihan Yang, Zhixuan Qi,
+  Jiaqi Han, Subham~Sekhar Sahoo, and Volodymyr Kuleshov.
+\newblock Block diffusion: Interpolating between autoregressive and diffusion
+  language models.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2025.
+\newblock arXiv:2503.09573.
+
+\bibitem[Bavarian et~al.(2022)Bavarian, Jun, Tezak, Schulman, McLeavey, Tworek,
+  and Chen]{bavarian2022fim}
+Mohammad Bavarian, Heewoo Jun, Nikolas Tezak, John Schulman, Christine
+  McLeavey, Jerry Tworek, and Mark Chen.
+\newblock Efficient training of language models to fill in the middle.
+\newblock \emph{arXiv preprint arXiv:2207.14255}, 2022.
+
+\bibitem[Chavan et~al.(2026)Chavan, Lee, Bamba, Yoo, Hong, Raghunathan, and
+  Kim]{chavan2026lafa}
+Arnav Chavan, Chanhyuk Lee, Udbhav Bamba, Jaehoon Yoo, Seunghoon Hong, Aditi
+  Raghunathan, and Jinwoo Kim.
+\newblock Large flow language models.
+\newblock \emph{arXiv preprint arXiv:2610.28559}, 2026.
+
+\bibitem[Chen et~al.(2023)Chen, Borgeaud, Irving, Lespiau, Sifre, and
+  Jumper]{chen2023speculative}
+Charlie Chen, Sebastian Borgeaud, Geoffrey Irving, Jean-Baptiste Lespiau,
+  Laurent Sifre, and John Jumper.
+\newblock Accelerating large language model decoding with speculative sampling.
+\newblock \emph{arXiv preprint arXiv:2302.01318}, 2023.
+
+\bibitem[Copet et~al.(2023)Copet, Kreuk, Gat, Remez, Kant, Synnaeve, Adi, and
+  D{\'e}fossez]{copet2023musicgen}
+Jade Copet, Felix Kreuk, Itai Gat, Tal Remez, David Kant, Gabriel Synnaeve,
+  Yossi Adi, and Alexandre D{\'e}fossez.
+\newblock Simple and controllable music generation.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2023.
+\newblock arXiv:2306.05284.
+
+\bibitem[Cutler et~al.(2025)Cutler, Kandoor, Dikkala, Saunshi, Wang, and
+  Panigrahy]{cutler2025stagformer}
+Dylan Cutler, Arun Kandoor, Nishanth Dikkala, Nikunj Saunshi, Xin Wang, and
+  Rina Panigrahy.
+\newblock {StagFormer}: Time staggering transformer decoding for running layers
+  in parallel.
+\newblock \emph{arXiv preprint arXiv:2501.15665}, 2025.
+
+\bibitem[Eldan \& Li(2023)Eldan and Li]{eldan2023tinystories}
+Ronen Eldan and Yuanzhi Li.
+\newblock {TinyStories}: How small can language models be and still speak
+  coherent {English}?
+\newblock \emph{arXiv preprint arXiv:2305.07759}, 2023.
+
+\bibitem[Fu et~al.(2024)Fu, Bailis, Stoica, and Zhang]{fu2024lookahead}
+Yichao Fu, Peter Bailis, Ion Stoica, and Hao Zhang.
+\newblock Break the sequential dependency of {LLM} inference using lookahead
+  decoding.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2024.
+\newblock arXiv:2402.02057.
+
+\bibitem[Gloeckle et~al.(2024)Gloeckle, Idrissi, Rozi{\`e}re, Lopez-Paz, and
+  Synnaeve]{gloeckle2024mtp}
+Fabian Gloeckle, Badr~Youbi Idrissi, Baptiste Rozi{\`e}re, David Lopez-Paz, and
+  Gabriel Synnaeve.
+\newblock Better \& faster large language models via multi-token prediction.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2024.
+\newblock arXiv:2404.19737.
+
+\bibitem[Gu et~al.(2018)Gu, Bradbury, Xiong, Li, and Socher]{gu2018nat}
+Jiatao Gu, James Bradbury, Caiming Xiong, Victor O.~K. Li, and Richard Socher.
+\newblock Non-autoregressive neural machine translation.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2018.
+\newblock arXiv:1711.02281.
+
+\bibitem[He et~al.(2026)He, Feng, Fu, Wang, Zhu, and Wang]{he2026psf}
+Jinjin He, Xinsong Feng, Lucheng Fu, Sinan Wang, Bo~Zhu, and Jiayun Wang.
+\newblock Rethinking the roles of diffusion and decoding: Predictive-state
+  flows for parallel language generation.
+\newblock \emph{arXiv preprint arXiv:2610.12898}, 2026.
+
+\bibitem[He et~al.(2025)He, Chen, He, He, Zhou, Zhang, and Zhuang]{he2025zipar}
+Yefei He, Feng Chen, Yuanyu He, Shaoxuan He, Hong Zhou, Kaipeng Zhang, and
+  Bohan Zhuang.
+\newblock {ZipAR}: Parallel auto-regressive image generation through spatial
+  locality.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2025.
+\newblock arXiv:2412.04062.
+
+\bibitem[Hou \& Kwok(2026)Hou and Kwok]{hou2026rethinking}
+Kai~Syun Hou and James Kwok.
+\newblock Rethinking the generation order of block diffusion language models.
+\newblock \emph{arXiv preprint arXiv:2607.24306}, 2026.
+
+\bibitem[Jin et~al.(2026)Jin, Xu, Liu, Xu, Tu, Li, Tu, Yan, Yu, Liu, and
+  Deng]{jin2026multibd}
+Yijie Jin, Jiajun Xu, Yuxuan Liu, Chenkai Xu, Yi~Tu, Jiajun Li, Dandan Tu,
+  Xiaohui Yan, Kai Yu, Pengfei Liu, and Zhijie Deng.
+\newblock Multi-block diffusion language models.
+\newblock \emph{arXiv preprint arXiv:2606.29215}, 2026.
+
+\bibitem[Kim et~al.(2025)Kim, Shah, Kontonis, Kakade, and
+  Chen]{kim2025trainworst}
+Jaeyeon Kim, Kulin Shah, Vasilis Kontonis, Sham Kakade, and Sitan Chen.
+\newblock Train for the worst, plan for the best: Understanding token ordering
+  in masked diffusions.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2025.
+\newblock arXiv:2502.06768.
+
+\bibitem[Leviathan et~al.(2023)Leviathan, Kalman, and
+  Matias]{leviathan2023speculative}
+Yaniv Leviathan, Matan Kalman, and Yossi Matias.
+\newblock Fast inference from transformers via speculative decoding.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2023.
+\newblock arXiv:2211.17192.
+
+\bibitem[Li et~al.(2025)Li, Guan, Wu, and Li]{li2025refusion}
+Jia-Nan Li, Jian Guan, Wei Wu, and Chongxuan Li.
+\newblock {ReFusion}: A diffusion large language model with parallel
+  autoregressive decoding.
+\newblock \emph{arXiv preprint arXiv:2512.13586}, 2025.
+
+\bibitem[Li et~al.(2026)Li, Zhang, Yang, Zhang, Ver~Steeg, and Li]{li2026lclm}
+Shiyuan Li, Shaorong Zhang, Zhaorui Yang, Qian Zhang, Greg Ver~Steeg, and
+  Bingyao Li.
+\newblock Line-coupled language model.
+\newblock \emph{arXiv preprint arXiv:2609.07129}, 2026.
+
+\bibitem[Li et~al.(2024)Li, Wei, Zhang, and Zhang]{li2024eagle}
+Yuhui Li, Fangyun Wei, Chao Zhang, and Hongyang Zhang.
+\newblock {EAGLE}: Speculative sampling requires rethinking feature
+  uncertainty.
+\newblock In \emph{International Conference on Machine Learning (ICML)}, 2024.
+\newblock arXiv:2401.15077.
+
+\bibitem[Nguyen et~al.(2023)Nguyen, Karampatziakis, and Chen]{nguyen2023meet}
+Anh Nguyen, Nikos Karampatziakis, and Weizhu Chen.
+\newblock Meet in the middle: A new pre-training paradigm.
+\newblock \emph{arXiv preprint arXiv:2303.07295}, 2023.
+
+\bibitem[Pannatier et~al.(2024)Pannatier, Courdier, and
+  Fleuret]{pannatier2024sigma}
+Arnaud Pannatier, Evann Courdier, and Fran{\c{c}}ois Fleuret.
+\newblock $\sigma$-{GPTs}: A new approach to autoregressive models.
+\newblock \emph{arXiv preprint arXiv:2404.09562}, 2024.
+
+\bibitem[Ren et~al.(2026)Ren, Lou, Liu, Fang, Wang, Zhou, and
+  You]{ren2026asynclane}
+Yingxuan Ren, Yuxuan Lou, Yong Liu, Pengcheng Fang, Ziming Wang, Pengfei Zhou,
+  and Yang You.
+\newblock {AsyncLane}: Decoupling refinement from advancement in diffusion
+  language model decoding.
+\newblock \emph{arXiv preprint arXiv:2606.08411}, 2026.
+
+\bibitem[Rodionov et~al.(2025)Rodionov, Garipov, Shutova, Yakushev, Schultheis,
+  Egiazarian, Sinitsin, Kuznedelev, and Alistarh]{rodionov2025hogwild}
+Gleb Rodionov, Roman Garipov, Alina Shutova, George Yakushev, Erik Schultheis,
+  Vage Egiazarian, Anton Sinitsin, Denis Kuznedelev, and Dan Alistarh.
+\newblock Hogwild! inference: Parallel {LLM} generation via concurrent
+  attention.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2025.
+\newblock arXiv:2504.06261.
+
+\bibitem[Shao et~al.(2025)Shao, Li, Meng, and Zhou]{shao2025calm}
+Chenze Shao, Darren Li, Fandong Meng, and Jie Zhou.
+\newblock Continuous autoregressive language models.
+\newblock \emph{arXiv preprint arXiv:2510.27688}, 2025.
+
+\bibitem[Shih et~al.(2022)Shih, Sadigh, and Ermon]{shih2022aoarm}
+Andy Shih, Dorsa Sadigh, and Stefano Ermon.
+\newblock Training and inference on any-order autoregressive models the right
+  way.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2022.
+\newblock arXiv:2205.13554.
+
+\bibitem[Stern et~al.(2018)Stern, Shazeer, and Uszkoreit]{stern2018blockwise}
+Mitchell Stern, Noam Shazeer, and Jakob Uszkoreit.
+\newblock Blockwise parallel decoding for deep autoregressive models.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2018.
+\newblock arXiv:1811.03115.
+
+\bibitem[Sullivan et~al.(2012)Sullivan, Ohm, Han, and
+  Wiegand]{sullivan2012hevc}
+Gary~J. Sullivan, Jens-Rainer Ohm, Woo-Jin Han, and Thomas Wiegand.
+\newblock Overview of the high efficiency video coding ({HEVC}) standard.
+\newblock \emph{IEEE Transactions on Circuits and Systems for Video
+  Technology}, 22\penalty0 (12):\penalty0 1649--1668, 2012.
+
+\bibitem[Sutskever et~al.(2014)Sutskever, Vinyals, and
+  Le]{sutskever2014seq2seq}
+Ilya Sutskever, Oriol Vinyals, and Quoc~V. Le.
+\newblock Sequence to sequence learning with neural networks.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2014.
+\newblock arXiv:1409.3215.
+
+\bibitem[Tian et~al.(2026)Tian, Liu, Zhong, Duan, Luo, Jin, Wang, and
+  Liao]{tian2026flowblock}
+Bing Tian, Haikun Liu, Xiaocheng Zhong, Zhuohui Duan, Zhaokai Luo, Huayi Jin,
+  Zhiyong Wang, and Xiaofei Liao.
+\newblock {FlowBlock}: Wavefront-parallel decoding for self-correcting
+  diffusion language models.
+\newblock \emph{arXiv preprint arXiv:2607.17652}, 2026.
+
+\bibitem[Tsou et~al.(2026)Tsou, Liu, Wang, Xu, and Lee]{tsou2026tecop}
+Jui-Chien Tsou, Hsuan-Chi Liu, Wei-Chin Wang, Yu-Syuan Xu, and Chun-Yi Lee.
+\newblock {TeCoP}: Accelerating diffusion large language model decoding via
+  tentative context pipelining.
+\newblock \emph{arXiv preprint arXiv:2610.27583}, 2026.
+
+\bibitem[Vaswani et~al.(2017)Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez,
+  Kaiser, and Polosukhin]{vaswani2017attention}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N. Gomez, {\L}ukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2017.
+\newblock arXiv:1706.03762.
+
+\bibitem[Vinyals et~al.(2016)Vinyals, Bengio, and Kudlur]{vinyals2016order}
+Oriol Vinyals, Samy Bengio, and Manjunath Kudlur.
+\newblock Order matters: Sequence to sequence for sets.
+\newblock In \emph{International Conference on Learning Representations
+  (ICLR)}, 2016.
+\newblock arXiv:1511.06391.
+
+\bibitem[Wang et~al.(2018)Wang, Zhang, and Chen]{wang2018semi}
+Chunqi Wang, Ji~Zhang, and Haiqing Chen.
+\newblock Semi-autoregressive neural machine translation.
+\newblock In \emph{Conference on Empirical Methods in Natural Language
+  Processing (EMNLP)}, 2018.
+\newblock arXiv:1808.08583.
+
+\bibitem[Wang et~al.(2025)Wang, Ren, Lin, Han, Guo, Yang, Zou, Feng, and
+  Liu]{wang2025par}
+Yuqing Wang, Shuhuai Ren, Zhijie Lin, Yujin Han, Haoyuan Guo, Zhenheng Yang,
+  Difan Zou, Jiashi Feng, and Xihui Liu.
+\newblock Parallelized autoregressive visual generation.
+\newblock In \emph{IEEE/CVF Conference on Computer Vision and Pattern
+  Recognition (CVPR)}, 2025.
+\newblock arXiv:2412.15119.
+
+\bibitem[Yang et~al.(2019)Yang, Dai, Yang, Carbonell, Salakhutdinov, and
+  Le]{yang2019xlnet}
+Zhilin Yang, Zihang Dai, Yiming Yang, Jaime Carbonell, Ruslan Salakhutdinov,
+  and Quoc~V. Le.
+\newblock {XLNet}: Generalized autoregressive pretraining for language
+  understanding.
+\newblock In \emph{Advances in Neural Information Processing Systems
+  (NeurIPS)}, 2019.
+\newblock arXiv:1906.08237.
+
+\bibitem[Yao(2026)]{yao2026orderagnostic}
+Lin Yao.
+\newblock Decoding in order-agnostic language models: Chain-rule deviation and
+  uniform spreading.
+\newblock \emph{arXiv preprint arXiv:2606.00997}, 2026.
+
+\bibitem[Ye et~al.(2025)Ye, Guo, Wu, He, Pearce, Rashid, Hofmann, and
+  Bian]{ye2025diagonal}
+Yang Ye, Junliang Guo, Haoyu Wu, Tianyu He, Tim Pearce, Tabish Rashid, Katja
+  Hofmann, and Jiang Bian.
+\newblock Fast autoregressive video generation with diagonal decoding.
+\newblock \emph{arXiv preprint arXiv:2503.14070}, 2025.
+
+\bibitem[Zhang et~al.(2020)Zhang, Titov, and Sennrich]{zhang2020interleaved}
+Biao Zhang, Ivan Titov, and Rico Sennrich.
+\newblock Fast interleaved bidirectional sequence generation.
+\newblock In \emph{Proceedings of the Fifth Conference on Machine Translation
+  (WMT)}, 2020.
+\newblock arXiv:2010.14481.
+
+\bibitem[Zhang et~al.(2026{\natexlab{a}})Zhang, Li, Yu, and
+  Ver~Steeg]{zhang2026latlm}
+Shaorong Zhang, Shiyuan Li, Longxuan Yu, and Greg Ver~Steeg.
+\newblock {LatLM}: Line-parallel language models with deferred commitment.
+\newblock \emph{arXiv preprint arXiv:2610.23951}, 2026{\natexlab{a}}.
+
+\bibitem[Zhang et~al.(2026{\natexlab{b}})Zhang, Yu, Brekelmans, Tang, Asif, and
+  Ver~Steeg]{zhang2026generation}
+Shaorong Zhang, Longxuan Yu, Rob Brekelmans, Luhan Tang, Salman Asif, and Greg
+  Ver~Steeg.
+\newblock Generation order and parallel decoding in masked diffusion models: An
+  information-theoretic perspective.
+\newblock \emph{arXiv preprint arXiv:2602.00286}, 2026{\natexlab{b}}.
+
+\bibitem[Zhou et~al.(2019{\natexlab{a}})Zhou, Zhang, and Zong]{zhou2019sbnmt}
+Long Zhou, Jiajun Zhang, and Chengqing Zong.
+\newblock Synchronous bidirectional neural machine translation.
+\newblock \emph{Transactions of the Association for Computational Linguistics},
+  7, 2019{\natexlab{a}}.
+\newblock arXiv:1905.04847.
+
+\bibitem[Zhou et~al.(2019{\natexlab{b}})Zhou, Zhang, Zong, and
+  Yu]{zhou2019bothsides}
+Long Zhou, Jiajun Zhang, Chengqing Zong, and Heng Yu.
+\newblock Sequence generation: From both sides to the middle.
+\newblock In \emph{International Joint Conference on Artificial Intelligence
+  (IJCAI)}, 2019{\natexlab{b}}.
+\newblock arXiv:1906.09601.
+
+\end{thebibliography}
