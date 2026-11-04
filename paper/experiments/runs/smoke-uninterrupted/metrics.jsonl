@@ -1,6 +1,0 @@
-{"kind": "train", "step": 1, "ce": 9.023640632629395, "lr": 0.0003, "grad_norm": 3.7689733505249023, "target_tokens": 128, "tokens_seen": 128, "step_seconds": 0.08948700013570487, "target_tokens_per_second": 1430.3753596152635}
-{"kind": "train", "step": 2, "ce": 8.946926310911017, "lr": 0.00023249999999999999, "grad_norm": 2.8783187866210938, "target_tokens": 59, "tokens_seen": 187, "step_seconds": 0.03721230011433363, "target_tokens_per_second": 1585.4972635049255}
-{"kind": "dev", "step": 2, "ce": 9.00487649851832, "perplexity": 8142.695107775892, "tokens": 174, "stories": 4}
-{"kind": "train", "step": 3, "ce": 9.006996154785156, "lr": 9.750000000000003e-05, "grad_norm": 2.2343804836273193, "target_tokens": 128, "tokens_seen": 315, "step_seconds": 0.06496570003218949, "target_tokens_per_second": 1970.2704648234069}
-{"kind": "train", "step": 4, "ce": 8.996436928803066, "lr": 2.9999999999999997e-05, "grad_norm": 2.1817586421966553, "target_tokens": 106, "tokens_seen": 421, "step_seconds": 0.05469879996962845, "target_tokens_per_second": 1937.885292892286}
-{"kind": "dev", "step": 4, "ce": 8.998618641118894, "perplexity": 8091.898388028516, "tokens": 174, "stories": 4}

@@ -25,7 +25,7 @@ To submit:
 
 ## Sources of numbers
 
-- Mask study: `docs/paper-v1-draft.md` and `docs/idea-reverse-staggered-decoding.md`.
+- Mask study: `docs/stage2/idea.md` (repository root).
 - Per-slot values (figure and Appendix B): the `summary.md` files.
 - Sample tables: `judge_ce` (whole continuation) and `judge_steady_first_ce` (seam) from the sample-eval JSONs under `runs/schedule-mask*/`.
 - Meet-in-the-middle and seed-42 costs: `runs/schedule-mask/*-s42/final.json`.
@@ -34,11 +34,11 @@ To submit:
 - Wide 20k scaling: `runs/schedule-mask-wide-long/*/metrics.jsonl` (22M tokens, overfits) and `runs/schedule-mask-wide-1m/*/metrics.jsonl` (219M tokens, `data/prepared-1m`).
 - Single-token refinement: `runs/schedule-mask-refine/*/final.json` (refinement CE) and `runs/schedule-mask-refine/sample-eval.json` (`judge_ce`, `judge_steady_by_slot`).
 - Intra-block seam in samples: `judge_steady_by_slot` in the sample-eval JSONs.
-- Example samples and flagged-token shares (appendix "Example samples"): `runs/schedule-mask/sample-examples-s42-judge-s43.json`, written by `python -m seam.sample_examples --runs causal-s42 forward8-s42 reverse8-s42 reverse8g8-s42 delayed-s42 --judge causal-s43 --out runs/schedule-mask/sample-examples-s42-judge-s43.json`. Full-parallel samples (`landing`, `reverse0`, `forward0`): `runs/schedule-mask/sample-examples-parallel-s42-judge-s43.json`, same command with `--runs landing-s42 reverse0-s42 forward0-s42`. `scripts/make_examples.py` turns both into `figures/examples.tex` and `figures/examples_parallel.tex`.
+- Example samples and flagged-token shares (appendix "Example samples"): `runs/schedule-mask/sample-examples-s42-judge-s43.json`, written by `python -m seam.mask.examples --runs causal-s42 forward8-s42 reverse8-s42 reverse8g8-s42 delayed-s42 --judge causal-s43 --out runs/schedule-mask/sample-examples-s42-judge-s43.json`. Full-parallel samples (`landing`, `reverse0`, `forward0`): `runs/schedule-mask/sample-examples-parallel-s42-judge-s43.json`, same command with `--runs landing-s42 reverse0-s42 forward0-s42`. `scripts/make_examples.py` turns both into `figures/examples.tex` and `figures/examples_parallel.tex`.
 - Parameter counts (7.2M base, 31.5M wide): the run `config.json` files. The docs' "about 10M" for the base model is wrong.
 
 ## Code
 
-- Schedules (visibility): `seam/schedules.py`. Models: `seam/models.py`. Training: `seam/train_mask.py`, `seam/train_plan.py`. Sample evaluation: `seam/sample_eval.py`. Summaries: `seam/summarize.py`.
+- Schedules (visibility): `seam/schedules.py`. Models: `seam/models.py`. Training: `seam/mask/train.py`, `seam/plan/train.py`. Sample evaluation: `seam/mask/sample_eval.py`. Summaries: `seam/mask/summarize.py`.
 - Tests: `tests/test_seam_schedules.py` (distance bound, meet d+1, sampler rounds) and `tests/test_seam_plan.py`.
-- Run scripts: `scripts/run_schedule_*.bat`.
+- Run scripts: `scripts/stage2/run_schedule_*.bat` (repository root).

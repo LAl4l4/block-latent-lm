@@ -9,7 +9,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 
-from latent_ar.model import RMSNorm, SwiGLU
+from seam.common import RMSNorm, SwiGLU
 
 
 class TwoStreamLayer(nn.Module):

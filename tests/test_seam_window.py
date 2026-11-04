@@ -2,7 +2,7 @@ import torch
 
 from seam.models import WindowLM
 from seam.schedules import visibility, window_visibility
-from seam.train_window import losses
+from seam.window.train import losses
 
 P, B, L, D = 4, 4, 4, 3
 ARMS = [
@@ -90,7 +90,7 @@ def test_posterior_reads_only_its_own_block_and_losses_backprop():
 
 def test_sampling_never_reads_unwritten_positions():
     """占位值不同、随机种子相同时，采出的词必须完全一致。"""
-    from seam.window_samples import sample
+    from seam.window.samples import sample
 
     torch.manual_seed(0)
     model = WindowLM(50, P + B * L, B, L, D, 32, 2, 2, 64).double().eval()
@@ -123,7 +123,7 @@ def test_gated_model_reads_left_blocks_only_through_the_gate():
 
 
 def test_corrupt_keeps_prompt_and_shapes():
-    from seam.train_window import corrupt
+    from seam.window.train import corrupt
 
     torch.manual_seed(0)
     ids = torch.randint(0, 50, (8, P + B * L))

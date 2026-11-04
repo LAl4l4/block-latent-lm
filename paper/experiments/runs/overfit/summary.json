@@ -1,7 +1,0 @@
-{
-  "last_step": 1000,
-  "tokens_seen": 4657444,
-  "wall_seconds": 623.7598177001346,
-  "peak_gpu_allocated_mb": 2490.82958984375,
-  "checkpoint": "runs\\overfit\\last.pt"
-}

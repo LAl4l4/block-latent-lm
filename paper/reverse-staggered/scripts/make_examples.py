@@ -1,4 +1,4 @@
-"""Write figures/examples*.tex from the sample-examples JSONs (seam.sample_examples).
+"""Write figures/examples*.tex from the sample-examples JSONs (seam.mask.examples).
 
 Block boundaries (‖) become \\blk and judge-flagged tokens (⟦…⟧) become \\brk{…}.
 The first prompts of the evaluation set are used as they are, without selection.

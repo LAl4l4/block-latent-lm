@@ -1,5 +1,0 @@
-{"kind": "train", "stage": "prior", "step": 1, "flow_mse": 2.2141133854898176, "tokens": 11172, "blocks": 2848, "lr": 6e-07, "grad_norm": 0.16267532110214233, "step_seconds": 0.3693753001280129, "tokens_seen": 11172, "blocks_seen": 2848}
-{"kind": "train", "stage": "prior", "step": 2, "flow_mse": 2.2159759821876137, "tokens": 10727, "blocks": 2743, "lr": 1.2e-06, "grad_norm": 0.1637488454580307, "step_seconds": 0.1900830001104623, "tokens_seen": 21899, "blocks_seen": 5591}
-{"kind": "dev", "stage": "prior", "step": 2, "flow_mse": 2.2096159869942853, "tokens": 5370, "blocks": 1378}
-{"kind": "train", "stage": "prior", "step": 3, "flow_mse": 2.2114542760491713, "tokens": 10870, "blocks": 2776, "lr": 1.8e-06, "grad_norm": 0.1620802879333496, "step_seconds": 0.5226288000121713, "tokens_seen": 32769, "blocks_seen": 8367}
-{"kind": "dev", "stage": "prior", "step": 3, "flow_mse": 2.209326667951742, "tokens": 5370, "blocks": 1378}

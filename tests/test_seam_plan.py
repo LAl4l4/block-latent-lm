@@ -3,7 +3,7 @@ import torch.nn.functional as F
 
 from seam.models import PlanLM
 from seam.schedules import plan_visibility, visibility
-from seam.train_plan import losses
+from seam.plan.train import losses
 
 P, B, L, K = 4, 4, 8, 2
 ARMS = [
