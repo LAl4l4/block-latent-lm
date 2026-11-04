@@ -2,7 +2,7 @@ import torch
 
 from seam.models import LatentLM
 from seam.schedules import plan_visibility
-from seam.train_latent import gaussian_kl, losses
+from seam.latent.train import gaussian_kl, losses
 
 P, B, L, K, D = 4, 4, 8, 2, 3
 ARMS = [
@@ -85,7 +85,7 @@ def test_posterior_reads_only_its_own_block():
 
 def test_sampling_never_reads_unwritten_positions():
     """占位值不同、随机种子相同时，采出的词和潜变量必须完全一致。"""
-    from seam.latent_samples import sample
+    from seam.latent.samples import sample
 
     torch.manual_seed(0)
     model = LatentLM(50, P + B * L, B, L, K, D, 32, 2, 2, 64, encoder_dim=8).double().eval()

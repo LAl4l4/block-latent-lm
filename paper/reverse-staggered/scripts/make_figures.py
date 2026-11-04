@@ -64,7 +64,7 @@ SAMPLES = ROOT / "runs/schedule-mask/sample-eval-s42-judge-s43.json"
 
 
 def parse_summary(path):
-    """Return {run: [16 per-slot CE values]} from a seam.summarize table."""
+    """Return {run: [16 per-slot CE values]} from a seam.mask.summarize table."""
     rows = {}
     for line in path.read_text(encoding="utf-8").splitlines():
         match = re.match(r"- (\w+): ((?:[\d.]+ ?){16})$", line.strip())
@@ -220,7 +220,7 @@ def tradeoff_figure(costs):
 
 
 def parse_costs(path):
-    """Return {run: mean cost vs causal} from the cost column of a seam.summarize table."""
+    """Return {run: mean cost vs causal} from the cost column of a seam.mask.summarize table."""
     costs = {}
     for line in path.read_text(encoding="utf-8").splitlines():
         cells = [c.strip() for c in line.strip().strip("|").split("|")]

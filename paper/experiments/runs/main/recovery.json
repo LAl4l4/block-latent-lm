@@ -1,8 +1,0 @@
-{
-  "step": 3100,
-  "recovered_from": "runs\\token-head-ablation-v1\\token_head\\last-step3100-recovered.pt",
-  "previous_last_step": 3000,
-  "model_optimizer_rng_verified": true,
-  "immutable_backup": "artifacts/checkpoints/main-step3100.pt",
-  "training_started_during_cleanup": false
-}

@@ -1,8 +1,0 @@
-{
-  "last_step": 3,
-  "tokens_seen": 32769,
-  "interrupted": false,
-  "wall_seconds": 2.0547086999285966,
-  "peak_gpu_allocated_mb": 4085.7392578125,
-  "checkpoint": "runs\\block-v2-integration-check\\last.pt"
-}
