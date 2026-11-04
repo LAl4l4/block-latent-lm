@@ -8,10 +8,10 @@
   every axis plot/.append style={line width=1pt, mark size=1.8pt},
   legend style={font=\footnotesize, draw=black!20, at={(0.98,0.03)}, anchor=south east}]
 \addplot[color=cOrange, mark=triangle*] coordinates {(1.75,0.353) (2.8,0.423) (4.0,0.482) (5.09,0.522) (7.0,0.571)};
-\addlegendentry{forward-$s$}
+\addlegendentry{\textsc{Forward}}
 \addplot[color=cAqua, mark=diamond*] coordinates {(1.75,0.326) (2.8,0.356) (4.0,0.386) (5.09,0.417) (7.0,0.459)};
-\addlegendentry{token reversal ($g=1$)}
+\addlegendentry{\textsc{Reverse}}
 \addplot[color=cBlue, mark=*] coordinates {(1.75,0.271) (2.8,0.442) (4.0,0.470)};
-\addlegendentry{segment reversal ($g=s$)}
+\addlegendentry{segment reversal, $g=s$}
 \end{axis}
 \end{tikzpicture}
