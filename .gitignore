@@ -17,4 +17,4 @@ htmlcov/
 *.parquet
 
 # LaTeX build output
-paper/reverse-staggered/build/
+stage2/paper/build/
